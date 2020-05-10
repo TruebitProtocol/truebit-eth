@@ -27,23 +27,17 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
  && cd / \
  && rm -rf go-ipfs*
 
-RUN git clone https://github.com/TruebitFoundation/jit-runner \
- && cd jit-runner \
- && git checkout  v2 \
- && npm i
+RUN eval $(ssh-agent) && \
+    ssh-add github_key && \
+    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
 
-RUN git clone https://github.com/mrsmkl/truebit-os \
- && cd truebit-os \
- && git checkout meter_fix \
+RUN git clone teutsch@github.com:TruebitFoundation/2020 \
+ && cd 2020 \
  && npm i --production \
  && npm run deps \
  && npm run  compile \
- && rm -rf ~/.opam
-
-RUN git clone https://github.com/TruebitFoundation/wasm-ports \
- && cd wasm-ports \
- && git checkout  v2 \
- && ln -s /truebit-os . \
+ && rm -rf ~/.opam \
+ && ln -s truebit-os . \
  && cd samples \
  && npm i \
  && ln -s /wasm-ports/samples /var/www/html \
