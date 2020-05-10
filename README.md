@@ -1,4 +1,4 @@
-# Truebit OS
+# Truebit OS 2020
 
 [![Build Status](https://travis-ci.org/TrueBitFoundation/truebit-os.svg?branch=master)](https://travis-ci.org/TrueBitFoundation/truebit-os)
 
