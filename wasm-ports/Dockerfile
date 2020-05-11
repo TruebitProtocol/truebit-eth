@@ -3,17 +3,17 @@ MAINTAINER Sami Mäkelä
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get  update \
+RUN apt-get update \
  && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev apache2 psmisc sudo mongodb curl tmux nano \
  && opam init -y
 
 RUN git clone https://github.com/juj/emsdk \
  && cd emsdk \
  && ./emsdk update-tags \
- && ./emsdk install sdk-1.37.36-64bit \
- && ./emsdk activate sdk-1.37.36-64bit \
- && ./emsdk install  binaryen-tag-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit
+ && ./emsdk install sdk-1.38.43-64bit \
+ && ./emsdk activate sdk-1.38.43-64bit \
+ && ./emsdk install binaryen-tag-1.38.31-64bit \
+ && ./emsdk activate binaryen-tag-1.38.31-64bit
 
 RUN git clone https://github.com/llvm-mirror/llvm \
  && cd llvm/tools \
@@ -52,7 +52,7 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.17/go-ipfs_v0.4.17_linux-amd64.tar.gz
  && cd / \
  && rm -rf go-ipfs*
 
-RUN apt-get  update \
+RUN apt-get update \
  && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev psmisc sudo curl tmux nano npm apache2 \
  && opam init -y \
  && npm install -g ganache-cli mocha browserify
@@ -75,18 +75,17 @@ RUN cd bin \
  && mv solc-static-linux solc \
  && chmod 744 solc
 
-RUN git clone https://github.com/TruebitFoundation/truebit-os \
- && cd truebit-os \
- && git checkout mono-2 \
+RUN git clone https://github.com/TruebitFoundation/Truebit2020 \
+ && cd Truebit2020 \
  && cd jit-runner \
  && npm i
 
-RUN cd truebit-os/emscripten-module-wrapper \
+RUN cd Truebit2020/emscripten-module-wrapper \
  && source /emsdk/emsdk_env.sh \
  && npm install \
- && ln -s /truebit-os/emscripten-module-wrapper /root/emscripten-module-wrapper
+ && ln -s /Truebit2020/emscripten-module-wrapper /root/emscripten-module-wrapper
 
-RUN cd truebit-os/wasm-ports \
+RUN cd Truebit2020/wasm-ports \
  && source /emsdk/emsdk_env.sh \
  && export EMCC_WASM_BACKEND=1 \
  && apt-get install -y lzip autoconf libtool flex bison \
@@ -97,13 +96,13 @@ RUN cd truebit-os/wasm-ports \
  && sh boost.sh \
  && sh libpbc.sh
 
-RUN cd truebit-os \
+RUN cd Truebit2020 \
  && npm i --production \
  && npm run deps \
  && npm run  compile \
  && rm -rf ~/.opam
 
-RUN cd truebit-os/wasm-ports/samples/pairing \
+RUN cd Truebit2020/wasm-ports/samples/pairing \
  && source  /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
@@ -113,13 +112,14 @@ RUN cd truebit-os/wasm-ports/samples/pairing \
  && cd ../chess \
  && sh compile.sh
 
-RUN cd truebit-os/wasm-ports/samples/ffmpeg \
+RUN cd Truebit2020/wasm-ports/samples/ffmpeg \
  && source  /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && sh compile.sh
 
-RUN cd truebit-os/wasm-ports/samples \
+RUN cd Truebit2020/wasm-ports/samples \
  && npm i
 
 
 EXPOSE 4001 30303 80 8545
+#docker build . -t truebit-toolchain:latest

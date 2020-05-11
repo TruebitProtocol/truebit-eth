@@ -31,9 +31,9 @@ COPY github_key .
 RUN eval $(ssh-agent) && \
     ssh-add github_key && \
     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-    git clone git@github.com:TruebitFoundation/2020
+    git clone git@github.com:TruebitFoundation/Truebit2020
 
-RUN cd 2020 \
+RUN cd Truebit2020 \
  && cd jit-runner \
  && npm i \
  && cd .. \
@@ -57,8 +57,8 @@ RUN cd 2020 \
  RUN eval $(ssh-agent) && \
      ssh-add ../github_key && \
      ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-     cd 2020 && \
-     git pull git@github.com:TruebitFoundation/2020
+     cd Truebit2020 && \
+     git pull git@github.com:TruebitFoundation/Truebit2020
 
 # ipfs and eth ports
 EXPOSE 4001 30303 80 8545
