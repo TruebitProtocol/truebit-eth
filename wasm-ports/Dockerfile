@@ -75,9 +75,13 @@ RUN cd bin \
  && mv solc-static-linux solc \
  && chmod 744 solc
 
-RUN git clone https://github.com/TruebitFoundation/Truebit2020 \
- && cd Truebit2020 \
- && cd jit-runner \
+ COPY github_key .
+ RUN eval $(ssh-agent) && \
+     ssh-add github_key && \
+     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
+     git clone git@github.com:TruebitFoundation/Truebit2020
+
+RUN cd Truebit2020\jit-runner \
  && npm i
 
 RUN cd Truebit2020/emscripten-module-wrapper \
