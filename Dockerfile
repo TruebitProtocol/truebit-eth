@@ -3,7 +3,7 @@ MAINTAINER Sami Mäkelä
 
 SHELL ["/bin/bash", "-c"]
 
-RUN apt-get  update \
+RUN apt-get update \
  && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev psmisc sudo curl tmux nano npm apache2 \
  && opam init -y \
  && npm install -g ganache-cli mocha browserify
@@ -27,22 +27,21 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
  && cd / \
  && rm -rf go-ipfs*
 
-RUN git clone https://github.com/TruebitFoundation/jit-runner \
- && cd jit-runner \
- && git checkout  v2 \
- && npm i
+COPY github_key .
+RUN eval $(ssh-agent) && \
+    ssh-add github_key && \
+    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
+    git clone git@github.com:TruebitFoundation/2020
 
-RUN git clone https://github.com/mrsmkl/truebit-os \
- && cd truebit-os \
- && git checkout meter_fix \
+RUN cd 2020 \
+ && cd jit-runner \
+ && npm i \
+ && cd .. \
  && npm i --production \
  && npm run deps \
- && npm run  compile \
- && rm -rf ~/.opam
-
-RUN git clone https://github.com/TruebitFoundation/wasm-ports \
+ && npm run compile \
+ && rm -rf ~/.opam \
  && cd wasm-ports \
- && git checkout  v2 \
  && ln -s /truebit-os . \
  && cd samples \
  && npm i \
@@ -52,11 +51,14 @@ RUN git clone https://github.com/TruebitFoundation/wasm-ports \
  && solc --abi --optimize --overwrite --bin -o build contract.sol \
  && cd ../scrypt \
  && browserify public/app.js -o public/bundle.js \
- && solc --abi --optimize --overwrite --bin -o build contract.sol
+ && solc --abi --optimize --overwrite --bin -o build contract.sol \
+ && cd ../../..
 
-RUN cd truebit-os \
- && git pull
-
+ RUN eval $(ssh-agent) && \
+     ssh-add ../github_key && \
+     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
+     cd 2020 && \
+     git pull git@github.com:TruebitFoundation/2020
 
 # ipfs and eth ports
 EXPOSE 4001 30303 80 8545
