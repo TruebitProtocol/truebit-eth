@@ -1,12 +1,14 @@
 # Truebit OS 2020
 
-[![Build Status](https://travis-ci.org/TrueBitFoundation/truebit-os.svg?branch=master)](https://travis-ci.org/TrueBitFoundation/truebit-os)
+[![Build Status](https://travis-ci.org/TrueBitFoundation/Truebit2020.svg?branch=master)](https://travis-ci.org/TrueBitFoundation/Truebit2020)
 
 <p align="center">
-  <img src="./gundam-schematic.gif"/>
+  <img src="./gundam2.jpeg"/>
 </p>
 
-Truebit OS is the client software needed for running solvers and verifiers in [Truebit network](http://truebit.io/). The smart contracts are also included in the repo. The offchain interpreter is at https://github.com/TrueBitFoundation/ocaml-offchain/ and the JIT environment is at https://github.com/TrueBitFoundation/jit-runner. Tools for developing apps are at https://github.com/TrueBitFoundation/emscripten-module-wrapper and https://github.com/TrueBitFoundation/wasm-ports/.
+
+## **THIS OVERVIEW NEEDS TO BE REWRITTEN**
+Truebit OS is the client software needed for running Solvers and Verifiers in [Truebit network](http://truebit.io/). The smart contracts are also included in the repo. The offchain interpreter is at https://github.com/TrueBitFoundation/ocaml-offchain/ and the JIT environment is at https://github.com/TrueBitFoundation/jit-runner. Tools for developing apps are at https://github.com/TrueBitFoundation/emscripten-module-wrapper and https://github.com/TrueBitFoundation/wasm-ports/.
 
 You can install Truebit using Docker or build it from source.  One can install locally or run over the Goerli testnet.
 If you want to talk to the developers working on this project feel free to say hello on our [Gitter](https://gitter.im/TrueBitFoundation/Lobby).  
@@ -26,20 +28,26 @@ Install [Docker](https://www.docker.com/), and open a Terminal.
 
 ## Compiling and running Truebit tasks
 
-First start up the docker image:
+First start up the Truebit-OS Docker image (perhaps this should be merged with Truebit toolchain image when ready):
 ```
-docker run --rm -ti mrsmkl/wasm-ports:19-05-15 /bin/bash
+docker run --rm -ti truja/truebit-os:5-10-20 /bin/bash
 ```
 
-Start up the Truebit environment:
+Start up the Truebit environment for a local network:
 ```
-cd truebit-os
+cd Truebit2020
 sh scripts/start-private.sh
 ```
-
-Run test tasks:
+Start the Truebit OS client:
 ```
-cd /wasm-ports/samples
+npm run truebit
+```
+At the Truebit OS prompt, type `task` to issue a sample task, followed by `start solve` and optionally `start verify`.
+(insert image here)
+
+Run test tasks: (**this example should be moved to the Toolchain - image above does not have these compiled **)
+```
+cd wasm-ports/samples
 sh deploy.sh
 mocha
 ```
@@ -50,7 +58,7 @@ source /emsdk/emsdk_env.sh
 ```
 Then use the `compile.sh` script. You'll also have to re-deploy with `node ../deploy.js`
 
-### Testing on Goerli network
+### Testing on Goerli network (**Needs to be fixed**)
 
 To speed up network sync the next time, make a directory `~/goerli` and then mount it with docker:
 ```
