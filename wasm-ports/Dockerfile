@@ -33,15 +33,19 @@ RUN git clone https://github.com/llvm-mirror/llvm \
  && cd / \
  && rm -rf build llvm
 
-RUN sed -i 's|/emsdk/clang/e1.37.36_64bit|/usr/bin|' /root/.emscripten
+RUN sed -i 's|/emsdk/clang/e1.38.43_64bit|/usr/bin|' /root/.emscripten
+
+COPY github_key .
+RUN eval $(ssh-agent) && \
+    ssh-add github_key && \
+    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
+    git clone git@github.com:TruebitFoundation/Truebit2020
 
 RUN eval `opam config env` \
  && apt-get install libffi-dev \
  && opam update \
  && opam install cryptokit yojson ctypes ctypes-foreign -y \
- && git clone https://github.com/TrueBitFoundation/ocaml-offchain \
- && cd ocaml-offchain/interpreter \
- && git checkout v2 \
+ && cd Truebit2020/ocaml-offchain/interpreter \
  && make
 
 RUN wget https://dist.ipfs.io/go-ipfs/v0.4.17/go-ipfs_v0.4.17_linux-amd64.tar.gz \
@@ -74,12 +78,6 @@ RUN cd bin \
  && wget https://github.com/ethereum/solidity/releases/download/v0.5.2/solc-static-linux \
  && mv solc-static-linux solc \
  && chmod 744 solc
-
- COPY github_key .
- RUN eval $(ssh-agent) && \
-     ssh-add github_key && \
-     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-     git clone git@github.com:TruebitFoundation/Truebit2020
 
 RUN cd Truebit2020\jit-runner \
  && npm i
