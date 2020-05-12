@@ -3,9 +3,9 @@
 solc --overwrite --bin --abi --optimize contract.sol -o build
 
 # Clone ffmpeg project
-git clone https://github.com/mrsmkl/FFmpeg ffmpeg
-cd ffmpeg
-git checkout truebit_check
+#git clone https://github.com/mrsmkl/FFmpeg ffmpeg
+#cd ffmpeg
+#git checkout truebit_check
 
 echo "Beginning build..."
 
@@ -39,4 +39,3 @@ node ~/emscripten-module-wrapper/prepare.js ffcheck.js --file output.data --file
 
 cp dist/intfloat.wasm task.wasm
 cp dist/info.json .
-
