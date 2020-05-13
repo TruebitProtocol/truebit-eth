@@ -106,18 +106,6 @@ RUN cd Truebit2020 \
  && npm run compile \
  && rm -rf ~/.opam
 
-RUN cd emsdk \
- && source ./emsdk_env.sh \
- && cd /Truebit2020/wasm-ports/samples/pairing \
- && source ./emsdk/emsdk_env.sh \
- && ( ipfs daemon & ) \
- && export EMCC_WASM_BACKEND=1 \
- && sh compile.sh \
- && cd ../scrypt \
- && sh compile.sh \
- && cd ../chess \
- && sh compile.sh
-
 RUN eval $(ssh-agent) && \
     ssh-add github_key && \
     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
@@ -126,8 +114,18 @@ RUN eval $(ssh-agent) && \
 
 RUN cd emsdk \
  && source ./emsdk_env.sh \
+ && cd /Truebit2020/wasm-ports/samples/pairing \
+ && ( ipfs daemon & ) \
+ && export EMCC_WASM_BACKEND=1 \
+ && sh compile.sh \
+ && cd ../scrypt \
+ && sh compile.sh \
+ && cd ../chess \
+ && sh compile.sh
+
+RUN cd emsdk \
+ && source ./emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/ffmpeg \
- && source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && sh compile.sh
 
