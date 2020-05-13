@@ -28,11 +28,11 @@ emconfigure ./configure --disable-programs --disable-doc --disable-sdl2 \
 # Generate linked LLVM bitcode
 make -j 12
 
-cp ffcheck ffcheck.bc
+cp ffcheck ../ffcheck.bc
 
 cd ..
 
-emcc -o ffcheck.js ../ffcheck.bc
+emcc -o ffcheck.js ffcheck.bc
 
 node ~/emscripten-module-wrapper/prepare.js ffcheck.js --file output.data --file input.ts \
      --run --memory-size=21 --upload-ipfs --out=dist --debug --float
