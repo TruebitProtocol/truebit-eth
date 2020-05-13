@@ -117,7 +117,7 @@ RUN cd Truebit2020/wasm-ports/samples/pairing \
 RUN eval $(ssh-agent) && \
     ssh-add github_key && \
     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-    cd Truebit2020 && \ 
+    cd Truebit2020 && \
     git pull git@github.com:TruebitFoundation/Truebit2020
 
 RUN cd Truebit2020/wasm-ports/samples/ffmpeg \

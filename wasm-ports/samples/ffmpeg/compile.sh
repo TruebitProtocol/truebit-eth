@@ -2,18 +2,13 @@
 
 solc --overwrite --bin --abi --optimize contract.sol -o build
 
-echo "HERE HERE"
-
 # Clone ffmpeg project
 git clone https://github.com/mrsmkl/FFmpeg ffmpeg
 cd ffmpeg
 git checkout truebit_check
 
-echo "Beginning build...HELLO"
+echo "Beginning build..."
 
-#eval $(ssh-agent)
-#    ssh-add ../../github_key
-#    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
 # Configure
 emconfigure ./configure --disable-programs --disable-doc --disable-sdl2 \
             --disable-iconv --disable-muxers --disable-demuxers --disable-parsers \
@@ -33,11 +28,11 @@ emconfigure ./configure --disable-programs --disable-doc --disable-sdl2 \
 # Generate linked LLVM bitcode
 make -j 12
 
-cp ffcheck ../ffcheck.bc
+cp ffcheck ffcheck.bc
 
 cd ..
 
-emcc -o ffcheck.js ffcheck.bc
+emcc -o ffcheck.js ../ffcheck.bc
 
 node ~/emscripten-module-wrapper/prepare.js ffcheck.js --file output.data --file input.ts \
      --run --memory-size=21 --upload-ipfs --out=dist --debug --float
