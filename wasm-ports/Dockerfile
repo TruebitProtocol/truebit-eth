@@ -109,7 +109,6 @@ RUN cd Truebit2020 \
 RUN cd emsdk \
  && source ./emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/pairing \
- && source ./emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
  && sh compile.sh \
@@ -127,7 +126,6 @@ RUN eval $(ssh-agent) && \
 RUN cd emsdk \
  && source ./emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/ffmpeg \
- && source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && sh compile.sh
 
