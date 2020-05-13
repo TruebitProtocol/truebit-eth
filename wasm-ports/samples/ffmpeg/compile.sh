@@ -2,13 +2,18 @@
 
 solc --overwrite --bin --abi --optimize contract.sol -o build
 
+echo "HERE HERE"
+
 # Clone ffmpeg project
-#git clone https://github.com/mrsmkl/FFmpeg ffmpeg
-#cd ffmpeg
-#git checkout truebit_check
+git clone https://github.com/mrsmkl/FFmpeg ffmpeg
+cd ffmpeg
+git checkout truebit_check
 
-echo "Beginning build..."
+echo "Beginning build...HELLO"
 
+#eval $(ssh-agent)
+#    ssh-add ../../github_key
+#    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts
 # Configure
 emconfigure ./configure --disable-programs --disable-doc --disable-sdl2 \
             --disable-iconv --disable-muxers --disable-demuxers --disable-parsers \

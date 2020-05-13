@@ -64,22 +64,22 @@ RUN apt-get update \
 RUN wget -O rustup.sh https://sh.rustup.rs \
  && sh rustup.sh -y \
  && source $HOME/.cargo/env \
- && rustup toolchain add stable \
- && git clone https://github.com/goerli/parity-goerli.git \
- && cd parity-goerli \
- && source $HOME/.cargo/env \
- && apt-get install -y libudev-dev \
- && cargo build --release --features final \
- && cd / \
- && cp /parity-goerli/target/release/parity /bin \
- && rm -rf /parity-goerli ~/.rustup ~/.cargo
+ && rustup toolchain add stable
+# && git clone https://github.com/goerli/parity-goerli.git \
+# && cd parity-goerli \
+# && source $HOME/.cargo/env \
+# && apt-get install -y libudev-dev \
+# && cargo build --release --features final \
+# && cd / \
+# && cp /parity-goerli/target/release/parity /bin \
+# && rm -rf /parity-goerli ~/.rustup ~/.cargo
 
 RUN cd bin \
  && wget https://github.com/ethereum/solidity/releases/download/v0.5.2/solc-static-linux \
  && mv solc-static-linux solc \
  && chmod 744 solc
 
-RUN cd Truebit2020\jit-runner \
+RUN cd Truebit2020/jit-runner \
  && npm i
 
 RUN cd Truebit2020/emscripten-module-wrapper \
@@ -101,11 +101,11 @@ RUN cd Truebit2020/wasm-ports \
 RUN cd Truebit2020 \
  && npm i --production \
  && npm run deps \
- && npm run  compile \
+ && npm run compile \
  && rm -rf ~/.opam
 
 RUN cd Truebit2020/wasm-ports/samples/pairing \
- && source  /emsdk/emsdk_env.sh \
+ && source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
  && sh compile.sh \
@@ -114,8 +114,14 @@ RUN cd Truebit2020/wasm-ports/samples/pairing \
  && cd ../chess \
  && sh compile.sh
 
+RUN eval $(ssh-agent) && \
+    ssh-add github_key && \
+    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
+    cd Truebit2020 && \
+    git pull git@github.com:TruebitFoundation/Truebit2020
+
 RUN cd Truebit2020/wasm-ports/samples/ffmpeg \
- && source  /emsdk/emsdk_env.sh \
+ && source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && sh compile.sh
 
