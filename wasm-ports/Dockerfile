@@ -10,10 +10,10 @@ RUN apt-get update \
 RUN git clone https://github.com/juj/emsdk \
  && cd emsdk \
  && ./emsdk update-tags \
- && ./emsdk install sdk-1.38.43-64bit \
- && ./emsdk activate sdk-1.38.43-64bit \
- && ./emsdk install binaryen-tag-1.38.31-64bit \
- && ./emsdk activate binaryen-tag-1.38.31-64bit
+ && ./emsdk install  sdk-fastcomp-tag-1.37.36-64bit \
+ && ./emsdk activate sdk-fastcomp-tag-1.37.36-64bit \
+ && ./emsdk install binaryen-tag-1.37.36-64bit \
+ && ./emsdk activate binaryen-tag-1.37.36-64bit
 
 RUN git clone https://github.com/llvm-mirror/llvm \
  && cd llvm/tools \
@@ -33,7 +33,7 @@ RUN git clone https://github.com/llvm-mirror/llvm \
  && cd / \
  && rm -rf build llvm
 
-RUN sed -i 's|/emsdk/clang/e1.38.43_64bit|/usr/bin|' /root/.emscripten
+RUN sed -i 's|/emsdk/clang/e1.37.36_64bit|/usr/bin|' /root/.emscripten
 
 COPY github_key .
 RUN eval $(ssh-agent) && \
@@ -82,13 +82,15 @@ RUN cd bin \
 RUN cd Truebit2020/jit-runner \
  && npm i
 
-RUN cd Truebit2020/emscripten-module-wrapper \
- && source /emsdk/emsdk_env.sh \
+RUN cd emsdk \
+ && source ./emsdk_env.sh \
+ && cd /Truebit2020/emscripten-module-wrapper \
  && npm install \
  && ln -s /Truebit2020/emscripten-module-wrapper /root/emscripten-module-wrapper
 
-RUN cd Truebit2020/wasm-ports \
- && source /emsdk/emsdk_env.sh \
+RUN cd emsdk \
+ && source ./emsdk_env.sh \
+ && cd /Truebit2020/wasm-ports \ 
  && export EMCC_WASM_BACKEND=1 \
  && apt-get install -y lzip autoconf libtool flex bison \
  && sh gmp.sh \
@@ -104,8 +106,10 @@ RUN cd Truebit2020 \
  && npm run compile \
  && rm -rf ~/.opam
 
-RUN cd Truebit2020/wasm-ports/samples/pairing \
- && source /emsdk/emsdk_env.sh \
+RUN cd emsdk \
+ && source ./emsdk_env.sh \
+ && cd /Truebit2020/wasm-ports/samples/pairing \
+ && source ./emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
  && sh compile.sh \
@@ -120,7 +124,9 @@ RUN eval $(ssh-agent) && \
     cd Truebit2020 && \
     git pull git@github.com:TruebitFoundation/Truebit2020
 
-RUN cd Truebit2020/wasm-ports/samples/ffmpeg \
+RUN cd emsdk \
+ && source ./emsdk_env.sh \
+ && cd /Truebit2020/wasm-ports/samples/ffmpeg \
  && source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && sh compile.sh
