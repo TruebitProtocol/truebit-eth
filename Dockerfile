@@ -28,20 +28,23 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
  && rm -rf go-ipfs*
 
 COPY github_key .
-RUN eval $(ssh-agent) && \
-    ssh-add github_key && \
-    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-    git clone git@github.com:TruebitFoundation/Truebit2020
+
+RUN chmod 400 github_key \
+ && eval $(ssh-agent) \
+ && ssh-add github_key \
+ && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
+ && git clone git@github.com:TruebitFoundation/Truebit2020
+
+RUN cd Truebit2020/jit-runner \
+ && npm i \
 
 RUN cd Truebit2020 \
- && cd jit-runner \
- && npm i \
- && cd .. \
  && npm i --production \
  && npm run deps \
  && npm run compile \
  && rm -rf ~/.opam \
- && cd wasm-ports \
+
+RUN cd Truebit2020/wasm-ports \
  && ln -s /truebit-os . \
  && cd samples \
  && npm i \
@@ -53,11 +56,11 @@ RUN cd Truebit2020 \
  && browserify public/app.js -o public/bundle.js \
  && solc --abi --optimize --overwrite --bin -o build contract.sol \
 
- RUN eval $(ssh-agent) && \
-     ssh-add ../github_key && \
-     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-     cd Truebit2020 && \
-     git pull git@github.com:TruebitFoundation/Truebit2020
+# RUN eval $(ssh-agent) && \
+#     ssh-add github_key && \
+#     ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
+#     cd Truebit2020 && \
+#     git pull git@github.com:TruebitFoundation/Truebit2020
 
 # ipfs and eth ports
 EXPOSE 4001 30303 80 8545
