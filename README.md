@@ -32,6 +32,11 @@ First start up the Truebit-OS Docker image (perhaps this should be merged with T
 ```
 docker run --rm -ti truja/truebit-os:5-10-20 /bin/bash
 ```
+The Truebit toolchain image for generating tasks is here:
+```
+docker run --rm -it mrsmkl/wasm-ports:20-05-12 /bin/bash
+```
+Here's a demo video for building a task: https://www.youtube.com/watch?v=dDzPCMBlZN4
 
 Start up the Truebit environment for a local network:
 ```
