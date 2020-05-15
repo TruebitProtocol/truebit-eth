@@ -40,7 +40,9 @@ RUN chmod 400 github_key \
  && eval $(ssh-agent) \
  && ssh-add github_key \
  && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
- && git clone git@github.com:TruebitFoundation/Truebit2020
+ && git clone git@github.com:TruebitFoundation/Truebit2020 \
+ && cd Truebit2020 \
+ && git pull git@github.com:TruebitFoundation/Truebit2020 
 
 RUN eval `opam config env` \
  && apt-get install libffi-dev \
@@ -92,21 +94,17 @@ RUN cd Truebit2020 \
  && npm run compile \
  && rm -rf ~/.opam
 
-RUN eval $(ssh-agent) && \
-    ssh-add github_key && \
-    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-    cd Truebit2020 && \
-    git pull git@github.com:TruebitFoundation/Truebit2020
-
 RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/pairing \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
  && sh compile.sh \
+ && cd ../wasm \
+ && sh compile.sh \
  && cd ../scrypt \
  && sh compile.sh \
  && cd ../chess \
- && sh compile.sh
+ $$ sh compile.sh
 
 RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/ffmpeg \

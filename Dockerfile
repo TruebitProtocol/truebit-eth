@@ -33,30 +33,27 @@ RUN chmod 400 github_key \
  && eval $(ssh-agent) \
  && ssh-add github_key \
  && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
- && git clone git@github.com:TruebitFoundation/Truebit2020
+ && git clone git@github.com:TruebitFoundation/Truebit2020 \
  && cd Truebit2020 \
  && git pull git@github.com:TruebitFoundation/Truebit2020
 
 RUN cd Truebit2020/jit-runner \
- && npm i \
+ && npm i
 
 RUN cd Truebit2020 \
  && npm i --production \
  && npm run deps \
  && npm run compile \
- && rm -rf ~/.opam \
+ && rm -rf ~/.opam
 
-RUN cd Truebit2020/wasm-ports \
- && ln -s /truebit-os . \
- && cd samples \
+RUN cd Truebit2020/wasm-ports/samples \
  && npm i \
- && ln -s /wasm-ports/samples /var/www/html \
  && cd pairing \
  && browserify public/app.js -o public/bundle.js \
  && solc --abi --optimize --overwrite --bin -o build contract.sol \
  && cd ../scrypt \
  && browserify public/app.js -o public/bundle.js \
- && solc --abi --optimize --overwrite --bin -o build contract.sol \
+ && solc --abi --optimize --overwrite --bin -o build contract.sol
 
 # ipfs and eth ports
 EXPOSE 4001 30303 80 8545
