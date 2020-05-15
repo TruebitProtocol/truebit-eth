@@ -35,10 +35,12 @@ RUN git clone https://github.com/llvm-mirror/llvm \
 RUN sed -i 's|/emsdk/clang/e1.37.36_64bit|/usr/bin|' /root/.emscripten
 
 COPY github_key .
-RUN eval $(ssh-agent) && \
-    ssh-add github_key && \
-    ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts && \
-    git clone git@github.com:TruebitFoundation/Truebit2020
+
+RUN chmod 400 github_key \
+ && eval $(ssh-agent) \
+ && ssh-add github_key \
+ && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
+ && git clone git@github.com:TruebitFoundation/Truebit2020
 
 RUN eval `opam config env` \
  && apt-get install libffi-dev \
