@@ -7,12 +7,11 @@ RUN apt-get update \
  && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev apache2 psmisc sudo mongodb curl tmux nano \
  && opam init -y
 
-RUN git clone https://github.com/juj/emsdk \
+RUN git clone https://github.com/urho3d/emscripten-sdk emsdk \
  && cd emsdk \
- && ./emsdk update-tags \
- && ./emsdk install  sdk-fastcomp-tag-1.37.36-64bit \
- && ./emsdk activate sdk-fastcomp-tag-1.37.36-64bit \
- && ./emsdk install binaryen-tag-1.37.36-64bit \
+ && ./emsdk install sdk-1.37.36-64bit \
+ && ./emsdk activate sdk-1.37.36-64bit \
+ && ./emsdk install  binaryen-tag-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit
 
 RUN git clone https://github.com/llvm-mirror/llvm \
@@ -61,19 +60,6 @@ RUN apt-get update \
  && opam init -y \
  && npm install -g ganache-cli mocha browserify
 
-RUN wget -O rustup.sh https://sh.rustup.rs \
- && sh rustup.sh -y \
- && source $HOME/.cargo/env \
- && rustup toolchain add stable
-# && git clone https://github.com/goerli/parity-goerli.git \
-# && cd parity-goerli \
-# && source $HOME/.cargo/env \
-# && apt-get install -y libudev-dev \
-# && cargo build --release --features final \
-# && cd / \
-# && cp /parity-goerli/target/release/parity /bin \
-# && rm -rf /parity-goerli ~/.rustup ~/.cargo
-
 RUN cd bin \
  && wget https://github.com/ethereum/solidity/releases/download/v0.5.2/solc-static-linux \
  && mv solc-static-linux solc \
@@ -82,15 +68,13 @@ RUN cd bin \
 RUN cd Truebit2020/jit-runner \
  && npm i
 
-RUN cd emsdk \
- && source ./emsdk_env.sh \
+RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/emscripten-module-wrapper \
  && npm install \
  && ln -s /Truebit2020/emscripten-module-wrapper /root/emscripten-module-wrapper
 
-RUN cd emsdk \
- && source ./emsdk_env.sh \
- && cd /Truebit2020/wasm-ports \ 
+RUN source /emsdk/emsdk_env.sh \
+ && cd /Truebit2020/wasm-ports \
  && export EMCC_WASM_BACKEND=1 \
  && apt-get install -y lzip autoconf libtool flex bison \
  && sh gmp.sh \
@@ -112,8 +96,7 @@ RUN eval $(ssh-agent) && \
     cd Truebit2020 && \
     git pull git@github.com:TruebitFoundation/Truebit2020
 
-RUN cd emsdk \
- && source ./emsdk_env.sh \
+RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/pairing \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
@@ -123,8 +106,7 @@ RUN cd emsdk \
  && cd ../chess \
  && sh compile.sh
 
-RUN cd emsdk \
- && source ./emsdk_env.sh \
+RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/ffmpeg \
  && ( ipfs daemon & ) \
  && sh compile.sh

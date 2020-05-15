@@ -52,7 +52,6 @@ RUN cd Truebit2020 \
  && cd ../scrypt \
  && browserify public/app.js -o public/bundle.js \
  && solc --abi --optimize --overwrite --bin -o build contract.sol \
- && cd ../../..
 
  RUN eval $(ssh-agent) && \
      ssh-add ../github_key && \
