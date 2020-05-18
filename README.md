@@ -38,6 +38,14 @@ docker run --rm -it mrsmkl/wasm-ports:20-05-12 /bin/bash
 ```
 Here's a demo video for building a task: https://www.youtube.com/watch?v=dDzPCMBlZN4
 
+
+Geth incantation for Goerli (need to set up acccount with password):
+```
+geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
+```
+
+
+
 Start up the Truebit environment for a local network:
 ```
 cd Truebit2020
