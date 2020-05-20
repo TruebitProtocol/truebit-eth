@@ -39,12 +39,20 @@ docker run --rm -it mrsmkl/wasm-ports:20-05-12 /bin/bash
 Here's a demo video for building a task: https://www.youtube.com/watch?v=dDzPCMBlZN4
 
 
-Geth incantation for Goerli (need to set up acccount with password):
+Geth incantation for Goerli (need to set up acccount with supersecret.txt password) -- see below:
 ```
 geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
 ```
+Follow Geth instructions below.  May need to change `let from = accounts[0]` to `let from = accounts[1]` in `deploy.js`
 
-
+George's instructions and scripts for transpiling Rust:
+```
+https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
+```
+George's modified Emscripten wrapper:
+```
+https://github.com/georgeroman/emscripten-module-wrapper/tree/v2/build
+```
 
 Start up the Truebit environment for a local network:
 ```
