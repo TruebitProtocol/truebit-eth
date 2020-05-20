@@ -46,13 +46,10 @@ geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --a
 Follow Geth instructions below.  May need to change `let from = accounts[0]` to `let from = accounts[1]` in `deploy.js`
 
 George's instructions and scripts for transpiling Rust:
-```
 https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
-```
+
 George's modified Emscripten wrapper:
-```
-https://github.com/georgeroman/emscripten-module-wrapper/tree/v2/build
-```
+https://github.com/georgeroman/emscripten-module-wrapper/
 
 Start up the Truebit environment for a local network:
 ```
