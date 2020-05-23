@@ -6,8 +6,155 @@
   <img src="./gundam2.jpeg"/>
 </p>
 
+# Playground: Mac-OS tutorial on Görli (May 2020)
 
-## **THIS OVERVIEW NEEDS TO BE REWRITTEN**
+This tutorial shows how to install Truebit, connect to the testnet network, solve, verify and issue tasks, and finally build your own tasks.
+
+## Install Truebit-OS
+
+To begin, we install Truebit-OS from the command line.  First, download and install [brew](https://brew.sh/).
+```
+/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
+```
+
+The next step assumes that you already have `git` configured, but one can alternatively download the repository from the indicated website.
+```
+git clone https://github.com/TrueBitFoundation/Truebit2020
+cd Truebit2020
+sh macinstall.sh
+```
+Installation will take several minutes.  For a Linux install, follow the steps outlined in `Truebit2020/Dockerfile`.  Other systems can run Truebit-OS directly from a Docker container, which can be obtained here:
+```
+https://docs.docker.com/get-docker/
+```
+Then run at the command line:
+```
+docker build . -t truebit-os:latest
+docker run --rm -it truebit-os:latest /bin/bash
+```
+
+## Connect to the network
+
+Next we connect to Görli testnet.  Open a new terminal window, and generate a new account if you do not have one already.  You will need to create and store a password.
+```
+echo plort > supersecret.txt
+geth --goerli account new --password=supersecret.txt
+```
+To verify your existing addresses, type
+```
+geth --goerli account list
+```
+and note the index of the account you want to use (1 in the example below).  To start running a Görli node, use an incantation of the following form.
+```
+geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
+```
+The light client should begin syncing with the network and be up to date within a minute.
+
+Now open another terminal and start IPFS.
+```
+ipfs init
+ipfs daemon
+```
+Alteratively, one can save a window by running `ipfs daemon &` and running `ipfs shutdown` if you later want to kill it.
+
+
+## Issue and Solve a sample task
+
+First, obtain Görli ETH from one of the following faucets.
+```  
+https://goerli-faucet.slock.it/
+https://faucet.goerli.mudit.blog/
+```
+Then start Truebit-OS and claim some testnet TRU tokens for the respective account.
+```
+cd Truebit2020
+npm run truebit
+claim -a 1
+deposit -a 1 -v 2000
+```
+Now issue a sample task.
+```
+task -a 1 -t testWasmTask.json
+```
+Spawn Solver and Verifier to solve the task
+```
+start solve -a 1
+start verify -a 1
+```
+Check your progress here or look up your address on Görli.
+```
+https://goerli.etherscan.io/address/0x6dac0a17f50497321785a07b531b8e42c1123757
+```
+use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.
+
+### More sample tasks
+
+The Truebit2020 repo includes some precompiled sample tasks.  To deploy them onto the blockchain, do the following
+```
+cd wasm-ports/samples
+sh deploy.sh
+```
+You may need to edit `deploy.js` and other files and replace
+ `accounts[0]` with the index for your Geth account.  To run a sample task, `cd` into that diretory and run `node send.js` in the appropriate directory as described below.
+
+ Testing samples, Scrypt
+ ```
+ cd /wasm-ports/samples/scrypt
+ node send.js <text>
+ ```
+ Computes scrypt, the string is extended to 80 bytes. See source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/scrypthash.cpp
+ Originally by @chriseth
+
+ Bilinear pairing (enter a string with more than 32 characters)
+ ```
+ cd /wasm-ports/samples/pairing
+ node send.js <text>
+ ```
+ Uses libff to compute bilinear pairing for bn128 curve. Reads two 32 byte data pieces `a` and `b`, they are used like private keys to get `a*O` and `b*O`. Then bilinear pairing is computed. The result has several components, one of them is posted. (To be clear, the code just shows that libff can be used to implement bilinear pairings with Truebit)
+ See source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/pairing/pairing.cpp
+
+ Chess sample
+ ```
+ cd /wasm-ports/samples/chess
+ node send.js <text>
+ ```
+ Checks a game of chess. For example the players could use a state channel to play a match. If there is a disagreement, then the game can be posted to Truebit. This will always work for state channels, because both parties have the data available.
+ Source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/chess/chess.cpp
+ Doesn't implement all the rules, and not much tested.
+
+ Validate WASM file
+ ```
+ cd /wasm-ports/samples/wasm
+ node send.js <wasm file>
+ ```
+ Uses parity-wasm to read and write a WASM file.
+ Source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/wasm/src/main.rs
+
+ Size of video packets in a file:
+ ```
+ cd /wasm-ports/samples/ffmpeg
+ node send.js input.ts
+ ```
+ Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
+
+
+## Building your own tasks with Truebit Toolchain
+Use a Docker container to compile programs from C or C++ into Truebit tasks.
+```
+cd wasm-ports
+docker build . -t truebit-toolchain:latest
+docker run --rm -it truebit-os:latest /bin/bash
+```
+It may tkae some hours to compile the image.  For Rust tasks, try George's tutorial:
+```
+https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
+```
+Check out the posts on Truebit Medium for more details, and stay tuned.
+
+
+
+
+## **END OF TUTORIAL - THIS OVERVIEW NEEDS TO BE REWRITTEN**
 Truebit OS is the client software needed for running Solvers and Verifiers in [Truebit network](http://truebit.io/). The smart contracts are also included in the repo. The offchain interpreter is at https://github.com/TrueBitFoundation/ocaml-offchain/ and the JIT environment is at https://github.com/TrueBitFoundation/jit-runner. Tools for developing apps are at https://github.com/TrueBitFoundation/emscripten-module-wrapper and https://github.com/TrueBitFoundation/wasm-ports/.
 
 You can install Truebit using Docker or build it from source.  One can install locally or run over the Goerli testnet.
@@ -302,7 +449,7 @@ skip -n 120 # Go past reveal period and finalize task
 
 *NOTE* These parameters are subject to future change
 
-# Building from source in MacOS
+# Local blockchain on MacOS (Ganache)
 
 1. Install brew.
 ```
