@@ -23,11 +23,7 @@ git clone https://github.com/TrueBitFoundation/Truebit2020
 cd Truebit2020
 sh macinstall.sh
 ```
-Installation will take several minutes.  For a Linux install, follow the steps outlined in `Truebit2020/Dockerfile`.  Other systems can run Truebit-OS directly from a Docker container, which can be obtained here:
-```
-https://docs.docker.com/get-docker/
-```
-Then run at the command line:
+Installation will take several minutes.  For a Linux install, follow the steps outlined in `Truebit2020/Dockerfile`.  Other systems can run Truebit-OS directly from a Docker.  Download it [here](https://docs.docker.com/get-docker/).  Then run at the command line:
 ```
 docker build . -t truebit-os:latest
 docker run --rm -it truebit-os:latest /bin/bash
@@ -145,13 +141,27 @@ cd wasm-ports
 docker build . -t truebit-toolchain:latest
 docker run --rm -it truebit-os:latest /bin/bash
 ```
-It may tkae some hours to compile the image.  For Rust tasks, try George's tutorial:
+It may take some hours to compile the image.  You should now be able to compile the sample tasks.
+```
+cd samples/scrypt
+sh compile.sh
+cd ../pairing
+sh compile.sh
+cd ../chess
+sh compile.sh
+cd ../wasm
+sh compile.sh
+cd ../ffmpeg
+sh compile.sh
+```
+For Rust tasks, try George's tutorial:
 ```
 https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
 ```
 Check out the posts on Truebit Medium for more details, and stay tuned.
 
 
+Here's Harley's demo video for building a task: https://www.youtube.com/watch?v=dDzPCMBlZN4
 
 
 ## **END OF TUTORIAL - THIS OVERVIEW NEEDS TO BE REWRITTEN**
@@ -183,7 +193,7 @@ The Truebit toolchain image for generating tasks is here:
 ```
 docker run --rm -it mrsmkl/wasm-ports:20-05-12 /bin/bash
 ```
-Here's a demo video for building a task: https://www.youtube.com/watch?v=dDzPCMBlZN4
+
 
 
 Geth incantation for Goerli (need to set up acccount with supersecret.txt password) -- see below:
