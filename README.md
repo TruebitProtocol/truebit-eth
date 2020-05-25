@@ -100,6 +100,7 @@ Spawn Solver and Verifier to solve the task
 start solve -a 1
 start verify -a 1
 ```
+Alternatively, try `start verify -a 1 -t` to make the Verifier challenge the correct solution.
 Check your progress here or look up your address on Görli.
 ```
 https://goerli.etherscan.io/address/0x6dac0a17f50497321785a07b531b8e42c1123757
