@@ -21,13 +21,13 @@ If you would like to speak with developers working on this project, come say hel
 
 ## Contents
 
-1. [Computational playground on Görli testnet (MacOS and Docker)](Computational-playground-on-Görli-testnet-MacOS-and-Docker)
+1. [Computational playground on testnet (MacOS and Docker)](Computational-playground-on-testnet-MacOS-and-Docker)
 2. [Building your own tasks with Truebit Toolchain](Building-your-own-tasks-with-Truebit-Toolchain)
 3. [Local blockchain on Ganache](Local-blockchain-on-Ganache)
 4. [Further development references](Further-development-references)
 
 
-# Computational playground on Görli testnet (MacOS and Docker)
+# Computational playground on testnet (MacOS and Docker)
 
 This tutorial shows how to install Truebit, connect to the testnet network, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and run tasks with your friends!
 
@@ -89,7 +89,6 @@ Then start Truebit-OS and claim some testnet TRU tokens for the respective accou
 cd Truebit2020
 npm run truebit
 claim -a 1
-deposit -a 1 -v 2000
 ```
 Now issue a sample task.
 ```
@@ -157,7 +156,7 @@ You may need to edit `deploy.js` and other files and replace
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
 
 
-# Building your own tasks with Truebit Toolchain
+# Building your own tasks with Truebit toolchain
 Use a Docker container to compile programs from C or C++ into Truebit tasks.
 ```
 cd wasm-ports
@@ -224,7 +223,7 @@ In local blockchain mode, one can fast-forward through time.  Try `skip 300` to 
 
 Here is a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/tree/v2/samples/scrypt) for creating and deploying Truebit tasks.  Here's Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
-#### Running tests
+### Running tests
 
 To run the tests on a local Ganache blockchain, use: `npm run test`.
 
