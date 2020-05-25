@@ -13,7 +13,7 @@ RUN cd bin \
  && mv solc-static-linux solc \
  && chmod 744 solc
 
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.8.23-c9427004.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.9.14-6d74d1e5.tar.gz \
  && tar xf geth*tar.gz \
  && rm geth*tar.gz \
  && cd geth* \
