@@ -80,10 +80,11 @@ Alteratively, one can save a window by running `ipfs daemon &` and running `ipfs
 ## Issue and solve a sample task
 
 First, obtain Görli ETH from one of the following faucets.
-```  
+
 https://goerli-faucet.slock.it/
+
 https://faucet.goerli.mudit.blog/
-```
+
 Then start Truebit-OS and claim some testnet TRU tokens for the respective account.  If you need ETH for another address, you can use `node send.js` _youraddress_ to send test ETH from `account[0]`.
 ```
 cd Truebit2020
