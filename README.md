@@ -6,13 +6,34 @@
   <img src="./gundam2.jpeg"/>
 </p>
 
-# Playground: Mac-OS tutorial on Görli (May 2020)
+# What is Truebit?
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/Truebit2020/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/Truebit2020/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/Truebit2020/tree/master/ocaml-offchain), and [smart contracts](https://github.com/TrueBitFoundation/Truebit2020/tree/master/ocaml-offchain) as well as [sample tasks](#More-sample-tasks).  You can install Truebit using Docker or build it from source for Linux or MacOS.  One can install the system locally or run over a public Ethereum blockchain.
 
-This tutorial shows how to install Truebit, connect to the testnet network, solve, verify and issue tasks, and finally build your own tasks.
+Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki), start a new one, or check out these classic development blog posts:
+* [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
+* [Using the Truebit Filesystem](https://medium.com/truebit/using-the-truebit-filesystem-f6a5d4ac9604)
+* [Truebit Toolchain & Transmute](https://medium.com/truebit/truebit-toolchain-transmute-4984928364a7)
+* [Writing a Truebit Task in Rust](https://medium.com/truebit/writing-a-truebit-task-in-rust-6d96f2ee0a4b)
+* [JIT for Truebit](https://medium.com/truebit/jit-for-truebit-e5299afc72d8)
+
+If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.  
+
+
+## Contents
+
+1. [Computational playground on Görli testnet (MacOS and Docker)](Computational-playground-on-Görli-testnet-MacOS-and-Docker)
+2. [Building your own tasks with Truebit Toolchain](Building-your-own-tasks-with-Truebit-Toolchain)
+3. [Local blockchain on Ganache](Local-blockchain-on-Ganache)
+4. [Further development references](Further-development-references)
+
+
+# Computational playground on Görli testnet (MacOS and Docker)
+
+This tutorial shows how to install Truebit, connect to the testnet network, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and run tasks with your friends!
 
 ## Install Truebit-OS
 
-To begin, we install Truebit-OS from the command line.  First, download and install [brew](https://brew.sh/).
+First we install Truebit-OS from the MacOS command line.  Download and install [brew](https://brew.sh/).
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
@@ -23,11 +44,14 @@ git clone https://github.com/TrueBitFoundation/Truebit2020
 cd Truebit2020
 sh macinstall.sh
 ```
-Installation will take several minutes.  For a Linux install, follow the steps outlined in `Truebit2020/Dockerfile`.  Other systems can run Truebit-OS directly from a Docker.  Download it [here](https://docs.docker.com/get-docker/).  Then run at the command line:
+Installation will take several minutes.  For a Linux install, follow the steps outlined in `Truebit2020/Dockerfile`.  Other systems can run Truebit-OS directly from a Docker container.  Download and install [Docker](https://docs.docker.com/get-docker/).  Then run at the command line:
 ```
 docker build . -t truebit-os:latest
 docker run --rm -it truebit-os:latest /bin/bash
 ```
+
+If you are using Docker, you can follow the steps below, but you will need to split the terminal screen by running `tmux`.  Create three windows by typing `ctrl-b "` then `ctrl-b %`.  Navigate to one of the smaller windows on the the bottom `ctrl-b (down arrow)` and start `geth` as described in the next section, then navigate to the other small window and start `ipfs`.  Finally, start Truebit-os in the large window.  You may wish to make a fourth window for issuing more sample tasks.
+
 
 ## Connect to the network
 
@@ -44,24 +68,23 @@ and note the index of the account you want to use (1 in the example below).  To 
 ```
 geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
 ```
-The light client should begin syncing with the network and be up to date within a minute.
+You may have to exit `geth` and restart several times in order to connect to a node.  The light client should begin syncing with the network and be up to date within a minute.  
 
 Now open another terminal and start IPFS.
 ```
-ipfs init
 ipfs daemon
 ```
 Alteratively, one can save a window by running `ipfs daemon &` and running `ipfs shutdown` if you later want to kill it.
 
 
-## Issue and Solve a sample task
+## Issue and solve a sample task
 
 First, obtain Görli ETH from one of the following faucets.
 ```  
 https://goerli-faucet.slock.it/
 https://faucet.goerli.mudit.blog/
 ```
-Then start Truebit-OS and claim some testnet TRU tokens for the respective account.
+Then start Truebit-OS and claim some testnet TRU tokens for the respective account.  If you need ETH for another address, you can use `node send.js` _youraddress_ to send test ETH from `account[0]`.
 ```
 cd Truebit2020
 npm run truebit
@@ -81,7 +104,7 @@ Check your progress here or look up your address on Görli.
 ```
 https://goerli.etherscan.io/address/0x6dac0a17f50497321785a07b531b8e42c1123757
 ```
-use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.
+use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.  Use `exit` to return to the main terminal.
 
 ### More sample tasks
 
@@ -134,7 +157,7 @@ You may need to edit `deploy.js` and other files and replace
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
 
 
-## Building your own tasks with Truebit Toolchain
+# Building your own tasks with Truebit Toolchain
 Use a Docker container to compile programs from C or C++ into Truebit tasks.
 ```
 cd wasm-ports
@@ -158,308 +181,9 @@ For Rust tasks, try George's tutorial:
 ```
 https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
 ```
-Check out the posts on Truebit Medium for more details, and stay tuned.
 
 
-Here's Harley's demo video for building a task: https://www.youtube.com/watch?v=dDzPCMBlZN4
-
-
-## **END OF TUTORIAL - THIS OVERVIEW NEEDS TO BE REWRITTEN**
-Truebit OS is the client software needed for running Solvers and Verifiers in [Truebit network](http://truebit.io/). The smart contracts are also included in the repo. The offchain interpreter is at https://github.com/TrueBitFoundation/ocaml-offchain/ and the JIT environment is at https://github.com/TrueBitFoundation/jit-runner. Tools for developing apps are at https://github.com/TrueBitFoundation/emscripten-module-wrapper and https://github.com/TrueBitFoundation/wasm-ports/.
-
-You can install Truebit using Docker or build it from source.  One can install locally or run over the Goerli testnet.
-If you want to talk to the developers working on this project feel free to say hello on our [Gitter](https://gitter.im/TrueBitFoundation/Lobby).  
-
-# Contents
-
-1. [Running on Docker](#running-on-docker)
-    1. [Compiling and running Truebit tasks](#compiling-and-running-truebit-tasks)
-    2. [Goerli testnet tutorial](#goerli-testnet-tutorial)
-2. [Linux installation](#building-from-source-in-linux)
-3. [MacOS installation](#building-from-source-in-macos)
-4. [Development](#development)
-
-# Running on Docker
-
-Install [Docker](https://www.docker.com/), and open a Terminal.
-
-## Compiling and running Truebit tasks
-
-First start up the Truebit-OS Docker image (perhaps this should be merged with Truebit toolchain image when ready):
-```
-docker run --rm -ti truja/truebit-os:5-10-20 /bin/bash
-```
-The Truebit toolchain image for generating tasks is here:
-```
-docker run --rm -it mrsmkl/wasm-ports:20-05-12 /bin/bash
-```
-
-
-
-Geth incantation for Goerli (need to set up acccount with supersecret.txt password) -- see below:
-```
-geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
-```
-Follow Geth instructions below.  May need to change `let from = accounts[0]` to `let from = accounts[1]` in `deploy.js`
-
-George's instructions and scripts for transpiling Rust:
-https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
-
-George's modified Emscripten wrapper:
-https://github.com/georgeroman/emscripten-module-wrapper/
-
-Start up the Truebit environment for a local network:
-```
-cd Truebit2020
-sh scripts/start-private.sh
-```
-Start the Truebit OS client:
-```
-npm run truebit
-```
-At the Truebit OS prompt, type `task` to issue a sample task, followed by `start solve` and optionally `start verify`.
-(insert image here)
-
-Run test tasks: (**this example should be moved to the Toolchain - image above does not have these compiled **)
-```
-cd wasm-ports/samples
-sh deploy.sh
-mocha
-```
-
-If you want to recompile a sample, go to a sample directory, and then first setup the environment with
-```
-source /emsdk/emsdk_env.sh
-```
-Then use the `compile.sh` script. You'll also have to re-deploy with `node ../deploy.js`
-
-### Testing on Goerli network (**Needs to be fixed**)
-
-To speed up network sync the next time, make a directory `~/goerli` and then mount it with docker:
-```
-docker run --rm --name=tb -it -p 4001:4001 -p 30303:30303 -v ~/goerli:/root/.local/share/io.parity.ethereum mrsmkl/wasm-ports:19-05-15 /bin/bash
-```
-
-Start up IPFS and Parity:
-```
-cd truebit-os
-sh scripts/start-goerli.sh
-```
-Wait for parity to sync, should take few minutes. (For example `tail -F ~/goerli_log`)
-
-Find out your Goerli ETH address:
-```
-parity --chain=goerli account list
-```
-Then use the faucet to get some GÖETH:  https://goerli-faucet.slock.it/
-
-To connect to IPFS nodes, try `ipfs swarm connect /ip4/213.251.185.41/tcp/4001/ipfs/QmSob847F3sPkmveU5p2aPmjRgaXXdhXb7nnmJtkBZ1QDz`
-(does not matter if fails)
-
-(Optional) After parity has synced, you can start Truebit:
-```
-sh scripts/start-tb.sh
-```
-
-Testing samples, Scrypt
-```
-cd /wasm-ports/samples/scrypt
-node send.js <text>
-```
-Computes scrypt, the string is extended to 80 bytes. See source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/scrypthash.cpp
-Originally by @chriseth
-
-Bilinear pairing (enter a string with more than 32 characters)
-```
-cd /wasm-ports/samples/pairing
-node send.js <text>
-```
-Uses libff to compute bilinear pairing for bn128 curve. Reads two 32 byte data pieces `a` and `b`, they are used like private keys to get `a*O` and `b*O`. Then bilinear pairing is computed. The result has several components, one of them is posted. (To be clear, the code just shows that libff can be used to implement bilinear pairings with Truebit)
-See source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/pairing/pairing.cpp
-
-Chess sample
-```
-cd /wasm-ports/samples/chess
-node send.js <text>
-```
-Checks a game of chess. For example the players could use a state channel to play a match. If there is a disagreement, then the game can be posted to Truebit. This will always work for state channels, because both parties have the data available.
-Source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/chess/chess.cpp
-Doesn't implement all the rules, and not much tested.
-
-Validate WASM file
-```
-cd /wasm-ports/samples/wasm
-node send.js <wasm file>
-```
-Uses parity-wasm to read and write a WASM file.
-Source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/wasm/src/main.rs
-
-Size of video packets in a file:
-```
-cd /wasm-ports/samples/ffmpeg
-node send.js input.ts
-```
-Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
-
-Progress of tasks can be followed from https://goerli.etherscan.io/address/0xf018f7f68f6eb999f4e7c02158e9a1ea4d77a067
-
-
-## Goerli testnet tutorial
-
-*Quickstart: try running these steps!*
-
-1. Install Docker.
-
-2. Open a terminal window.
-
-3. Create directory `~/goerli` to store your blockchain data.
-
-4. Start a session:
-
-```
-docker run --rm --name=tb -it -p 8545:8545 -p 3000:80 -p 4001:4001 -p 30303:30303 -v ~/goerli:/root/.ethereum mrsmkl/truebit-goerli:19-03-25 /bin/bash
-```
-
-5. Initiate ```tmux```.
-
-6. Create three windows by typing ```ctrl-b "``` then ```ctrl-b %```.
-
-7. *Start IPFS.*  Navigate to one of the smaller windows on the the bottom ``ctrl-b (down arrow)'' and type
-
-```
-ipfs daemon
-```
-
-If it looks like IPFS doesn't find files, try `ipfs swarm connect /ip4/213.251.185.41/tcp/4001/ipfs/QmSob847F3sPkmveU5p2aPmjRgaXXdhXb7nnmJtkBZ1QDz`
-to connect to a Truebit node running IPFS.
-
-8. *Set up a new ethereum account.* Navigate to the other small window and type:
-
-```
-cd ~/.ethereum
-echo plort > supersecret.txt
-geth --goerli account new --password=supersecret.txt
-```
-
-If you already have an account, just `cd ~/.ethereum`
-
-To check addresses created, type
-```
-geth --goerli account list
-```
-Make sure there is just one account.
-
-9. *Connect to Goerli*.  Type:
-
-```
-geth --goerli --rpc --unlock 0 --password=supersecret.txt
-```
-
-10. *Get testnet tokens* for the account(s) above here: https://goerli-faucet.slock.it/
-
-11.  *Start Truebit-OS.* Wait a few minutes to sync with Goerli.  Console will say "Imported" when ready.  Navigate to the top window ```ctrl-b (up arrow)``` and type
-```
-cd truebit-os
-npm run truebit
-claim
-balance
-```
-The balance command should show that you've claimed TRU testnet tokens.
-
-12. *Task - Solve - Verify!*  Start a Solver:
-```
-start solve
-```
-Start a Verifier:
-```
-start verify
-```
-Issue a task (factorial example):
-```
-task
-```
-
-13. Check your decentralized computations on the blockchain here: https://goerli.etherscan.io/address/0xf018f7f68f6eb999f4e7c02158e9a1ea4d77a067
-
-
-# Building from source in Linux
-
-## Getting Started
-
-Start with an ethereum client running on port 8545, and an ipfs daemon at port 5001. For a quick start, ganache-cli is a blockchain emulator that can be used for development.
-
-```
-npm i -g ganache-cli
-```
-
-You will also need the latest version of solidity compiler installed and available on your path. Please refer to [its documentation](https://solidity.readthedocs.io/) to install its binary package.
-
-## Installation
-
-Install instructions are catered to Linux users. However, other OS's can use this by simply installing ocaml-offchain without the `npm run deps` script.
-
-In order to get things running you'll have to go through all these commands at least once.
-
-```bash
-cd truebit-os/
-npm i
-npm run fixperms
-npm run deps # you'll need to be in root (su root)
-npm run compile
-npm run deploy
-```
-
-
-## Usage
-
-The shell provides a number of commands which you can get instructions by using the `help` command:
-
-```
-help
-```
-
-Before submitting a task you will need to claim some test TRU tokens, from our faucet.
-
-```
-claim -a 0
-```
-
-Then account0 after the transaction is confirmed you should have 10000 TRU.
-
-## Example
-
-After starting up the shell you can enter commands to start submitting and solving tasks:
-
-You can start up a task giver process that will monitor the incentive layer smart contract for events:
-```
-start task -a 0
-```
-
-Now the process will be monitoring for tasks created by account 0.
-
-We can also start up a solver with a different account:
-```
-start solve -a 1
-```
-
-We've started up a solver with account 1 (this is to simulate different users, but it could be the same account).
-
-Finally, we can submit our task:
-```
-task -a 0 -t testWasmTask.json
-```
-
-We have specified to submit a task from account 0. And the data related to the task is located at testWasmTask.json
-
-If you are running this on a development test net you will need to skip blocks to see the solution in the solutions directory.
-```
-skip -n 120 # Go past the challenge period
-skip -n 120 # Go past reveal period and finalize task
-```
-
-*NOTE* These parameters are subject to future change
-
-# Local blockchain on MacOS (Ganache)
+# Local blockchain on Ganache
 
 1. Install brew.
 ```
@@ -472,7 +196,7 @@ git clone https://github.com/TrueBitFoundation/truebit-os
 cd truebit-os
 ```
 
-3. Install Solidity, NPM, IPFS, the off-chain interpreter, and client.
+3. If you are using MacOS, install Solidity, NPM, IPFS, the off-chain interpreter, and client.  Skip this step if you are running in a Docker container.
 ```
 sh macinstall.sh
 ```
@@ -493,15 +217,16 @@ and optionally open another terminal with IPFS via `ipfs daemon`.  Finally, star
 ```
 npm run truebit
 ```
-To get some tokens, type `claim`, and check your address using `balance`.  If you need ETH, then `exit` Truebit-OS  and use `node send.js` _youraddress_ to send test ETH from `account[0]`.  Use `help` For assistance with other Truebit-OS commands.
+In local blockchain mode, one can fast-forward through time.  Try `skip 300` to jump ahead some blocks.  Otherwise, you can follow the [tutorial steps](#Issue-and-solve-a-sample-task) above.
 
-# Development
 
-Tutorial for writing Truebit tasks is [here](https://github.com/TrueBitFoundation/wasm-ports/tree/v2/samples/scrypt).
+# Further development references
 
-### Running tests
+Here is a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/tree/v2/samples/scrypt) for creating and deploying Truebit tasks.  Here's Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
-To run the tests use: `npm run test`
+#### Running tests
+
+To run the tests on a local Ganache blockchain, use: `npm run test`.
 
 ### WASM Client
 
@@ -560,4 +285,5 @@ Deleting submodules
 ```
 git rm *submodule_name*
 rm -rf .git/modules/*submodule_name*
+
 ```
