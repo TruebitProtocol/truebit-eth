@@ -68,7 +68,7 @@ and note the index of the account you want to use (1 in the example below).  To 
 ```
 geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
 ```
-You may have to exit `geth` and restart several times in order to connect to a node.  The light client should begin syncing with the network and be up to date within a minute.  
+You may have to exit `geth` and restart several times in order to connect to a node.  The light client should begin syncing with the network and be up to date within a minute.
 
 Now open another terminal and start IPFS.
 ```
@@ -100,12 +100,12 @@ Spawn Solver and Verifier to solve the task
 start solve -a 1
 start verify -a 1
 ```
-Alternatively, try `start verify -a 1 -t` to make the Verifier challenge the correct solution.
 Check your progress here or look up your address on Görli.
 ```
 https://goerli.etherscan.io/address/0x6dac0a17f50497321785a07b531b8e42c1123757
 ```
 use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.  Use `exit` to return to the main terminal.
+
 
 ### More sample tasks
 
@@ -157,6 +157,22 @@ You may need to edit `deploy.js` and other files and replace
  ```
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
 
+
+### Execution variants
+
+ To initiate a verification game, start a Verifier with flag `-t`:
+ ```
+ start verify -a 1 -t
+ ```
+ You'll also need an active Solver and task.  For faster off-chain processing, your can try solving tasks with the just-in-time compiler (JIT).  Start Truebit-OS with the following configuration:
+ ```
+ node cli/index.js wasm-client/config-jit.json
+ ```
+ Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.
+ ```
+ cd Truebit2020/scrypt-data
+ node  ../jit-runner/jit.js --file input.data --file output.data --memory-size 128 scrypt.wasm
+ ```
 
 # Building your own tasks with Truebit toolchain
 Use a Docker container to compile programs from C or C++ into Truebit tasks.
