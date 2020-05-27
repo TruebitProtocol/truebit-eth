@@ -168,10 +168,10 @@ You may need to edit `deploy.js` and other files and replace
  ```
  node cli/index.js wasm-client/config-jit.json
  ```
- Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.
+ Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.  The name of the WASM input file is hardcoded as `task.wasm`
  ```
 cd Truebit2020/wasm-ports/samples/pairing
-node ../../../jit-runner/jit.js --file input.data --file output.data --memory-size 4096 task.wasm
+node ../../../jit-runner/jit.js --file input.data --file output.data --file _dev_urandom memory-size 4096
  ```
  Compare this with an interpreter run of the same file:
  ```
