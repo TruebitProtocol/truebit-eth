@@ -170,13 +170,12 @@ You may need to edit `deploy.js` and other files and replace
  ```
  Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.
  ```
- cd Truebit2020/wasm-ports/samples/ffmpeg
-node ../../../jit-runner/jit.js --file input.ts --file output.data --memory-size 256 task.wasm
+cd Truebit2020/wasm-ports/samples/pairings
+node ../../../jit-runner/jit.js --file input.data --file output.data --memory-size 4096 task.wasm
  ```
  Compare this with an interpreter run of the same file:
  ```
- ./../../../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -output-io -memory-size 21 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file input.ts -wasm task.wasm
-
+./../../../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -output-io -memory-size 25 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file _dev_urandom -file input.data -wasm task.wasm
 ```
 
 # Building your own tasks with Truebit toolchain
