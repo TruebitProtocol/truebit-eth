@@ -21,36 +21,85 @@ If you would like to speak with developers working on this project, come say hel
 
 ## Contents
 
-1. [Computational playground on testnet (MacOS and Docker)](Computational-playground-on-testnet-MacOS-and-Docker)
+1. [Computational playground on testnet (Docker, MacOS and Ubuntu)](Computational-playground-on-testnet-Docker-MacOS-and-Ubuntu)
 2. [Building your own tasks with Truebit Toolchain](Building-your-own-tasks-with-Truebit-Toolchain)
 3. [Local blockchain on Ganache](Local-blockchain-on-Ganache)
 4. [Further development references](Further-development-references)
 
 
-# Computational playground on testnet (MacOS and Docker)
+## FAQ
 
-This tutorial shows how to install Truebit, connect to the testnet network, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and run tasks with your friends!
+TO APPEAR
+
+
+## To do
+
+* Fix `ffmpeg` sample timeouts error for Verifier when running in Docker.
+
+* Fix memory allocation error when running `task  'testWasmAlphabet.json` from Truebit OS prompt.
+
+* Add CLI [console] messages indicating which tasks are currently being solved or verified.
+
+
+
+# Computational playground on testnet (Docker, MacOS, and Ubuntu)
+
+This tutorial shows how to install Truebit, connect to the testnet network, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and solve tasks with your friends!
 
 ## Install Truebit-OS
 
-First we install Truebit-OS from the MacOS command line.  Download and install [brew](https://brew.sh/).
+Follow the following steps to run Truebi-OS as a container on any system.  For those who happen to be running MacOS or Ubuntu, we recommend local installation and provide instructions below.
+
+### Docker install
+
+Docker provides a replicable interface for running Truebit-OS.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
+```
+docker build . -t truebit-os:latest
+```
+Building the image will take some minutes, but running the container should give you a prompt instantly.
+
+From the directory where you plan to usually run the container, type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  to get the full path to your current working directory, type `pwd`.
+```
+docker run --network host -v YYY/dcache:/root/.ethereum --rm -it truebit-os:latest /bin/bash
+```
+The optional parameter `--network host -v YYY/dcache:/root/.ethereum` automatically stores cached blockchain data into a local subfolder called `dcache`.  This avoids having to synchronize the blockchain and your accounts from genesis when you later restart the container.  To avoid generating local files (not recommended), you can start with this simpler command instead.
+```
+docker run --rm -it truebit-os:latest /bin/bash
+```
+
+When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Truebit-OS locally or in a separate container from Geth or IPFS will not work.
+
+When it is time to open a new container window, find the name of your container running `truebit-os:latest` either by checking the container prompt or by using `docker ps`, open a new local terminal window and enter the following at the command line.
+```
+docker exec -it _your containerID_ /bin/bash/
+```
+_you containerID_ might look like `f7b994c94911`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
+
+Finally, you can copy your password or other local files into the container with the following command.
+```
+docker cp Truebit2020/supersecret.txt f7b994c94911:/Truebit2020/supersecret.txt
+```
+Here `f7b994c94911` is the name of the container's ID.
+
+
+### Mac OS install
+
+Install Truebit-OS from the MacOS command line.  Download and install [brew](https://brew.sh/) via the following command.
 ```
 /usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
 ```
-
 The next step assumes that you already have `git` configured, but one can alternatively download the repository from the indicated website.
 ```
 git clone https://github.com/TrueBitFoundation/Truebit2020
 cd Truebit2020
 sh macinstall.sh
 ```
-Installation will take several minutes.  For a Linux install, follow the steps outlined in `Truebit2020/Dockerfile`.  Other systems can run Truebit-OS directly from a Docker container.  Download and install [Docker](https://docs.docker.com/get-docker/).  Then run at the command line:
-```
-docker build . -t truebit-os:latest
-docker run --rm -it truebit-os:latest /bin/bash
-```
+Installation will take several minutes.
 
-If you are using Docker, you can follow the steps below, but you will need to split the terminal screen by running `tmux`.  Create three windows by typing `ctrl-b "` then `ctrl-b %`.  Navigate to one of the smaller windows on the the bottom `ctrl-b (down arrow)` and start `geth` as described in the next section, then navigate to the other small window and start `ipfs`.  Finally, start Truebit-os in the large window.  You may wish to make a fourth window for issuing more sample tasks.
+
+### Ubuntu install
+
+For an Ubuntu Linux install, follow the steps outlined in `Dockerfile` located in the root Truebit2020 directory.
 
 
 ## Connect to the network
@@ -66,9 +115,9 @@ geth --goerli account list
 ```
 and note the index of the account you want to use (1 in the example below).  To start running a Görli node, use an incantation of the following form.
 ```
-geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
+geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlockgeth
 ```
-You may have to exit `geth` and restart several times in order to connect to a node.  The light client should begin syncing with the network and be up to date within a minute.
+You may have to exit `geth` (`Ctrl-C`) and restart it again in order to connect to a peer upon initialization.  The light client should begin syncing with the network and be up to date within a minute.
 
 Now open another terminal and start IPFS.
 ```
@@ -85,7 +134,7 @@ https://goerli-faucet.slock.it/
 
 https://faucet.goerli.mudit.blog/
 
-Then start Truebit-OS and claim some testnet TRU tokens for the respective account.  If you need ETH for another address, you can use `node send.js` _youraddress_ to send test ETH from `account[0]`.
+Then start Truebit-OS and claim some testnet TRU tokens for the respective account.  If you prefer to send Görli ETH from another address, you can use `node send.js` _youraddress_ to send test ETH from an existing `account[0]`, or else transfer using a web application like [Metamask](https://metamask.io/) or [MyCrypto](https://mycrypto.com/).  The following commands will assume that you are using Account #1 on your local machine, so substitute "`1`" as needed in the instructions below.
 ```
 cd Truebit2020
 npm run truebit
@@ -168,10 +217,10 @@ You may need to edit `deploy.js` and other files and replace
  ```
  node cli/index.js wasm-client/config-jit.json
  ```
- Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.  The name of the WASM input file is hardcoded as `task.wasm`
+ Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.  The name of the WASM input file is hardcoded as `task.wasm`.
  ```
 cd Truebit2020/wasm-ports/samples/pairing
-node ../../../jit-runner/jit.js --file input.data --file output.data --file _dev_urandom memory-size 4096
+node ../../../jit-runner/jit.js --file input.data --file output.data --file _dev_urandom --memory-size 4096
  ```
  Compare this with an interpreter run of the same file:
  ```
