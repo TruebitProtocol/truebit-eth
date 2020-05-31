@@ -115,7 +115,7 @@ geth --goerli account list
 ```
 and note the index of the account you want to use (1 in the example below).  To start running a Görli node, use an incantation of the following form.
 ```
-geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlockgeth
+geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
 ```
 You may have to exit `geth` (`Ctrl-C`) and restart it again in order to connect to a peer upon initialization.  The light client should begin syncing with the network and be up to date within a minute.
 
