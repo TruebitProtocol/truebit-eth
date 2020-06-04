@@ -234,7 +234,7 @@ cd wasm-ports
 docker build . -t truebit-toolchain:latest
 docker run --rm -it truebit-os:latest /bin/bash
 ```
-It may take some hours to compile the image.  You should now be able to compile the sample tasks.
+It may take some hours to compile the image.  You should now be able to compile the sample tasks from C and C++.
 ```
 cd samples/scrypt
 sh compile.sh
@@ -247,10 +247,22 @@ sh compile.sh
 cd ../ffmpeg
 sh compile.sh
 ```
-For Rust tasks, try George's tutorial:
-```
-https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
-```
+For Rust tasks, try George's [tutorial](
+https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround).
+
+When building and executing your own tasks, you may have to adjust some of the interprter execution parameters, including:
+
+`memory-size`: how deep the merkle tree for memory should be
+
+`table-size`: how deep the merkle tree for the call table should be
+
+`globals-size`: how deep the merkle tree for the globals table have
+
+`stack-size`: how deep the merkle tree for the stack have
+
+`call-stack-size`: how deep the merkle tree for the call stack have
+
+ See this [file](https://github.com/TrueBitFoundation/Truebit2020/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
 # Local blockchain on Ganache
