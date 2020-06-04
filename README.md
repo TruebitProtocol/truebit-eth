@@ -69,11 +69,11 @@ docker run --rm -it truebit-os:latest /bin/bash
 
 When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Truebit-OS locally or in a separate container from Geth or IPFS will not work.
 
-When it is time to open a new container window, find the name of your container running `truebit-os:latest` either by checking the container prompt or by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When it is time to open a new container window, find the name of your container running `truebit-os:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```
-docker exec -it _your containerID_ /bin/bash/
+docker exec -it _your containerNAME_ /bin/bash/
 ```
-_you containerID_ might look like `f7b994c94911`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
+_you containerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
 
 Finally, you can copy your password or other local files into the container with the following command.
 ```
@@ -234,7 +234,7 @@ cd wasm-ports
 docker build . -t truebit-toolchain:latest
 docker run --rm -it truebit-os:latest /bin/bash
 ```
-It may take some hours to compile the image.  You should now be able to compile the sample tasks.
+It may take some hours to compile the image.  You should now be able to compile the sample tasks from C and C++.
 ```
 cd samples/scrypt
 sh compile.sh
@@ -247,31 +247,36 @@ sh compile.sh
 cd ../ffmpeg
 sh compile.sh
 ```
-For Rust tasks, try George's tutorial:
-```
-https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround
-```
+For Rust tasks, try George's [tutorial](
+https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround).
+
+When building and executing your own tasks, you may have to adjust some of the interprter execution parameters, including:
+
+`memory-size`: how deep the merkle tree for memory should be
+
+`table-size`: how deep the merkle tree for the call table should be
+
+`globals-size`: how deep the merkle tree for the globals table have
+
+`stack-size`: how deep the merkle tree for the stack have
+
+`call-stack-size`: how deep the merkle tree for the call stack have
+
+ See this [file](https://github.com/TrueBitFoundation/Truebit2020/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
-# Local blockchain on Ganache
+# Local blockchain on Ganache (Docker/Mac)
 
-1. Install brew.
-```
-/usr/bin/ruby -e "$(curl -fsSL https://raw.githubusercontent.com/Homebrew/install/master/install)"
-```
+We shall assume that the
 
-2. Clone this repo.
+1. Open a Terminal and start a local Ethereum blockchain.
 ```
-git clone https://github.com/TrueBitFoundation/truebit-os
-cd truebit-os
+ganache-cli -h 0.0.0.0
 ```
+and optionally open another terminal with IPFS via `ipfs daemon`.  Finally, start Truebit-OS!
 
-3. If you are using MacOS, install Solidity, NPM, IPFS, the off-chain interpreter, and client.  Skip this step if you are running in a Docker container.
-```
-sh macinstall.sh
-```
 
-4. Compile and deploy the contracts.
+2. Compile and deploy the contracts.
 ```
 npm run compile
 npm run deploy
@@ -279,15 +284,11 @@ npm run deploy
 Check that everything works with `npm run test`. Type `npm run` for more options.
 
 
-5. Task-Solve-Verify.  Open a separate Terminal and start an Ethereum client, i.e.
-```
-ganache-cli -h 0.0.0.0
-```
-and optionally open another terminal with IPFS via `ipfs daemon`.  Finally, start Truebit-OS!
+3. Task-Solve-Verify.  Start Truebit-OS with the local configuration chosen in Steps 1 & 2 above.
 ```
 npm run truebit
 ```
-In local blockchain mode, one can fast-forward through time.  Try `skip 300` to jump ahead some blocks.  Otherwise, you can follow the [tutorial steps](#Issue-and-solve-a-sample-task) above.
+Unlike on a public blockchain, one can fast-forward through time in local blockchain mode.  Use`skip` to jump ahead some blocks.  Otherwise, follow the same [tutorial steps](#Issue-and-solve-a-sample-task) to get started.
 
 
 # Further development references

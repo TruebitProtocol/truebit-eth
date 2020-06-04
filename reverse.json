@@ -5,6 +5,11 @@
         "codeFile": "/emscripten_workaround/reverse_alphabet/task.wasm",
         "reward": "1",
         "maxDifficulty": "1",
-        "files": ["/emscripten_workaround/reverse_alphabet/alphabet.txt", "/emscripten_workaround/reverse_alphabet/reverse_alphabet.txt"
-        ]
+        "files": ["/emscripten_workaround/reverse_alphabet/alphabet.txt", "/emscripten_workaround/reverse_alphabet/reverse_alphabet.txt"],
+        "stackSize":"14",
+        "memorySize":"20",
+        "globalsSize":"8",
+        "tableSize":"8",
+        "callSize":"10",
+        "gasLimit":"0"
         }
