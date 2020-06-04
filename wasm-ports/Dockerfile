@@ -99,12 +99,12 @@ RUN source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
  && sh compile.sh \
- && cd ../wasm \
- && sh compile.sh \
- && cd ../scrypt \
- && sh compile.sh \
- && cd ../chess \
- && sh compile.sh
+# && cd ../scrypt \
+# && sh compile.sh \
+# && cd ../chess \
+# && sh compile.sh \
+# && cd ../wasm \
+# && sh compile.sh
 
 RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/ffmpeg \
@@ -114,6 +114,8 @@ RUN source /emsdk/emsdk_env.sh \
 RUN cd Truebit2020/wasm-ports/samples \
  && npm i
 
+RUN cd /emsdk \
+&& source ./emsdk_env.sh
 
 EXPOSE 4001 30303 80 8545
 #docker build . -t truebit-toolchain:latest

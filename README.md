@@ -36,10 +36,6 @@ TO APPEAR
 
 * Fix `ffmpeg` sample timeouts error for Verifier when running in Docker.
 
-* Fix memory allocation error when running `task  'testWasmAlphabet.json` from Truebit OS prompt.
-
-* Add CLI [console] messages indicating which tasks are currently being solved or verified.
-
 
 
 # Computational playground on testnet (Docker, MacOS, and Ubuntu)
