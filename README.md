@@ -69,11 +69,11 @@ docker run --rm -it truebit-os:latest /bin/bash
 
 When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Truebit-OS locally or in a separate container from Geth or IPFS will not work.
 
-When it is time to open a new container window, find the name of your container running `truebit-os:latest` either by checking the container prompt or by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When it is time to open a new container window, find the name of your container running `truebit-os:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```
-docker exec -it _your containerID_ /bin/bash/
+docker exec -it _your containerNAME_ /bin/bash/
 ```
-_you containerID_ might look like `f7b994c94911`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
+_you containerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
 
 Finally, you can copy your password or other local files into the container with the following command.
 ```
