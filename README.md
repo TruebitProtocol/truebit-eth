@@ -232,7 +232,7 @@ docker run --rm -it truebit-os:latest /bin/bash
 ```
 It may take some hours to compile the image.  You should now be able to compile the sample tasks from C and C++.
 ```
-( ipfs daemon &)
+( ipfs daemon & )
 cd Truebit2020/wasm-ports/samples/scrypt
 sh compile.sh
 cd ../pairing
