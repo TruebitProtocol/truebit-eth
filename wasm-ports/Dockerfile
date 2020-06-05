@@ -99,12 +99,12 @@ RUN source /emsdk/emsdk_env.sh \
  && ( ipfs daemon & ) \
  && export EMCC_WASM_BACKEND=1 \
  && sh compile.sh \
-# && cd ../scrypt \
-# && sh compile.sh \
-# && cd ../chess \
-# && sh compile.sh \
-# && cd ../wasm \
-# && sh compile.sh
+ && cd ../scrypt \
+ && sh compile.sh \
+ && cd ../chess \
+ && sh compile.sh \
+ && cd ../wasm \
+ && sh compile.sh
 
 RUN source /emsdk/emsdk_env.sh \
  && cd /Truebit2020/wasm-ports/samples/ffmpeg \
