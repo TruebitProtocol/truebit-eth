@@ -114,8 +114,5 @@ RUN source /emsdk/emsdk_env.sh \
 RUN cd Truebit2020/wasm-ports/samples \
  && npm i
 
-RUN cd /emsdk \
-&& source ./emsdk_env.sh
-
 EXPOSE 4001 30303 80 8545
 #docker build . -t truebit-toolchain:latest

@@ -228,12 +228,18 @@ Use a Docker container to compile programs from C or C++ into Truebit tasks.
 ```
 cd wasm-ports
 docker build . -t truebit-toolchain:latest
+
+```
+It may take some hours to compile the image.  Start the Docker container via the first line below, then initiate Emscripten and IPFS inside the container.
+```
 docker run --rm -it truebit-os:latest /bin/bash
-```
-It may take some hours to compile the image.  You should now be able to compile the sample tasks from C and C++.
-```
+cd emsdk
+source ./emsdk_env.sh
 ( ipfs daemon & )
-cd Truebit2020/wasm-ports/samples/scrypt
+```
+You should now be able to compile the sample tasks from C and C++.
+```
+cd /Truebit2020/wasm-ports/samples/scrypt
 sh compile.sh
 cd ../pairing
 sh compile.sh
