@@ -555,24 +555,24 @@ let run_action act =
       ( match Instance.export inst name with
       | Some (Instance.ExternalFunc (Instance.AstFunc (_, func))) ->
         run_test_micro inst inst.Instance.module_.it func (List.map (fun v -> v.it) vs)
-      | Some _ -> Assert.error act.at "export is not a function"
-      | None -> Assert.error act.at "undefined export" )
+      | Some _ -> Assert.error act.at ("export is not a function: " ^ Ast.string_of_name name)
+      | None -> Assert.error act.at ("undefined export: " ^ Ast.string_of_name name) )
     end else
     if !Flags.merkle then begin
       let inst = lookup_instance x_opt act.at in
       ( match Instance.export inst name with
       | Some (Instance.ExternalFunc (Instance.AstFunc (_, func))) ->
         run_test inst inst.Instance.module_.it func (List.map (fun v -> v.it) vs)
-      | Some _ -> Assert.error act.at "export is not a function"
-      | None -> Assert.error act.at "undefined export" )
+      | Some _ -> Assert.error act.at ("export is not a function: " ^ Ast.string_of_name name)
+      | None -> Assert.error act.at ("undefined export: " ^ Ast.string_of_name name) )
     end else
     begin
       let inst = lookup_instance x_opt act.at in
       (match Instance.export inst name with
       | Some (Instance.ExternalFunc f) ->
         Eval.invoke f (List.map (fun v -> v.it) vs)
-      | Some _ -> Assert.error act.at "export is not a function"
-      | None -> Assert.error act.at "undefined export"
+      | Some _ -> Assert.error act.at ("export is not a function: " ^ Ast.string_of_name name)
+      | None -> Assert.error act.at ("undefined export: " ^ Ast.string_of_name name)
       )
     end
  | Get (x_opt, name) ->
@@ -580,8 +580,8 @@ let run_action act =
     let inst = lookup_instance x_opt act.at in
     (match Instance.export inst name with
     | Some (Instance.ExternalGlobal v) -> [v]
-    | Some _ -> Assert.error act.at "export is not a global"
-    | None -> Assert.error act.at "undefined export"
+    | Some _ -> Assert.error act.at ("export is not a global: " ^ Ast.string_of_name name)
+    | None -> Assert.error act.at ("undefined export: " ^ Ast.string_of_name name)
     )
 
 let assert_result at correct got print_expect expect =
