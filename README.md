@@ -67,7 +67,7 @@ When you [connect to the network](Connect-to-the-network), you will need to open
 
 When it is time to open a new container window, find the name of your container running `truebit-os:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```
-docker exec -it yourcontainerNAME /bin/bash/
+docker exec -it yourcontainerNAME /bin/bash
 ```
 _yourcontainerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
 
