@@ -18,25 +18,12 @@ Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki)
 
 If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.  
 
-
 ## Contents
 
 1. [Computational playground on testnet (Docker, MacOS and Ubuntu)](Computational-playground-on-testnet-Docker-MacOS-and-Ubuntu)
 2. [Building your own tasks with Truebit Toolchain](Building-your-own-tasks-with-Truebit-Toolchain)
 3. [Local blockchain on Ganache](Local-blockchain-on-Ganache)
 4. [Further development references](Further-development-references)
-
-
-## FAQ
-
-TO APPEAR
-
-
-## To do
-
-* Fix `ffmpeg` sample timeouts error for Verifier when running in Docker.
-
-
 
 # Computational playground on testnet (Docker, MacOS, and Ubuntu)
 
@@ -77,7 +64,6 @@ docker cp Truebit2020/supersecret.txt f7b994c94911:/Truebit2020/supersecret.txt
 ```
 Here `f7b994c94911` is the name of the container's ID.
 
-
 ### Mac OS install
 
 Install Truebit-OS from the MacOS command line.  Download and install [brew](https://brew.sh/) via the following command.
@@ -92,11 +78,9 @@ sh macinstall.sh
 ```
 Installation will take several minutes.
 
-
 ### Ubuntu install
 
 For an Ubuntu Linux install, follow the steps outlined in `Dockerfile` located in the root Truebit2020 directory.
-
 
 ## Connect to the network
 
@@ -120,7 +104,6 @@ Now open another terminal and start IPFS.
 ipfs daemon
 ```
 Alteratively, one can save a window by running `ipfs daemon &` and running `ipfs shutdown` if you later want to kill it.
-
 
 ## Issue and solve a sample task
 
@@ -150,7 +133,6 @@ Check your progress here or look up your address on Görli.
 https://goerli.etherscan.io/address/0x6dac0a17f50497321785a07b531b8e42c1123757
 ```
 use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.  Use `exit` to return to the main terminal.
-
 
 ### More sample tasks
 
@@ -201,7 +183,6 @@ You may need to edit `deploy.js` and other files and replace
  node send.js input.ts
  ```
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
-
 
 ### Execution variants
 
@@ -267,7 +248,6 @@ When building and executing your own tasks, you may have to adjust some of the i
 
  See this [file](https://github.com/TrueBitFoundation/Truebit2020/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
-
 # Local blockchain on Ganache (Docker/Mac)
 
 We shall assume that the
@@ -292,7 +272,6 @@ Check that everything works with `npm run test`. Type `npm run` for more options
 npm run truebit
 ```
 Unlike on a public blockchain, one can fast-forward through time in local blockchain mode.  Use`skip` to jump ahead some blocks.  Otherwise, follow the same [tutorial steps](#Issue-and-solve-a-sample-task) to get started.
-
 
 # Further development references
 
