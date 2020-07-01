@@ -4,8 +4,9 @@ MAINTAINER Sami Mäkelä
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update \
- && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev apache2 psmisc sudo mongodb curl tmux nano \
- && opam init -y
+ && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev apache2 psmisc sudo mongodb curl tmux nano
+
+RUN opam init -y
 
 RUN git clone https://github.com/urho3d/emscripten-sdk emsdk \
  && cd emsdk \
@@ -33,6 +34,10 @@ RUN git clone https://github.com/llvm-mirror/llvm \
  && rm -rf build llvm
 
 RUN sed -i 's|/emsdk/clang/e1.37.36_64bit|/usr/bin|' /root/.emscripten
+
+RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
+ && source ~/.nvm/nvm.sh \
+ && nvm install node
 
 COPY github_key .
 
@@ -62,7 +67,7 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.17/go-ipfs_v0.4.17_linux-amd64.tar.gz
 RUN apt-get update \
  && apt-get install -y git cmake ninja-build g++ python wget ocaml opam libzarith-ocaml-dev m4 pkg-config zlib1g-dev psmisc sudo curl tmux nano npm apache2 \
  && opam init -y \
- && npm install -g ganache-cli mocha browserify
+ && npm install -g ganache-cli mocha@7.2.0 browserify
 
 RUN cd bin \
  && wget https://github.com/ethereum/solidity/releases/download/v0.5.2/solc-static-linux \
