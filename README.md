@@ -1,6 +1,7 @@
 # Truebit OS 2020
 
-[![Build Status](https://travis-ci.org/TrueBitFoundation/Truebit2020.svg?branch=master)](https://travis-ci.org/TrueBitFoundation/Truebit2020)
+<!-- [![Build Status](https://travis-ci.org/TrueBitFoundation/Truebit2020.svg?branch=master)](https://travis-ci.org/TrueBitFoundation/Truebit2020) -->
+[![Docker Image](https://img.shields.io/docker/cloud/build/truja/autobuild?style=flat-square)](https://hub.docker.com/repository/docker/truja/autobuild)
 
 <p align="center">
   <img src="./gundam2.jpeg"/>
