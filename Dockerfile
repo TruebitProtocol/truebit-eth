@@ -47,7 +47,7 @@ RUN chmod 400 github_key \
  && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
  && git clone git@github.com:TruebitFoundation/Truebit2020 \
  && cd Truebit2020 \
- && git checkout @model-n \
+ && git checkout model-n \
  && git pull git@github.com:TruebitFoundation/Truebit2020
 
 # Install Truebit and JIT
