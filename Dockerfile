@@ -71,6 +71,7 @@ RUN cd Truebit2020/wasm-ports/samples \
 # check and compile contracts
 RUN cd Truebit2020 \
  && source ~/.nvm/nvm.sh \
+ && npm install @openzeppelin/cli \
  && npm run compile \
  && npx oz compile --optimizer on
 
