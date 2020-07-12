@@ -57,8 +57,7 @@ When it is time to open a new container window, find the name of your container 
 ```
 docker exec -it yourcontainerNAME /bin/bash
 ```
-_yourcontainerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows
- by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
+_yourcontainerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
 Finally, you can copy your password or other local files into the container with the following command.
 ```

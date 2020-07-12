@@ -13,7 +13,7 @@ indata.resize(80);
 std::cout << "Got string: " << indata << std::endl;
 ```
 
-So the input from the task is read from file `input.data`. In general the input and output of Truebit tasks is handled using files. 
+So the input from the task is read from file `input.data`. In general the input and output of Truebit tasks is handled using files.
 Here is the code for output:
 ```
 std::ofstream fout("output.data", std::ios::binary);
@@ -87,7 +87,6 @@ bytes32 task = truebit.createTaskWithParams(filesystem.getInitHash(bundleID), 1,
       8,       // globals 2^8
       20,      // table 2^20
       10,      // call 2^10
-      5000     // gas limit in Mgas
       );
 ```
 
@@ -116,4 +115,3 @@ This contract is just deployed and used the same way as any other Ethereum contr
 See `../deploy.js` and `send.js` for details.
 
 Note that the contract needs the code hash (from `info.json`) and addresses to Truebit contracts when it's deployed.
-
