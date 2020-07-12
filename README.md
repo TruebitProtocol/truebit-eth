@@ -40,9 +40,9 @@ Docker provides a replicable interface for running Truebit-OS.  First, download 
 ```
 docker build . -t truebit-os:latest
 ```
-Building the image will take some minutes, but running the container should give you a prompt instantly.
+Building the image will take some minutes, but running the container should give you a prompt instantly.  One can also use the pre-built image `truja/truebit:os`.
 
-From the directory where you plan to usually run the container, type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  to get the full path to your current working directory, type `pwd`.
+From the directory where you plan to usually run the container, type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  tT get the full path to your current working directory, type `pwd`.
 ```
 docker run --network host -v YYY/dcache:/root/.ethereum --rm -it truebit-os:latest /bin/bash
 ```
@@ -53,11 +53,12 @@ docker run --rm -it truebit-os:latest /bin/bash
 
 When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Truebit-OS locally or in a separate container from Geth or IPFS will not work.
 
-When it is time to open a new container window, find the name of your container running `truebit-os:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When it is time to open a new container window, find the name of your container running `truebit-os:latest` (or `truja/truebit:os`) by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```
 docker exec -it yourcontainerNAME /bin/bash
 ```
-_yourcontainerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.
+_yourcontainerNAME_ might look like `xenodochial_fermat`.  To exit the container, type `exit`.  This will keep your container process alive in other windows.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows
+ by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
 Finally, you can copy your password or other local files into the container with the following command.
 ```
@@ -212,7 +213,7 @@ cd wasm-ports
 docker build . -t truebit-toolchain:latest
 
 ```
-It may take some hours to compile the image.  Start the Docker container via the first line below, then initiate Emscripten and IPFS inside the container.
+It may take some hours to compile the image.  Alteratively, use the pre-built image `truja/truebit:toolchain`.  Start the Docker container via the first line below, then initiate Emscripten and IPFS inside the container.
 ```
 docker run --rm -it truebit-os:latest /bin/bash
 cd emsdk
