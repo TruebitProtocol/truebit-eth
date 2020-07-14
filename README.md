@@ -276,7 +276,7 @@ Unlike on a public blockchain, one can fast-forward through time in local blockc
 
 # Further development references
 
-Here is a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/tree/v2/samples/scrypt) for creating and deploying Truebit tasks.  Here's Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Here is a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/README.md) for creating and deploying Truebit tasks.  Here's Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 ### Running tests
 

@@ -87,6 +87,7 @@ bytes32 task = truebit.createTaskWithParams(filesystem.getInitHash(bundleID), 1,
       8,       // globals 2^8
       20,      // table 2^20
       10,      // call 2^10
+      5000     // gas limit in Mgas
       );
 ```
 
