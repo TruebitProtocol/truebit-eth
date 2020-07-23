@@ -1,9 +1,10 @@
 {
-        "minDeposit": "1",
+        "minDeposit": "10",
         "codeType": "WASM",
         "storageType": "IPFS",
         "codeFile": "/emscripten_workaround/reverse_alphabet/task.wasm",
-        "reward": "1",
+        "solverReward": "2",
+        "verifierTax":"6",
         "maxDifficulty": "1",
         "files": ["/emscripten_workaround/reverse_alphabet/alphabet.txt", "/emscripten_workaround/reverse_alphabet/reverse_alphabet.txt"],
         "stackSize":"14",
