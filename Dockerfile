@@ -68,11 +68,10 @@ RUN cd Truebit2020/wasm-ports/samples \
  && browserify public/app.js -o public/bundle.js \
  && solc --abi --optimize --overwrite --bin -o build contract.sol
 
-# check and compile contracts
+# compile contracts
 RUN cd Truebit2020 \
  && source ~/.nvm/nvm.sh \
  && npm install @openzeppelin/cli \
- && npm run compile \
  && npx oz compile --optimizer on
 
 # ipfs and eth ports

@@ -27,7 +27,9 @@ async function main() {
     console.log("checking chess moves", str)
     let dta = new Buffer(str)
 
-    await sampleSubmitter.methods.submitData(dta).send({ gas: 2000000, from: account })
+    let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call()
+    console.log(dta);
+    await sampleSubmitter.methods.submitData(dta).send({ gas: 2000000, from: account, value: liquidityFee, gasPrice: web3.gp })
     let solution = ""
     while (solution == "") {
         await timeout(1000)
@@ -39,5 +41,3 @@ async function main() {
 }
 
 main()
-
-

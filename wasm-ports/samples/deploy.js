@@ -93,7 +93,7 @@ async function deploy() {
 
     let args = [
         artifacts.incentiveLayer.address,
-        artifacts.cpu.address,
+        artifacts.tru.address,
         artifacts.fileSystem.address,
         codeFileID,
         info.memsize,
@@ -106,9 +106,9 @@ async function deploy() {
 
     let c = await contract.deploy({ data: "0x" + bin, arguments: args }).send(options)
 
-    let cpu = new web3.eth.Contract(artifacts.cpu.abi, artifacts.cpu.address)
+    let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
 
-    cpu.methods.transfer(c.options.address, "100000000000000000000").send({ from: accounts[0], gas: 200000 })
+    tru.methods.transfer(c.options.address, "100000000000000000000").send({ from: accounts[0], gas: 200000 })
 
     artifacts["sample"] = { address: c.options.address, abi: abi }
 
@@ -118,4 +118,3 @@ async function deploy() {
 }
 
 deploy()
-
