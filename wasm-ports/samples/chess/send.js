@@ -27,9 +27,15 @@ async function main() {
     console.log("checking chess moves", str)
     let dta = new Buffer(str)
 
+    let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
+    tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
+
+    let bundleID = await sampleSubmitter.methods.submitFileData(dta).call()
+    await sampleSubmitter.methods.submitFileData(dta).send({ gas: 1000000, from: account, gasPrice: web3.gp })
+    let taskID = await sampleSubmitter.methods.initializeTask(bundleID,dta).call()
+    await sampleSubmitter.methods.initializeTask(bundleID,dta).send({ gas: 500000, from: account, gasPrice: web3.gp })
     let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call()
-    console.log(dta);
-    await sampleSubmitter.methods.submitData(dta).send({ gas: 2000000, from: account, value: liquidityFee, gasPrice: web3.gp })
+    await sampleSubmitter.methods.deployTask(taskID).send({ gas: 500000, from: account, value: liquidityFee, gasPrice: web3.gp })
     let solution = ""
     while (solution == "") {
         await timeout(1000)

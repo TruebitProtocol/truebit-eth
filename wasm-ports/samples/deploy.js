@@ -108,11 +108,12 @@ async function deploy() {
 
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
 
-    tru.methods.transfer(c.options.address, "100000000000000000000").send({ from: accounts[0], gas: 200000 })
-
     artifacts["sample"] = { address: c.options.address, abi: abi }
 
     fs.writeFileSync("public/" + networkName + ".json", JSON.stringify(artifacts))
+
+    // UNCOMMENT TO PRELOAD CONTRACT WITH FEES
+    //tru.methods.transfer(c.options.address, "100000000000000000000").send({ from: accounts[0], gas: 200000 })
 
     console.log("Contract has been deployed")
 }

@@ -72,7 +72,9 @@ RUN cd Truebit2020/wasm-ports/samples \
 RUN cd Truebit2020 \
  && source ~/.nvm/nvm.sh \
  && npm install @openzeppelin/cli \
- && npx oz compile --optimizer on
+ && npx oz compile --optimizer on \
+ && cd token \
+ && npx oz compile --optimizer on 
 
 # ipfs and eth ports
 EXPOSE 4001 30303 80 8545
