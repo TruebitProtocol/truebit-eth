@@ -90,7 +90,7 @@ contract SampleContract {
       return bundleID;
   }
 
-  // next call this second using bundleID from submitFileData
+  // call this second using bundleID from submitFileData
   function initializeTask(bytes32 bundleID, bytes calldata data) external returns (bytes32) {
       tru.approve(address(truebit), 9 ether);
       truebit.makeDeposit(9 ether);

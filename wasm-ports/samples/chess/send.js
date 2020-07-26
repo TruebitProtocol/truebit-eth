@@ -36,6 +36,7 @@ async function main() {
     await sampleSubmitter.methods.initializeTask(bundleID,dta).send({ gas: 500000, from: account, gasPrice: web3.gp })
     let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call()
     await sampleSubmitter.methods.deployTask(taskID).send({ gas: 500000, from: account, value: liquidityFee, gasPrice: web3.gp })
+    
     let solution = ""
     while (solution == "") {
         await timeout(1000)

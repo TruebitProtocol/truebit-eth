@@ -214,7 +214,7 @@ docker build . -t truebit-toolchain:latest
 ```
 It may take some hours to compile the image.  Alteratively, use the pre-built image `truja/truebit:toolchain`.  Start the Docker container via the first line below, then initiate Emscripten and IPFS inside the container.
 ```
-docker run --rm -it truebit-os:latest /bin/bash
+docker run --rm -it truebit-toolchain:latest /bin/bash
 cd emsdk
 source ./emsdk_env.sh
 ( ipfs daemon & )

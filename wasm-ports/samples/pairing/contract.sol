@@ -21,12 +21,11 @@ interface Filesystem {
 }
 
 interface TrueBit {
-    function createTaskWithParams(bytes32 initTaskHash, uint8 codeType, bytes32 bundleID,  uint maxDifficulty, uint reward,
-                                  uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint32 limit) external returns (bytes32);
-   function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint st) external;
+   function createTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, address taskSubmitter, uint ownerFee) external returns (bytes32);
+   function InitializeTaskVM(bytes32 id, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint32 limit) external payable; function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint st) external;
    function commitRequiredFiles(bytes32 id) external;
    function makeDeposit(uint _deposit) external payable returns (uint);
-   function makeRewardDeposit(uint _deposit) external payable returns (uint);
+   function getLiquidityFeeTaskGiver() external view returns (uint);
 }
 
 interface TRU {
@@ -63,7 +62,12 @@ contract SampleContract {
        gas = _gas;
    }
 
-   function submitData(bytes memory data) public returns (bytes32) {
+   function getLiquidityFee() public view returns (uint) {
+      return truebit.getLiquidityFeeTaskGiver();
+   }
+
+    // call this first
+    function submitFileData(bytes memory data) public returns (bytes32) {
       uint num = nonce;
       nonce++;
 
@@ -81,16 +85,24 @@ contract SampleContract {
       filesystem.addToBundle(bundleID, filesystem.createFileWithContents("output.data", num+1000000000, empty, 0));
 
       filesystem.finalizeBundle(bundleID, codeFileID);
+      return bundleID;
+    }
 
-      tru.approve(address(truebit), 6 ether);
-      truebit.makeRewardDeposit(6 ether);
+    // call this second using bundleID from submitFileData
+    function initializeTask(bytes32 bundleID, bytes calldata data) external returns (bytes32) {
+      tru.approve(address(truebit), 9 ether);
+      truebit.makeDeposit(9 ether);
+      bytes32 taskID = truebit.createTask(filesystem.getInitHash(bundleID), 1, bundleID, 10 ether, 2 ether, 6 ether, msg.sender, 1 ether);
+      task_to_string[taskID] = data;
+      return taskID;
+    }
 
-      bytes32 task = truebit.createTaskWithParams(filesystem.getInitHash(bundleID), 1, bundleID, 1, 1 ether, 20, memsize, 8, 20, 10);
-      truebit.requireFile(task, filesystem.hashName("output.data"), 0);
-      truebit.commitRequiredFiles(task);
-      task_to_string[task] = data;
-      return filesystem.getInitHash(bundleID);
-   }
+    // finally call this using taskID from initializeTask
+    function deployTask(bytes32 taskID) external payable {
+      truebit.requireFile(taskID, filesystem.hashName("output.data"), 0);
+      truebit.InitializeTaskVM.value(getLiquidityFee())(taskID, 20, memsize, 8, 20, 10, gas);
+      truebit.commitRequiredFiles(taskID);
+    }
 
    // this is the callback name
    function solved(bytes32 id, bytes32[] memory files) public {

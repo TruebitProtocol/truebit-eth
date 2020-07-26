@@ -49,7 +49,17 @@ async function main() {
 
     let wasmFile = await addIPFSFile(fileSystem, account, "input.wasm", fs.readFileSync(fname))
 
-    await sampleSubmitter.methods.submitData(wasmFile).send({ gas: 2000000, from: account })
+    //await sampleSubmitter.methods.submitData(wasmFile).send({ gas: 2000000, from: account })
+    let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
+    tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
+
+    let bundleID = await sampleSubmitter.methods.submitFileData(wasmFile).call()
+    await sampleSubmitter.methods.submitFileData(wasmFile).send({ gas: 1000000, from: account, gasPrice: web3.gp })
+    let taskID = await sampleSubmitter.methods.initializeTask(bundleID,wasmFile).call()
+    await sampleSubmitter.methods.initializeTask(bundleID,wasmFile).send({ gas: 500000, from: account, gasPrice: web3.gp })
+    let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call()
+    await sampleSubmitter.methods.deployTask(taskID).send({ gas: 500000, from: account, value: liquidityFee, gasPrice: web3.gp })
+
     let solution = "0x0000000000000000000000000000000000000000000000000000000000000000"
     while (solution == "0x0000000000000000000000000000000000000000000000000000000000000000") {
         await timeout(1000)
