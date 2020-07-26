@@ -115,7 +115,7 @@ async function deploy() {
     // UNCOMMENT TO PRELOAD CONTRACT WITH FEES
     //tru.methods.transfer(c.options.address, "100000000000000000000").send({ from: accounts[0], gas: 200000 })
 
-    console.log("Contract has been deployed")
+    console.log("Contract has been deployed at " + c.options.address)
 }
 
 deploy()
