@@ -131,7 +131,7 @@ start verify -a 1
 ```
 Check your progress here or look up your address on Görli.
 ```
-https://goerli.etherscan.io/address/0x6dac0a17f50497321785a07b531b8e42c1123757
+https://goerli.etherscan.io/address/0xD5FeCD83C3D10A18e4Df756e9e89026E084f59DC
 ```
 use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.  Use `exit` to return to the main terminal.
 
