@@ -103,7 +103,6 @@ contract SampleContract {
    function deployTask(bytes32 taskID) external payable {
      truebit.requireFile(taskID, filesystem.hashName("output.data"), 0);
      truebit.InitializeTaskVM.value(getLiquidityFee())(taskID, 20, memsize, 8, 20, 10, gas);
-     truebit.commitRequiredFiles(taskID);
    }
 
    function debugData(bytes calldata data) external returns (bytes32, bytes32, bytes32, bytes32, bytes32) {
