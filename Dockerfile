@@ -74,7 +74,9 @@ RUN cd Truebit2020 \
  && npm install @openzeppelin/cli \
  && npx oz compile --optimizer on \
  && cd token \
- && npx oz compile --optimizer on 
+ && npx oz compile --optimizer on
+
+RUN git checkout Truebit2020/checkout node_modules/truffle-contract/node_modules/web3/lib/web3/function.js
 
 # ipfs and eth ports
 EXPOSE 4001 30303 80 8545
