@@ -56,7 +56,7 @@ async function deploy() {
     let artifacts = JSON.parse(fs.readFileSync('../../../wasm-client/' + networkName + '.json'))
 
     let accounts = await web3.eth.getAccounts()
-    let account = accounts[0]
+    let account = accounts[1]
 
     let options = { from: account.toLowerCase(), gas: 4000000 }
 

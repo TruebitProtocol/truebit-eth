@@ -15,7 +15,7 @@ let timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve,
 
 async function main() {
     let accounts = await web3.eth.getAccounts()
-    account = accounts[0]
+    account = accounts[1]
     let networkName = await getNetwork(web3)
 
     //get scrypt submitter artifact
@@ -30,17 +30,12 @@ async function main() {
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
     await tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
 
-    let taskID = await sampleSubmitter.methods.makeTaskID(dta).call()
+    let taskID = await sampleSubmitter.methods.makeTaskID(dta).call({from:account})
     console.log("TaskID:", taskID);
     await sampleSubmitter.methods.makeTaskID(dta).send({ gas: 2000000, from: account, gasPrice: web3.gp })
 
     IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
     info = await IncentiveLayer.methods.getTaskInfo(taskID).call()
-        console.log(info);
-    while (info[0] == '0x0000000000000000000000000000000000000000') {
-      await timeout(1000)
-      info = await IncentiveLayer.methods.getTaskInfo(taskID).call()
-    }
     console.log(info);
     console.log('Task submitted');
 
