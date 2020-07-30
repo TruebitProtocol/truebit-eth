@@ -19,7 +19,7 @@ let timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve,
 
 async function main() {
     let accounts = await web3.eth.getAccounts()
-    account = accounts[0]
+    account = accounts[1]
     let networkName = await getNetwork()
 
 	  //get scrypt submitter artifact
@@ -31,20 +31,30 @@ async function main() {
     console.log("computing scrypt for", str)
     let dta = new Buffer(str)
 
+    // Deposit task fees
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
-    tru.methods.transfer(scryptSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
+    await tru.methods.transfer(scryptSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
 
-    let bundleID = await scryptSubmitter.methods.submitFileData(dta).call()
-    await scryptSubmitter.methods.submitFileData(dta).send({ gas: 1000000, from: account, gasPrice: web3.gp })
-    let taskID = await scryptSubmitter.methods.initializeTask(bundleID,dta).call();
-    await scryptSubmitter.methods.initializeTask(bundleID,dta).send({ gas: 500000, from: account, gasPrice: web3.gp })
-    let liquidityFee = await scryptSubmitter.methods.getLiquidityFee().call()
-    await scryptSubmitter.methods.deployTask(taskID).send({ gas: 500000, from: account, value: liquidityFee, gasPrice: web3.gp })
+    // Make Task ID
+    let taskID = await scryptSubmitter.methods.makeTaskID(dta).call({from:account})
+    console.log("TaskID:", taskID);
+    await scryptSubmitter.methods.makeTaskID(dta).send({ gas: 2000000, from: account, gasPrice: web3.gp })
 
+    // Debug (optional)
+    IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
+    info = await IncentiveLayer.methods.getTaskInfo(taskID).call({from:account})
+    console.log(info);
+    console.log('Task submitted');
+
+    // Broadcast task
+    let liquidityFee = await scryptSubmitter.methods.getLiquidityFee().call({from:account})
+    await scryptSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: liquidityFee, gasPrice: web3.gp })
+
+    // Wait for solution
     let solution = "0x0000000000000000000000000000000000000000000000000000000000000000"
     while (solution == "0x0000000000000000000000000000000000000000000000000000000000000000") {
         await timeout(1000)
-        solution = await scryptSubmitter.methods.scrypt(dta).call()
+        solution = await scryptSubmitter.methods.scrypt(dta).call({from:account})
 }
    console.log("Got solution", solution)
 

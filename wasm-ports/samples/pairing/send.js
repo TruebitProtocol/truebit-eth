@@ -16,7 +16,7 @@ let timeout = async (ms) => new Promise((resolve, reject) => setTimeout(resolve,
 
 async function main() {
     let accounts = await web3.eth.getAccounts()
-    account = accounts[0]
+    account = accounts[1]
     let networkName = await getNetwork(web3)
 
     //get scrypt submitter artifact
@@ -31,21 +31,30 @@ async function main() {
 
     console.log("calc root", merkleRoot(web3, dta))
 
-    // console.log(await sampleSubmitter.methods.debugData(dta).call({ gas: 2000000, from: account }))
+    // Deposit task fees
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
-    tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
+    await tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
 
-    let bundleID = await sampleSubmitter.methods.submitFileData(dta).call()
-    await sampleSubmitter.methods.submitFileData(dta).send({ gas: 1000000, from: account, gasPrice: web3.gp })
-    let taskID = await sampleSubmitter.methods.initializeTask(bundleID,dta).call()
-    await sampleSubmitter.methods.initializeTask(bundleID,dta).send({ gas: 500000, from: account, gasPrice: web3.gp })
-    let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call()
-    await sampleSubmitter.methods.deployTask(taskID).send({ gas: 500000, from: account, value: liquidityFee, gasPrice: web3.gp })
-    
+    // Make Task ID
+    let taskID = await sampleSubmitter.methods.makeTaskID(dta).call({from:account})
+    console.log("TaskID:", taskID);
+    await sampleSubmitter.methods.makeTaskID(dta).send({ gas: 2000000, from: account, gasPrice: web3.gp })
+
+    // Debug (optional)
+    IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
+    info = await IncentiveLayer.methods.getTaskInfo(taskID).call({from:account})
+    console.log(info);
+    console.log('Task submitted');
+
+    // Broadcast task
+    let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call({from:account})
+    await sampleSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: liquidityFee, gasPrice: web3.gp })
+
+    // Wait for solution
     let solution = "0x0000000000000000000000000000000000000000000000000000000000000000"
     while (solution == "0x0000000000000000000000000000000000000000000000000000000000000000") {
         await timeout(1000)
-        solution = await sampleSubmitter.methods.getResult(dta).call()
+        solution = await sampleSubmitter.methods.getResult(dta).call({from:account})
     }
     console.log("Got solution", solution)
 

@@ -27,25 +27,30 @@ async function main() {
     console.log("checking chess moves", str)
     let dta = new Buffer(str)
 
+    // Deposit task fees
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
     await tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
 
+    // Make Task ID
     let taskID = await sampleSubmitter.methods.makeTaskID(dta).call({from:account})
     console.log("TaskID:", taskID);
     await sampleSubmitter.methods.makeTaskID(dta).send({ gas: 2000000, from: account, gasPrice: web3.gp })
 
+    // Debug (optional)
     IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
-    info = await IncentiveLayer.methods.getTaskInfo(taskID).call()
+    info = await IncentiveLayer.methods.getTaskInfo(taskID).call({from:account})
     console.log(info);
     console.log('Task submitted');
 
-    let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call()
+    // Broadcast task
+    let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call({from:account})
     await sampleSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: liquidityFee, gasPrice: web3.gp })
 
+    // Wait for solution
     let solution = ""
     while (solution == "") {
         await timeout(1000)
-        let raw = await sampleSubmitter.methods.getResult(dta).call()
+        let raw = await sampleSubmitter.methods.getResult(dta).call({from:account})
         solution = Buffer.from(raw.map(a => a.substr(2)).join(""), "hex").toString()
     }
     console.log("Got solution:", solution)

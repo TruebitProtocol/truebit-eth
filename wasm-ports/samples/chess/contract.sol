@@ -18,7 +18,6 @@ interface Filesystem {
    function hashName(string calldata name) external returns (bytes32);
 
    function debugFinalizeBundle(bytes32 bundleID, bytes32 codeFileID) external returns (bytes32, bytes32, bytes32, bytes32, bytes32);
-
 }
 
 interface TrueBit {
