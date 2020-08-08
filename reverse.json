@@ -1,0 +1,17 @@
+{
+    "minDeposit": "10",
+    "codeType": "WASM",
+    "storageType": "IPFS",
+    "codeFile": "/data/reverse_alphabet.wasm",
+    "inputFile": "/data/alphabet.txt",
+    "solverReward": "2",
+    "verifierTax": "6",
+    "maxDifficulty": "1",
+    "files": ["/data/alphabet.txt", "/data/reverse_alphabet.txt"],
+    "stackSize":"14",
+    "memorySize":"20",
+    "globalsSize":"8",
+    "tableSize":"8",
+    "callSize":"10",
+    "gasLimit":"0"
+}
