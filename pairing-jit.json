@@ -1,0 +1,19 @@
+{
+    "minDeposit": "10",
+    "codeType": "WASM",
+    "storageType": "IPFS",
+    "codeFile": "/wasm-ports/samples/pairing/task.wasm",
+    "solverReward": "2",
+    "verifierTax": "6",
+    "stackSize":"20",
+    "memorySize":"25",
+    "globalsSize":"8",
+    "tableSize":"20",
+    "callSize":"10",
+    "gasLimit":"0",
+    "files": [
+      "/wasm-ports/samples/pairing/input.data",
+      "/wasm-ports/samples/pairing/output.data",
+      "/wasm-ports/samples/pairing/_dev_urandom"
+    ]
+}
