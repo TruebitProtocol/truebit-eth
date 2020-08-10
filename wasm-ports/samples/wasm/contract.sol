@@ -67,7 +67,7 @@ contract SampleContract {
       return truebit.getLiquidityFeeTaskGiver();
    }
 
-   // call this first
+      // this is an axiliary function for makeTaskID
    function submitFileData(bytes32 dataFile) private returns (bytes32) {
       uint num = nonce;
       nonce++;
