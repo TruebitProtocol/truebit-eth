@@ -90,15 +90,19 @@ Next we connect to Görli testnet.  Open a new terminal window, and generate a n
 echo plort > supersecret.txt
 geth --goerli account new --password=supersecret.txt
 ```
-To verify your existing addresses, type
+If you wish to use multiple accounts, paste the passwords for each on separate lines in your password file (`supersecret.txt`).  You can get a list of the local keystore files via:
 ```
 geth --goerli account list
 ```
-and note the index of the account you want to use (1 in the example below).  To start running a Görli node, use an incantation of the following form.
+Note the index of the account(s) you want to use (0,1,2, and 3 in the example below).  To start running a Görli node, use an incantation of the following form.
 ```
-geth --goerli --rpc --unlock 1 --password supersecret.txt --syncmode "light" --allow-insecure-unlock
+geth --goerli --rpc --unlock "0,1,2,3" --password supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
-You may have to exit `geth` (`Ctrl-C`) and restart it again in order to connect to a peer upon initialization.  The light client should begin syncing with the network and be up to date within a minute.
+You may have to exit `geth` (`Ctrl-C` or `exit`) and restart it again in order to connect to a peer upon initialization.  The light client should begin syncing with the network and be up to date within a minute.  To view a list of existing addresses inside the `geth console`, type `personal.listWallets
+` or `personal.listAccounts`.  If you wish to use Truebit OS via a Ledger hardware wallet, start `geth` as follows:
+```
+geth --goerli --rpc --syncmode "light" console
+```
 
 Now open another terminal and start IPFS.
 ```
@@ -131,7 +135,7 @@ start verify -a 1
 ```
 Check your progress here or look up your address on Görli.
 ```
-https://goerli.etherscan.io/address/0xD5FeCD83C3D10A18e4Df756e9e89026E084f59DC
+https://goerli.etherscan.io/address/0x274F408B1b7B9120A18143E3cD11446659975DCf
 ```
 use `help` followed by the name of any command to get more options.  Or type `help` to get a list of commands.  Use `exit` to return to the main terminal.
 
