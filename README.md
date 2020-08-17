@@ -239,7 +239,7 @@ sh compile.sh
 For Rust tasks, try George's [tutorial](
 https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround).
 
-When building and executing your own tasks, you may have to adjust some of the interprter execution parameters, including:
+When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 
 `memory-size`: how deep the merkle tree for memory should be
 
