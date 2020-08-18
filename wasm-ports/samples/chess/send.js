@@ -39,8 +39,8 @@ async function main() {
     // Debug (optional)
     IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
     info = await IncentiveLayer.methods.getTaskInfo(taskID).call({from:account})
-    console.log(info);
-    console.log('Task submitted');
+    console.log('DEBUG:', info)
+    console.log('Task submitted.  Waiting for solution...')
 
     // Broadcast task
     let liquidityFee = await sampleSubmitter.methods.getLiquidityFee().call({from:account})
