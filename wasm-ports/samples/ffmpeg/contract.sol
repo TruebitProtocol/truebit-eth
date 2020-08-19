@@ -89,7 +89,7 @@ contract SampleContract {
       tru.approve(address(truebit), 9 ether);
       truebit.makeDeposit(9 ether);
       bytes32 taskID = truebit.submitTask(filesystem.getInitHash(bundleID), 1, bundleID, 10 ether, 2 ether, 6 ether, 1 ether, 20, memsize, 8, 20, 10, gas);
-      truebit.requireFile(taskID, filesystem.hashName("output.data"), 0);
+      truebit.requireFile(taskID, filesystem.hashName("output.data"), 0); // 0: eth_bytes, 1: contract, 2: ipfs
       task_to_file[taskID] = dataFile;
       return taskID;
     }

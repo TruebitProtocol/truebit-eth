@@ -23,7 +23,7 @@ async function addIPFSFile(tbFileSystem, account, name, buf) {
 
     let fileID = await tbFileSystem.methods.calcId(fileNonce).call({from: account})
 
-    await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({from: account, gas: 300000})
+    await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({from: account, gas: 300000, gasPrice: web3.gp})
 
     console.log("Uploaded file", name, "with root", mr)
 
@@ -51,7 +51,8 @@ async function main() {
 
     // Deposit task fees
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
-    await tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000 })
+    await tru.methods.transfer(sampleSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000, gasPrice: web3.gp })
+    while (await tru.methods.balanceOf(account).call({from:account}) < 9) timeout(1000)
 
     // Make Task ID
     let taskID = await sampleSubmitter.methods.makeTaskID(wasmFile).call({from:account})
