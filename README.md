@@ -85,7 +85,7 @@ For an Ubuntu Linux install, follow the steps outlined in `Dockerfile` located i
 
 ## Connect to the network
 
-If you are not running Truebit from Docker, be sure to update `geth` to the latest version, or download a fresh install:
+If you are not running Truebit from Docker, be sure to update `geth` to the latest version, or download a fresh install.  If Geth is unable to find peers, try changing your IP address.  You must connect to `geth` through Docker if and only if you are running Truebit OS in Docker.
 
 ```
 https://geth.ethereum.org/docs/install-and-build/installing-geth
