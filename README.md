@@ -88,8 +88,7 @@ For an Ubuntu Linux install, follow the steps outlined in `Dockerfile` located i
 If you are not running Truebit from Docker, be sure to update `geth` to the latest version, or download a fresh install:
 
 ```
-https://geth.ethereum.org/downloads/
-https://github.com/ethereum/go-ethereum/wiki/Installation-Instructions-for-Mac
+https://geth.ethereum.org/docs/install-and-build/installing-geth
 ```
 
 Next we connect to Görli testnet.  Open a new terminal window, and generate a new account if you do not have one already.  You will need to create and store a password.
