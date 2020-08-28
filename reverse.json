@@ -13,5 +13,5 @@
     "globalsSize":"8",
     "tableSize":"8",
     "callSize":"10",
-    "gasLimit":"0"
+    "blockLimit":"1"
 }
