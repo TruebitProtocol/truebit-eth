@@ -50,9 +50,9 @@ contract SampleContract {
    mapping (bytes => bytes32) result;
 
    uint8 memsize;
-   uint32 blocklimit;
+   uint blocklimit;
 
-   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint32 _blocklimit, bytes32 _randomFileId) public {
+   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint _blocklimit, bytes32 _randomFileId) public {
        truebit = TrueBit(tb);
        tru = TRU(tru_);
        filesystem = Filesystem(fs);

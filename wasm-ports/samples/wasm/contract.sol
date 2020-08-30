@@ -22,7 +22,7 @@ interface Filesystem {
 
 interface TrueBit {
   function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external returns (bytes32);
-  function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint st) external;
+  function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint8 st) external;
   function commitRequiredFiles(bytes32 id) external payable;
   function makeDeposit(uint _deposit) external returns (uint);
   function getLiquidityFeeTaskGiver() external view returns (uint);
@@ -51,9 +51,9 @@ contract SampleContract {
    mapping (bytes32 => bytes32) result;
 
    uint8 memsize;
-   uint32 blocklimit;
+   uint blocklimit;
 
-   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint32 _blocklimit, bytes32 _randomFileId) public {
+   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint _blocklimit, bytes32 _randomFileId) public {
        truebit = TrueBit(tb);
        tru = TRU(tru_);
        filesystem = Filesystem(fs);

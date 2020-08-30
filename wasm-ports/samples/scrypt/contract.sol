@@ -50,7 +50,7 @@ contract SampleContract {
    uint8 memsize;
    uint blocklimit;
 
-   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint32 _blocklimit) public {
+   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint _blocklimit) public {
        truebit = TrueBit(tb);
        tru = TRU(tru_);
        filesystem = Filesystem(fs);
