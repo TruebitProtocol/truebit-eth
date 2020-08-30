@@ -21,7 +21,7 @@ interface Filesystem {
 }
 
 interface TrueBit {
-  function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint32 limit) external returns (bytes32);
+  function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external returns (bytes32);
   function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint st) external;
   function commitRequiredFiles(bytes32 id) external payable;
   function makeDeposit(uint _deposit) external returns (uint);
@@ -51,16 +51,16 @@ contract SampleContract {
    mapping (bytes32 => bytes32) result;
 
    uint8 memsize;
-   uint32 gas;
+   uint32 blocklimit;
 
-   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint32 _gas, bytes32 _randomFileId) public {
+   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint32 _blocklimit, bytes32 _randomFileId) public {
        truebit = TrueBit(tb);
        tru = TRU(tru_);
        filesystem = Filesystem(fs);
        codeFileID = _codeFileID;
        randomFile = _randomFileId;
        memsize = _memsize;
-       gas = _gas;
+       blocklimit = _blocklimit;
    }
 
    function getLiquidityFee() public view returns (uint) {
@@ -91,7 +91,7 @@ contract SampleContract {
     bytes32 bundleID = submitFileData(dataFile);
     tru.approve(address(truebit), 9 ether);
     truebit.makeDeposit(9 ether);
-    bytes32 taskID = truebit.submitTask(filesystem.getInitHash(bundleID), 1, bundleID, 10 ether, 2 ether, 6 ether, 1 ether, 20, memsize, 8, 20, 10, gas);
+    bytes32 taskID = truebit.submitTask(filesystem.getInitHash(bundleID), 1, bundleID, 10 ether, 2 ether, 6 ether, 1 ether, 20, memsize, 8, 20, 10, blocklimit);
     truebit.requireFile(taskID, filesystem.hashName("output.wasm"), 2); // 0: eth_bytes, 1: contract, 2: ipfs
     task_to_file[taskID] = dataFile;
     return taskID;
