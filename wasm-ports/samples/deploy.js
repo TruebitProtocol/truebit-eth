@@ -97,7 +97,7 @@ async function deploy() {
         artifacts.fileSystem.address,
         codeFileID,
         info.memsize,
-        info.gas || 0
+        info.blocklimit || 3
     ]
 
     if (randomFile) args.push(randomFile)
