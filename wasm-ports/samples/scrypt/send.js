@@ -34,7 +34,7 @@ async function main() {
     // Deposit task fees
     let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
     await tru.methods.transfer(scryptSubmitter.options.address, web3.utils.toWei('9', 'ether')).send({ from: account, gas: 200000, gasPrice: web3.gp })
-    while (await tru.methods.balanceOf(account).call({from:account}) < 9) timeout(1000)
+    while (await tru.methods.balanceOf(account).call({from:account}) < 9) await timeout(1000)
 
     // Make Task ID
     let taskID = await scryptSubmitter.methods.makeTaskID(dta).call({from:account})
