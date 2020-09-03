@@ -20,6 +20,6 @@
     },
     "hash": "0xae753f5f3074430d2a0e19df44aea75f7d789fee908dde530606ae6a28914808"
   },
-  "memsize": "25",
-  "gas": 0
+  "memsize": 25,
+  "blocklimit": 5
 }

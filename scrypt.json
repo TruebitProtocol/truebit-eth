@@ -1,0 +1,18 @@
+{
+    "minDeposit": "10",
+    "codeType": "WASM",
+    "storageType": "IPFS",
+    "codeFile": "/wasm-ports/samples/scrypt/task.wasm",
+    "solverReward": "2",
+    "verifierTax": "6",
+    "stackSize":"20",
+    "memorySize":"20",
+    "globalsSize":"8",
+    "tableSize":"20",
+    "callSize":"10",
+    "blockLimit":"2",
+    "files": [
+      "/wasm-ports/samples/scrypt/input.data",
+      "/wasm-ports/samples/scrypt/output.data"
+    ]
+}
