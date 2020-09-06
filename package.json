@@ -6,14 +6,13 @@
     "truebit-os": "cli/index.js"
   },
   "pkg": {
+    "scripts": "./jit-runner/jit.js",
     "assets": [
       "./wasm-client/secret",
       "./wasm-client/ethereum.json",
       "./wasm-client/goerli.json",
       "./wasm-client/rinkeby.json",
-      "./node_modules/figlet/fonts/Standard.flf",
-      "./node_modules/websocket/build/Release/bufferutil.node",
-      "./node_modules/websocket/build/Release/validation.node"
+      "./node_modules/figlet/fonts/Standard.flf"
     ]
   },
   "scripts": {
@@ -46,7 +45,7 @@
   "devDependencies": {
     "@openzeppelin/cli": "^2.8.2",
     "@openzeppelin/contracts-ethereum-package": "^3.0.0",
-    "wasm-metering-tb": "^0.2.1",
-    "npm": "^6.4.1"
+    "npm": "^6.4.1",
+    "wasm-metering-tb": "^0.2.1"
   }
 }
