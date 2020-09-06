@@ -9,7 +9,7 @@
     "scripts": "./jit-runner/jit.js",
     "assets": [
       "./wasm-client/secret",
-      "./wasm-client/ethereum.json",
+      "./wasm-client/mainnet.json",
       "./wasm-client/goerli.json",
       "./wasm-client/rinkeby.json",
       "./node_modules/figlet/fonts/Standard.flf"
