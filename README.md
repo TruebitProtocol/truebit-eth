@@ -4,7 +4,7 @@
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit?style=flat-square)](https://hub.docker.com/repository/docker/truja/truebit)
 
 <p align="center">
-  <img src="./gundam2.jpeg"/>
+  <img src="./images/gundam2.jpeg"/>
 </p>
 
 # What is Truebit?

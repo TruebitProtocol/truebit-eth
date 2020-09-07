@@ -45,6 +45,7 @@
   "devDependencies": {
     "@openzeppelin/cli": "^2.8.2",
     "@openzeppelin/contracts-ethereum-package": "^3.0.0",
+    "fs-extra": "^6.0.1",
     "npm": "^6.4.1",
     "wasm-metering-tb": "^0.2.1"
   }
