@@ -36,7 +36,7 @@ RUN apt-get install curl \
 RUN apt-get install wget \
  && wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
  && source ~/.nvm/nvm.sh \
- && nvm install node
+ && nvm install 14.10.0
 
 # Install Solidity
 RUN cd bin \
@@ -75,21 +75,21 @@ RUN apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-
  && rm -rf ~/.opam
 
 # Install Emscripten module wrapper and dependencies for sample tasks
-RUN apt-get install -y npm \
+RUN source ~/.nvm/nvm.sh \
  && ln -s /truebit-eth/emscripten-module-wrapper /root/emscripten-module-wrapper \
  && cd truebit-eth \
  && npm i
 
 # Install Toolchain libraries
-RUN source /emsdk/emsdk_env.sh \
+RUN apt-get install -y autoconf bison flex libtool lzip \
+ && source /emsdk/emsdk_env.sh \
  && cd /truebit-eth/wasm-ports \
- && apt-get install -y autoconf bison flex libtool lzip \
  && sh gmp.sh \
  && sh openssl.sh \
  && sh secp256k1.sh \
  && sh libff.sh \
  && sh boost.sh \
- && sh libpbc.sh
+ && sh libpbc.sh \
 
 # Compile sample tasks
 RUN source /emsdk/emsdk_env.sh \
