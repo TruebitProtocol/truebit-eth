@@ -83,7 +83,7 @@ RUN apt-get install -y npm \
 # Install Toolchain libraries
 RUN source /emsdk/emsdk_env.sh \
  && cd /truebit-eth/wasm-ports \
- # && apt-get install -y autoconf bison flex libtool lzip \
+ && apt-get install -y autoconf bison flex libtool lzip \
  && sh gmp.sh \
  && sh openssl.sh \
  && sh secp256k1.sh \

@@ -54,7 +54,11 @@ docker exec -it _yourContainerName_ /bin/bash
 ```
 _yourContainerName_ might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
-You can share files between your local machine and the Docker container by copying them into your `geth-docker-cache` folder.  To exit a container, type `exit`.  Your container process will remain alive in other windows.
+You can share files between your native machine and the Docker container by copying them into your `geth-docker-cache` folder.  Alternatively, you may copy into (or out of) the container with commands of the following form.
+```
+docker cp truebit-eth/supersecret.txt f7b994c94911:/truebit-eth/supersecret.txt
+```
+Here `f7b994c94911` is the name of the container's ID.To exit a container, type `exit`.  Your container process will remain alive in other windows.
 
 ### "Connect to the network"
 
