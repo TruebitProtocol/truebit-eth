@@ -84,6 +84,8 @@ RUN source ~/.nvm/nvm.sh \
 RUN apt-get install -y autoconf bison flex libtool lzip \
  && source /emsdk/emsdk_env.sh \
  && cd /truebit-eth/wasm-ports \
+ && mkdir -p /emsdk/fastcomp-clang/lib/clang/5.0.0/include \
+ && cp -rf /emsdk/upstream/fastcomp/lib/clang/6.0.1/include /emsdk/fastcomp-clang/lib/clang/5.0.0/ \
  && sh gmp.sh \
  && sh openssl.sh \
  && sh secp256k1.sh \
@@ -107,11 +109,11 @@ RUN source /emsdk/emsdk_env.sh \
  && sh compile.sh
 
 # Optional: set up Ganache, Mocha, and Browserify example
-RUN npm install -g ganache-cli mocha@7.2.0 browserify \
- && cd /truebit-eth/wasm-ports/samples/pairing \
- && browserify public/app.js -o public/bundle.js \
- && cd ../scrypt \
- && browserify public/app.js -o public/bundle.js
+# RUN npm install -g ganache-cli mocha@7.2.0 browserify \
+#  && cd /truebit-eth/wasm-ports/samples/pairing \
+#  && browserify public/app.js -o public/bundle.js \
+#  && cd ../scrypt \
+#  && browserify public/app.js -o public/bundle.js
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545
