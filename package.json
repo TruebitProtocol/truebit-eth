@@ -47,7 +47,6 @@
     "@openzeppelin/contracts-ethereum-package": "^3.0.0",
     "browserify": "^16.5.2",
     "fs-extra": "^6.0.1",
-    "npm": "^6.4.1",
     "wasm-metering-tb": "^0.2.1"
   }
 }
