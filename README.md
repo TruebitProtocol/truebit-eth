@@ -62,7 +62,11 @@ Here `f7b994c94911` is the name of the container's ID.To exit a container, type 
 
 ### "Connect to the network"
 
-One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  Your Truebit container connects to IPFS automatically in the background at launch.  You can terminate IPFS at any time by typing `ipfs shutdown`.  Geth, on the other hand, requires more delicate interaction.  Below we'll connect to Truebit on the Görli testnet.  Connecting on Ethereum mainnet is quite similar.  Truebit-OS client automatically detects the blockchain network you are connected to.
+One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, run IPFS in the background:
+```
+( ipfs daemon & )
+```
+You can terminate IPFS at any time by typing `ipfs shutdown`.  Geth demands more nuanced interaction.  Below we'll connect to Truebit on the Görli testnet.  Connecting on Ethereum mainnet is quite similar.  Truebit-OS automatically detects which blockchain network you are connected to.
 
 #### Initializing accounts
 
@@ -207,31 +211,10 @@ To run a sample task, `cd` into that directory and run `node send.js` as detaile
  ```
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
 
-<!-- ### Execution variants
-
- To initiate a verification game, start a Verifier with flag `-t`:
- ```
- start verify -a 1 -t
- ```
- You'll also need an active Solver and task.  For faster off-chain processing, your can try solving tasks with the just-in-time compiler (JIT).  Start Truebit-OS with the following configuration:
- ```
- node cli/index.js wasm-client/config-jit.json
- ```
- Then issue one of the sample tasks [above](More-sample-tasks).  You may need to make a manual deposit before solving the task, e.g. `deposit -a 1 -v 2000`.  Note that the JIT interfaces with `wasm-client/merke-computer.js`.  If you want to experiment with the JIT outside of Truebit-OS, try the following example.  The name of the WASM input file is hardcoded as `task.wasm`.
- ```
-cd Truebit2020/wasm-ports/samples/pairing
-node ../../../jit-runner/jit.js --file input.data --file output.data --file _dev_urandom --memory-size 4096
- ```
- Compare this with an interpreter run of the same file:
- ```
-./../../../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -output-io -memory-size 25 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file _dev_urandom -file input.data -wasm task.wasm
-``` -->
-
 # Building your own tasks with the Truebit toolchain
-From the Docker container, do the following.
+From a Truebit Docker container connected to IPFS do the following.
 ```
 source ./emsdk/emsdk_env.sh
-( ipfs daemon & )
 cd wasm-ports
 ```
 You should now be able to compile the sample tasks from C and C++.
@@ -248,7 +231,7 @@ cd ../ffmpeg
 sh compile.sh
 ```
 Use `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as a template for generating your own tasks. For Rust tasks, try @georgeroman's [walk-through](
-https://github.com/TrueBitFoundation/Truebit2020/tree/master/emscripten_workaround).
+https://github.com/TrueBitFoundation/Truebit2020/tree/master/rust_workaround).
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 

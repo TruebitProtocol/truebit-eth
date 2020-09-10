@@ -83,30 +83,33 @@ RUN source ~/.nvm/nvm.sh \
 # Install Toolchain libraries
 RUN apt-get install -y autoconf bison flex libtool lzip \
  && source /emsdk/emsdk_env.sh \
+ && mkdir -p /emsdk/fastcomp-clang/lib/clang/5.0.0 \
+ && cp -rf /emsdk/emscripten/1.37.36/system/include/libc/ /emsdk/fastcomp-clang/lib/clang/5.0.0 \
+ && mv /emsdk/fastcomp-clang/lib/clang/5.0.0/libc /emsdk/fastcomp-clang/lib/clang/5.0.0/include \
+ && rm -rf /emsdk/fastcomp-clang/lib/clang/5.0.0/include/bits && mkdir /emsdk/fastcomp-clang/lib/clang/5.0.0/include/bits \
+ && cp -rf /emsdk/emscripten/1.37.36/system/include/libc/bits/* /emsdk/fastcomp-clang/lib/clang/5.0.0/include/bits \
  && cd /truebit-eth/wasm-ports \
- && mkdir -p /emsdk/fastcomp-clang/lib/clang/5.0.0/include \
- && cp -rf /emsdk/upstream/fastcomp/lib/clang/6.0.1/include /emsdk/fastcomp-clang/lib/clang/5.0.0/ \
  && sh gmp.sh \
  && sh openssl.sh \
  && sh secp256k1.sh \
  && sh libff.sh \
  && sh boost.sh \
- && sh libpbc.sh \
+ && sh libpbc.sh
 
-# Compile sample tasks
-RUN source /emsdk/emsdk_env.sh \
- && ( ipfs daemon & ) \
- && cd /truebit-eth/wasm-ports/samples/pairing \
- && sh compile.sh \
- && cd ../scrypt \
- && sh compile.sh \
- && cd ../chess \
- && sh compile.sh \
- && cd ../wasm \
- && source $HOME/.cargo/env \
- && sh compile.sh \
- && cd ../ffmpeg \
- && sh compile.sh
+# # Compile sample tasks
+# RUN source /emsdk/emsdk_env.sh \
+#  && ( ipfs daemon & ) \
+#  && cd /truebit-eth/wasm-ports/samples/pairing \
+#  && sh compile.sh \
+#  && cd ../scrypt \
+#  && sh compile.sh \
+#  && cd ../chess \
+#  && sh compile.sh \
+#  && cd ../wasm \
+#  && source $HOME/.cargo/env \
+#  && sh compile.sh \
+#  && cd ../ffmpeg \
+#  && sh compile.sh
 
 # Optional: set up Ganache, Mocha, and Browserify example
 # RUN npm install -g ganache-cli mocha@7.2.0 browserify \
@@ -119,7 +122,7 @@ RUN source /emsdk/emsdk_env.sh \
 EXPOSE 4001 30303 80 8545
 
 # Open IPFS session on startup
-CMD ( ipfs daemon & )
+# CMD ( ipfs daemon & )
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest
