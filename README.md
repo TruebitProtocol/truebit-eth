@@ -198,7 +198,6 @@ To run a sample task, `cd` into that directory and run `node send.js` as detaile
  ### Validate WASM file
  ```
  cd /wasm-ports/samples/wasm
- source $HOME/.cargo/env
  node send.js <wasm file>
  ```
  Uses parity-wasm to read and write a WASM file.
@@ -215,23 +214,20 @@ To run a sample task, `cd` into that directory and run `node send.js` as detaile
 From a Truebit Docker container connected to IPFS do the following.
 ```
 source ./emsdk/emsdk_env.sh
-cd wasm-ports
 ```
-You should now be able to compile the sample tasks from C and C++.
+You should now be able to compile the sample tasks in C++ (chess, scrypt, pairing) and C (ffmpeg) below.
 ```
-cd /Truebit2020/wasm-ports/samples/scrypt
+cd /truebit-eth/wasm-ports/samples/chess
+sh compile.sh
+cd ../scrypt
 sh compile.sh
 cd ../pairing
-sh compile.sh
-cd ../chess
-sh compile.sh
-cd ../wasm
 sh compile.sh
 cd ../ffmpeg
 sh compile.sh
 ```
-Use `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as a template for generating your own tasks. For Rust tasks, try @georgeroman's [walk-through](
-https://github.com/TrueBitFoundation/Truebit2020/tree/master/rust_workaround).
+Use the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for generating your own Task Owner task and contract. For Rust tasks, take a look @georgeroman's [walk-through](
+https://github.com/TrueBitFoundation/Truebit2020/tree/master/rust_workaround).  You can use his guide to build the task `../wasm`.  When compiling with rust, first set up the environment with  `source $HOME/.cargo/env`.  Be sure to run `source /emsdk/emsdk_env.sh` followed by an optional check of `emcc -v` when switching between active versions of Emscripten.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 

@@ -10,10 +10,10 @@ RUN apt-get update && apt-get install -y tmux
 RUN apt-get install -y cmake g++ git python \
  && git clone https://github.com/emscripten-core/emsdk.git emsdk \
  && cd emsdk \
- && ./emsdk install sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk install binaryen-tag-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit
+ && ./emsdk install sdk-fastcomp-1.38.15-64bit \
+ && ./emsdk activate sdk-fastcomp-1.38.15-64bit \
+ && ./emsdk install binaryen-tag-1.38.15-64bit \
+ && ./emsdk activate binaryen-tag-1.38.15-64bit
 
 # Add support for Rust tasks
 RUN apt-get install curl \
@@ -23,9 +23,11 @@ RUN apt-get install curl \
  && rustup default 1.40.0 \
  && rustup target add wasm32-unknown-emscripten \
  && cd emsdk \
+ && ./emsdk install 1.38.33 \
  && ./emsdk install 1.39.8
  # One may activate version 1.39.8 and substitute emscripten-module-wrapper as described in rust_workaround/README.md:
  # ./emsdk activate 1.39.8
+ # source /emsdk/emsdk_env.sh
  # cd truebit-eth
  # rm -r emscripten-module-wrapper
  # git clone https://github.com/georgeroman/emscripten-module-wrapper.git
@@ -83,11 +85,11 @@ RUN source ~/.nvm/nvm.sh \
 # Install Toolchain libraries
 RUN apt-get install -y autoconf bison flex libtool lzip \
  && source /emsdk/emsdk_env.sh \
- && mkdir -p /emsdk/fastcomp-clang/lib/clang/5.0.0 \
- && cp -rf /emsdk/emscripten/1.37.36/system/include/libc/ /emsdk/fastcomp-clang/lib/clang/5.0.0 \
- && mv /emsdk/fastcomp-clang/lib/clang/5.0.0/libc /emsdk/fastcomp-clang/lib/clang/5.0.0/include \
- && rm -rf /emsdk/fastcomp-clang/lib/clang/5.0.0/include/bits && mkdir /emsdk/fastcomp-clang/lib/clang/5.0.0/include/bits \
- && cp -rf /emsdk/emscripten/1.37.36/system/include/libc/bits/* /emsdk/fastcomp-clang/lib/clang/5.0.0/include/bits \
+ && mkdir -p /emsdk/fastcomp-clang/lib/clang/6.0.1 \
+ && cp -rf /emsdk/emscripten/1.38.15/system/include/libc/ /emsdk/fastcomp-clang/lib/clang/6.0.1 \
+ && mv /emsdk/fastcomp-clang/lib/clang/6.0.1/libc /emsdk/fastcomp-clang/lib/clang/6.0.1/include \
+ && rm -rf /emsdk/fastcomp-clang/lib/clang/6.0.1/include/bits && mkdir /emsdk/fastcomp-clang/lib/clang/6.0.1/include/bits \
+ && cp -rf /emsdk/emscripten/1.38.15/system/include/libc/bits/* /emsdk/fastcomp-clang/lib/clang/6.0.1/include/bits \
  && cd /truebit-eth/wasm-ports \
  && sh gmp.sh \
  && sh openssl.sh \
@@ -96,20 +98,30 @@ RUN apt-get install -y autoconf bison flex libtool lzip \
  && sh boost.sh \
  && sh libpbc.sh
 
-# # Compile sample tasks
-# RUN source /emsdk/emsdk_env.sh \
-#  && ( ipfs daemon & ) \
-#  && cd /truebit-eth/wasm-ports/samples/pairing \
-#  && sh compile.sh \
-#  && cd ../scrypt \
-#  && sh compile.sh \
-#  && cd ../chess \
-#  && sh compile.sh \
-#  && cd ../wasm \
-#  && source $HOME/.cargo/env \
-#  && sh compile.sh \
-#  && cd ../ffmpeg \
-#  && sh compile.sh
+# DUBUGGING NOTES
+# RUN sed -i 's|/binaryen/tag-1.38.3_64bit_binaryen|/fastcomp-clang/e1.38.3_64bit/binaryen/|' /emsdk/.emscripten
+# mkdir -p /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share
+# Then one of these:
+# Fist one is much smaller!
+# cp -r /emsdk/binaryen/tag-1.38.3/bin /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/binaryen
+# cp -r /emsdk/fastcomp-clang/e1.38.3_64bit/binaryen/bin /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/binaryen
+# cp /emsdk/fastcomp-clang/e1.38.3_64bit/binaryen/bin/binaryen.js /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/
+# cp /emsdk/fastcomp-clang/e1.38.3_64bit/binaryen/bin/wasm.js /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/
+
+# Compile sample tasks
+RUN source /emsdk/emsdk_env.sh \
+ && ( ipfs daemon & ) \
+ && cd /truebit-eth/wasm-ports/samples/chess \
+ && sh compile.sh \
+ && cd ../scrypt \
+ && sh compile.sh \
+ && cd ../pairing \
+ && sh compile.sh \
+ && cd ../wasm \
+ && source $HOME/.cargo/env \
+ && sh compile.sh \
+ && cd ../ffmpeg \
+ && sh compile.sh
 
 # Optional: set up Ganache, Mocha, and Browserify example
 # RUN npm install -g ganache-cli mocha@7.2.0 browserify \
@@ -120,9 +132,6 @@ RUN apt-get install -y autoconf bison flex libtool lzip \
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545
-
-# Open IPFS session on startup
-# CMD ( ipfs daemon & )
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest
