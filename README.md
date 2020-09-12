@@ -62,9 +62,9 @@ Here `f7b994c94911` is the name of the container's ID.To exit a container, type 
 
 ### "Connect to the network"
 
-One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, run IPFS in the background:
+One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, run IPFS in the background with the following command.
 ```
-( ipfs daemon & )
+bash startup.sh
 ```
 You can terminate IPFS at any time by typing `ipfs shutdown`.  Geth demands more nuanced interaction.  Below we'll connect to Truebit on the Görli testnet.  Connecting on Ethereum mainnet is quite similar.  Truebit-OS automatically detects which blockchain network you are connected to.
 
@@ -211,9 +211,9 @@ To run a sample task, `cd` into that directory and run `node send.js` as detaile
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
 
 # Building your own tasks with the Truebit toolchain
-From a Truebit Docker container connected to IPFS do the following.
+If you haven't already, from your Truebit container, run
 ```
-source ./emsdk/emsdk_env.sh
+bash startup.sh
 ```
 You should now be able to compile the sample tasks in C++ (chess, scrypt, pairing) and C (ffmpeg) below.
 ```
@@ -227,7 +227,7 @@ cd ../ffmpeg
 sh compile.sh
 ```
 Use the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for generating your own Task Owner task and contract. For Rust tasks, take a look @georgeroman's [walk-through](
-https://github.com/TrueBitFoundation/Truebit2020/tree/master/rust_workaround).  You can use his guide to build the task `../wasm`.  When compiling with rust, first set up the environment with  `source $HOME/.cargo/env`.  Be sure to run `source /emsdk/emsdk_env.sh` followed by an optional check of `emcc -v` when switching between active versions of Emscripten.
+https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  You can use his guide to build the task `../wasm`.  When compiling with rust, first set up the environment with  `source $HOME/.cargo/env`.  Be sure to run `source /emsdk/emsdk_env.sh` followed by an optional check of `emcc -v` when switching between active versions of Emscripten.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 

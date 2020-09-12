@@ -10,10 +10,30 @@ RUN apt-get update && apt-get install -y tmux
 RUN apt-get install -y cmake g++ git python \
  && git clone https://github.com/emscripten-core/emsdk.git emsdk \
  && cd emsdk \
- && ./emsdk install sdk-fastcomp-1.38.15-64bit \
- && ./emsdk activate sdk-fastcomp-1.38.15-64bit \
- && ./emsdk install binaryen-tag-1.38.15-64bit \
- && ./emsdk activate binaryen-tag-1.38.15-64bit
+ && ./emsdk install sdk-fastcomp-1.37.36-64bit \
+ && ./emsdk install binaryen-tag-1.37.36-64bit \
+ && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
+ && ./emsdk activate binaryen-tag-1.37.36-64bit
+
+# Install LLVM components
+RUN apt-get install -y ninja-build \
+ && git clone https://github.com/llvm-mirror/llvm \
+ && cd llvm/tools \
+ && git clone https://github.com/llvm-mirror/clang \
+ && git clone https://github.com/llvm-mirror/lld \
+ && cd /llvm \
+ && git checkout release_60 \
+ && cd tools/clang \
+ && git checkout release_60 \
+ && cd ../lld \
+ && git checkout release_60 \
+ && mkdir /build \
+ && cd /build \
+ && cmake -G Ninja -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/usr/ /llvm \
+ && ninja \
+ && ninja install \
+ && cd / \
+ && rm -rf build llvm
 
 # Add support for Rust tasks
 RUN apt-get install curl \
@@ -24,7 +44,8 @@ RUN apt-get install curl \
  && rustup target add wasm32-unknown-emscripten \
  && cd emsdk \
  && ./emsdk install 1.38.33 \
- && ./emsdk install 1.39.8
+ && ./emsdk install 1.39.8 \
+ && rm -r zips
  # One may activate version 1.39.8 and substitute emscripten-module-wrapper as described in rust_workaround/README.md:
  # ./emsdk activate 1.39.8
  # source /emsdk/emsdk_env.sh
@@ -76,7 +97,7 @@ RUN apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-
  && make \
  && rm -rf ~/.opam
 
-# Install Emscripten module wrapper and dependencies for sample tasks
+# Install Emscripten module wrapper and dependencies for deploying sample tasks
 RUN source ~/.nvm/nvm.sh \
  && ln -s /truebit-eth/emscripten-module-wrapper /root/emscripten-module-wrapper \
  && cd truebit-eth \
@@ -85,11 +106,9 @@ RUN source ~/.nvm/nvm.sh \
 # Install Toolchain libraries
 RUN apt-get install -y autoconf bison flex libtool lzip \
  && source /emsdk/emsdk_env.sh \
+ && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/usr/bin/optimizer'|" /emsdk/.emscripten \
+ && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
  && mkdir -p /emsdk/fastcomp-clang/lib/clang/6.0.1 \
- && cp -rf /emsdk/emscripten/1.38.15/system/include/libc/ /emsdk/fastcomp-clang/lib/clang/6.0.1 \
- && mv /emsdk/fastcomp-clang/lib/clang/6.0.1/libc /emsdk/fastcomp-clang/lib/clang/6.0.1/include \
- && rm -rf /emsdk/fastcomp-clang/lib/clang/6.0.1/include/bits && mkdir /emsdk/fastcomp-clang/lib/clang/6.0.1/include/bits \
- && cp -rf /emsdk/emscripten/1.38.15/system/include/libc/bits/* /emsdk/fastcomp-clang/lib/clang/6.0.1/include/bits \
  && cd /truebit-eth/wasm-ports \
  && sh gmp.sh \
  && sh openssl.sh \
@@ -98,19 +117,11 @@ RUN apt-get install -y autoconf bison flex libtool lzip \
  && sh boost.sh \
  && sh libpbc.sh
 
-# DUBUGGING NOTES
-# RUN sed -i 's|/binaryen/tag-1.38.3_64bit_binaryen|/fastcomp-clang/e1.38.3_64bit/binaryen/|' /emsdk/.emscripten
-# mkdir -p /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share
-# Then one of these:
-# Fist one is much smaller!
-# cp -r /emsdk/binaryen/tag-1.38.3/bin /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/binaryen
-# cp -r /emsdk/fastcomp-clang/e1.38.3_64bit/binaryen/bin /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/binaryen
-# cp /emsdk/fastcomp-clang/e1.38.3_64bit/binaryen/bin/binaryen.js /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/
-# cp /emsdk/fastcomp-clang/e1.38.3_64bit/binaryen/bin/wasm.js /emsdk/binaryen/tag-1.38.3_64bit_binaryen/share/
-
 # Compile sample tasks
-RUN source /emsdk/emsdk_env.sh \
- && ( ipfs daemon & ) \
+RUN && ( ipfs daemon & ) \
+ && source /emsdk/emsdk_env.sh \
+ && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/usr/bin/optimizer'|" /emsdk/.emscripten \
+ && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
  && cd /truebit-eth/wasm-ports/samples/chess \
  && sh compile.sh \
  && cd ../scrypt \
@@ -128,10 +139,12 @@ RUN source /emsdk/emsdk_env.sh \
 #  && cd /truebit-eth/wasm-ports/samples/pairing \
 #  && browserify public/app.js -o public/bundle.js \
 #  && cd ../scrypt \
-#  && browserify public/app.js -o public/bundle.js
+#  && browserify public/app.js -o public/bundle.jscd emsd
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545
+
+CMD bash startup.sh
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest
