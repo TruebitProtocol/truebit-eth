@@ -235,6 +235,7 @@ https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  
 ```
 ( ipfs daemon & )
 mv /truebit-eth/wasm-ports/samples/wasm /
+cd /
 git clone https://github.com/georgeroman/emscripten-module-wrapper.git
 cd /emscripten-module-wrapper && npm install
 /emsdk/emsdk activate 1.39.8

@@ -92,15 +92,15 @@ RUN apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-
 # Install Emscripten module wrapper and dependencies for deploying sample tasks
 RUN source ~/.nvm/nvm.sh \
  && ln -s /truebit-eth/emscripten-module-wrapper /root/emscripten-module-wrapper \
- && ln -s /truebit-eth/ocaml-offchain
+ && ln -s /truebit-eth/ocaml-offchain \
  && cd truebit-eth \
  && npm i
 
 # Install Toolchain libraries
 RUN apt-get install -y autoconf bison flex libtool lzip \
  && source /emsdk/emsdk_env.sh \
- && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/usr/bin/optimizer'|" /emsdk/.emscripten \
  && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
+ && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
  && cd /truebit-eth/wasm-ports \
  && sh gmp.sh \
  && sh openssl.sh \
@@ -109,11 +109,11 @@ RUN apt-get install -y autoconf bison flex libtool lzip \
  && sh boost.sh \
  && sh libpbc.sh
 
-# Compile sample tasks
+# Compile  C/C++ sample tasks
 RUN ( ipfs daemon & ) \
  && source /emsdk/emsdk_env.sh \
- && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/usr/bin/optimizer'|" /emsdk/.emscripten \
  && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
+ && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
  && cd /truebit-eth/wasm-ports/samples/chess \
  && sh compile.sh \
  && cd ../scrypt \
@@ -122,16 +122,23 @@ RUN ( ipfs daemon & ) \
  && sh compile.sh \
  && cd ../ffmpeg \
  && sh compile.sh
- && mv /truebit-eth/wasm-ports/samples/wasm / \
- && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
- && cd /emscripten-module-wrapper && npm install \
- && /emsdk/emsdk activate 1.39.8 \
- && source /emsdk/emsdk_env.sh && source $HOME/.cargo/env \
- && cd /wasm \
- && npm i \
- && sh compile.sh \
- && rm -r /emscripten-module-wrapper \
- && mv /wasm /truebit-eth/wasm-ports/samples
+
+# # Compile Rust sample task
+# RUN  ( ipfs daemon & ) \
+#  && source /emsdk/emsdk_env.sh \
+#  && mv /truebit-eth/wasm-ports/samples/wasm / \
+#  && cd / \
+#  && source ~/.nvm/nvm.sh \
+#  && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
+#  && cd /emscripten-module-wrapper && npm install \
+#  && cd /emsdk \
+#  && ./emsdk activate 1.39.8 \
+#  && source $HOME/.cargo/env \
+#  && cd /wasm \
+#  && npm i \
+#  && sh compile.sh \
+#  && rm -r /emscripten-module-wrapper \
+#  && mv /wasm /truebit-eth/wasm-ports/samples
 
 # Optional: set up Ganache, Mocha, and Browserify example
 # RUN npm install -g ganache-cli mocha@7.2.0 browserify \
@@ -140,9 +147,8 @@ RUN ( ipfs daemon & ) \
 #  && cd ../scrypt \
 #  && browserify public/app.js -o public/bundle.js
 
-# Move initialization script for IPFS and Emscripten, re-activate compiler version for C/C++
-RUN mv /truebit-eth/startup.sh /startup.sh \
- && /emsdk/emsdk activate sdk-fastcomp-1.37.36-64bit
+# Move initialization script for IPFS and Emscripten
+RUN mv /truebit-eth/startup.sh /startup.sh
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545
