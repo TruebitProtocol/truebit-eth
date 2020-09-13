@@ -62,11 +62,14 @@ Here `f7b994c94911` is the name of the container's ID.To exit a container, type 
 
 ### "Connect to the network"
 
-One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, run IPFS in the background with the following command.
+One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, start IPFS in the background and configure the compiler with the following pair of commands (in this order).
 ```
+source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
-You can terminate IPFS at any time by typing `ipfs shutdown`.  Geth demands more nuanced interaction.  Below we'll connect to Truebit on the Görli testnet.  Connecting on Ethereum mainnet is quite similar.  Truebit-OS automatically detects which blockchain network you are connected to.
+You can terminate IPFS at any time by typing `ipfs shutdown`.
+
+Geth demands more nuanced setup compared to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we will see, connecting on Ethereum mainnet is quite similar.  Truebit OS automatically detects which Ethereum blockchain network you are connected to (Görli or Mainnet).
 
 #### Initializing accounts
 
@@ -134,11 +137,11 @@ For a self-guided tour or additional options not provided in this tutorial, type
 
 In order to start a Solver or Verifier, one must first stake TRU into the incentive layer.  Let's purchase 100 TRU tokens for account 0.
 ```
-token purchase -v 100 -a 0
+token purchase -v 1000 -a 0
 ```
 Now we can stake some of our TRU.
 ```
-token deposit -v 50 -a 0
+token deposit -v 500 -a 0
 ```
 We can repeat this process for account 1, if desired.  We are ready to start a Verifier, but if we wish to run a Solver, there is one additional step.  We must purchase a Solver license.
 ```
@@ -163,7 +166,7 @@ https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E
 
 ## "Real" sample tasks
 
-In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a verified solution.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your Truebit container.  One can deploy all of the samples onto the blockchain as follows.
+In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your Truebit container.  One can deploy all of the samples onto the blockchain as follows.
 ```
 cd wasm-ports/samples
 sh deploy.sh
@@ -211,11 +214,12 @@ To run a sample task, `cd` into that directory and run `node send.js` as detaile
  Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
 
 # Building your own tasks with the Truebit toolchain
-If you haven't already, from your Truebit container, run
+If you haven't already, from your Truebit container, run the following commands (in order):
 ```
+source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
-You should now be able to compile the sample tasks in C++ (chess, scrypt, pairing) and C (ffmpeg) below.
+You should now be able to compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
 ```
 cd /truebit-eth/wasm-ports/samples/chess
 sh compile.sh
@@ -226,8 +230,20 @@ sh compile.sh
 cd ../ffmpeg
 sh compile.sh
 ```
-Use the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for generating your own Task Owner task and contract. For Rust tasks, take a look @georgeroman's [walk-through](
-https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  You can use his guide to build the task `../wasm`.  When compiling with rust, first set up the environment with  `source $HOME/.cargo/env`.  Be sure to run `source /emsdk/emsdk_env.sh` followed by an optional check of `emcc -v` when switching between active versions of Emscripten.
+For Rust tasks, take a look @georgeroman's [workaround](
+https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  You can use his guide to build the `../wasm` task via the steps below.
+```
+( ipfs daemon & )
+mv /truebit-eth/wasm-ports/samples/wasm /
+git clone https://github.com/georgeroman/emscripten-module-wrapper.git
+cd /emscripten-module-wrapper && npm install
+/emsdk/emsdk activate 1.39.8
+source /emsdk/emsdk_env.sh && source $HOME/.cargo/env
+cd /wasm
+npm i
+sh compile.sh
+```
+Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 
@@ -246,4 +262,4 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 # Further development references
 
-Here is a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/README.md) for creating and deploying Truebit tasks.  Here's Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Here are a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
