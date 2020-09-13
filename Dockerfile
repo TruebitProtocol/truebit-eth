@@ -123,22 +123,22 @@ RUN ( ipfs daemon & ) \
  && cd ../ffmpeg \
  && sh compile.sh
 
-# # Compile Rust sample task
-# RUN  ( ipfs daemon & ) \
-#  && source /emsdk/emsdk_env.sh \
-#  && mv /truebit-eth/wasm-ports/samples/wasm / \
-#  && cd / \
-#  && source ~/.nvm/nvm.sh \
-#  && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
-#  && cd /emscripten-module-wrapper && npm install \
-#  && cd /emsdk \
-#  && ./emsdk activate 1.39.8 \
-#  && source $HOME/.cargo/env \
-#  && cd /wasm \
-#  && npm i \
-#  && sh compile.sh \
-#  && rm -r /emscripten-module-wrapper \
-#  && mv /wasm /truebit-eth/wasm-ports/samples
+# Compile Rust sample task
+RUN  ( ipfs daemon & ) \
+ && source ~/.nvm/nvm.sh \
+ && mv /truebit-eth/wasm-ports/samples/wasm / \
+ && cd / \
+ && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
+ && cd /emscripten-module-wrapper \
+ && npm install \
+ && /emsdk/emsdk activate 1.39.8 \
+ && source /emsdk/emsdk_env.sh \
+ && source $HOME/.cargo/env \
+ && cd /wasm \
+ && npm i \
+ && sh compile.sh \
+ && rm -r /emscripten-module-wrapper \
+ && mv /wasm /truebit-eth/wasm-ports/samples
 
 # Optional: set up Ganache, Mocha, and Browserify example
 # RUN npm install -g ganache-cli mocha@7.2.0 browserify \
@@ -147,8 +147,11 @@ RUN ( ipfs daemon & ) \
 #  && cd ../scrypt \
 #  && browserify public/app.js -o public/bundle.js
 
-# Move initialization script for IPFS and Emscripten
-RUN mv /truebit-eth/startup.sh /startup.sh
+# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples
+RUN mv /truebit-eth/startup.sh /startup.sh \
+ && cd emsdk \
+ && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
+ && ./emsdk activate binaryen-tag-1.37.36-64bit
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545

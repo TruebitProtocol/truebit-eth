@@ -25,7 +25,7 @@ This tutorial shows how to install Truebit, connect to Görli or Ethereum mainne
 
 Follow the following steps to run a containerized Truebit-OS client for Solvers, Verifiers, and Task Givers on any system.  Docker provides a replicable interface for running Truebit-OS and streamlines the installation process.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
 ```
-docker pull truja/truebit:latest
+docker pull truja/truebit-beta:latest
 ```
 
 ## Docker incantations
@@ -42,13 +42,13 @@ We first open a new container with two parts
 
 Select a directory where you plan to usually run the Docker container and store your private keys and type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  To get the full path for your current working directory in UNIX, type `pwd`.
 ```
-docker run --network host -v YYY/geth-docker-cache:/root/.ethereum --rm -it truja/truebit:latest /bin/bash
+docker run --network host -v YYY/geth-docker-cache:/root/.ethereum --rm -it truja/truebit-beta:latest /bin/bash
 ```
 Docker will then store your files in the folder you specified as `geth-docker-cache`.  The incantation `--network host -v YYY/geth-docker-cache:/root/.ethereum` avoids having to synchronize the blockchain and your accounts from genesis when you later restart the container.
 
 ### "Open terminal window"
 
-When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truja/truebit:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truja/truebit-beta:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```
 docker exec -it _yourContainerName_ /bin/bash
 ```
