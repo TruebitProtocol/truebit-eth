@@ -96,7 +96,7 @@ In your Truebit Docker container, connect your account(s) to the Görli network 
 ```
 geth --goerli --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
-Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit OS.  If we wanted to connect to mainnet instead of Görli, we would simply substitute `--mainnet` for `--goerli` in the incantation above.  Your Geth client should now begin syncing with the network and be up to date within a minute.  If you are have trouble connecting to a light client peer, try the following.
+Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit OS.  If we wanted to connect to mainnet instead of Görli, we would simply delete the term `--goerli` in the incantation above.  Your Geth client should now begin syncing with the network and be up to date within a minute.  If you are have trouble connecting to a light client peer, try the following.
 
 1. Exit `geth` (`Ctrl-C` or `exit`) and re-run the `geth` incantation above.
 
