@@ -1,13 +1,18 @@
 {
-    "minDeposit": "10",
-    "codeType": "WASM",
-    "storageType": "IPFS",
-    "codeFile": "/data/reverse_alphabet.wasm",
-    "inputFile": "/data/alphabet.txt",
+    "codeFile": {
+      "path": "/data/reverse_alphabet.wasm",
+      "fileType": "IPFS"
+    },
+    "dataFiles": {
+      "/data/alphabet.txt": "CONTRACT",
+      "/data/reverse_alphabet.txt": "BYTES"
+    },
+    "outputs": {
+      "reverse_alphabet.txt": "BYTES"
+    },
     "solverReward": "2",
     "verifierTax": "6",
-    "maxDifficulty": "1",
-    "files": ["/data/alphabet.txt", "/data/reverse_alphabet.txt"],
+    "minDeposit": "10",
     "stackSize":"14",
     "memorySize":"20",
     "globalsSize":"8",
