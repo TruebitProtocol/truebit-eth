@@ -1,12 +1,14 @@
 {
-    "storageType": "IPFS",
-    "codeFile": "/data/reverse_alphabet.wasm",
-    "dataFiles": [
-      "/data/alphabet.txt",
-      "/data/reverse_alphabet.txt"
-    ],
+    "codeFile": {
+      "path": "/data/reverse_alphabet.wasm",
+      "fileType": "IPFS"
+    },
+    "dataFiles": {
+      "/data/alphabet.txt": "CONTRACT",
+      "/data/reverse_alphabet.txt": "BYTES"
+    },
     "outputs": {
-      "reverse_alphabet.txt": "IPFS"
+      "reverse_alphabet.txt": "BYTES"
     },
     "solverReward": "2",
     "verifierTax": "6",

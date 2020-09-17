@@ -1,15 +1,18 @@
 {
-    "minDeposit": "10",
-    "codeType": "WAST",
-    "storageType": "BLOCKCHAIN",
-    "codeFile": "/data/factorial.wast",
-    "solverReward": "2",
-    "verifierTax": "6",
-    "maxDifficulty": "1",
-    "stackSize":"14",
-    "memorySize":"16",
-    "globalsSize":"8",
-    "tableSize":"8",
-    "callSize":"10",
-    "blockLimit":"1"
+  "codeFile": {
+    "path": "/data/factorial.wast",
+    "fileType": "BYTES"
+  },
+  "dataFiles": "",
+  "outputs": "",
+  "minDeposit": "10",
+  "solverReward": "2",
+  "verifierTax": "6",
+  "maxDifficulty": "1",
+  "stackSize":"14",
+  "memorySize":"16",
+  "globalsSize":"8",
+  "tableSize":"8",
+  "callSize":"10",
+  "blockLimit":"1"
 }
