@@ -106,7 +106,7 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 To view a list of connected addresses inside the `geth console`, type `personal.listWallets` at the Geth command line.
 
-# Solve, and verify tasks
+# Solve and verify tasks
 
 We are now ready to run Truebit Solver and Verifier nodes.  Use an ["open terminal window"](Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!
 ```
@@ -131,7 +131,21 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 $ [09-08 00:20:00] info: Truebit OS 1.0.0 has been initialized on goerli network at block 3365229.
 ```
 
-For a self-guided tour or additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.
+For a self-guided tour or additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
+```
+help [command...]         Provides help for a given command.
+exit                      Exits application.
+accounts                  List available network accounts.
+balance [options]         Show the balance of an account.
+bonus                     Display current per task bonus payout.
+ipfsnode [options] <cmd>  Manage IPFS nodes.
+license [options] <cmd>   Obtain a Solver license.
+ps                        List active Solvers and Verifiers along with their tasks and games.
+start [options] <cmd>     Start a Solver or Verifier.
+stop <num>                Stop a Solver or Verifier.  Find process <num> with 'ps'.
+token [options] <cmd>     Swap ETH for TRU.  Deposit or withdraw from incentive layer.
+version                   Display Truebit OS version.
+```
 
 ## Staking tokens
 
@@ -238,7 +252,7 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
  cd /wasm-ports/samples/scrypt
  node send.js <text>
  ```
- Computes scrypt.  The string is extended to 80 bytes. See the source code [here]( https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
+ Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
  ### Bilinear pairing
  ```
@@ -246,14 +260,14 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
  node send.js <text>
  ```
  For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
- See the source code [here](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/pairing/pairing.cpp).
+ See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/pairing/pairing.cpp).
 
  ### Chess
  ```
  cd /wasm-ports/samples/chess
  node send.js <text>
  ```
- This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/chess/chess.cpp).
+ This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/chess/chess.cpp).
  The source code doesn't implement all the rules chess rules, and is not much tested.
 
  ### Validate WASM file
@@ -261,7 +275,7 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
  cd /wasm-ports/samples/wasm
  node send.js <wasm file>
  ```
- Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/wasm/src/main.rs).
+ Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/wasm/src/main.rs).
 
  ### Size of video packets in a file:
  ```
@@ -315,9 +329,9 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 `call-stack-size`: how deep the merkle tree for the call stack have
 
- See this [file](https://github.com/TrueBitFoundation/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
+ See this [file](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
 # Further development references
 
-Here are a [tutorial](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Here are a [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
