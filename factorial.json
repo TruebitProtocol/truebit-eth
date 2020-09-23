@@ -1,7 +1,7 @@
 {
   "codeFile": {
     "path": "/data/factorial.wast",
-    "fileType": "BYTES"
+    "fileType": "CONTRACT"
   },
   "dataFiles": "",
   "outputs": "",

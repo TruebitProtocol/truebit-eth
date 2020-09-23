@@ -6,7 +6,7 @@
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit?style=flat-square)](https://hub.docker.com/repository/docker/TrueBitFoundation/truebit-eth)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](#More-sample-tasks).  You can install Truebit using Docker or build it from source for Linux or MacOS.  One can install the system locally or run over a public Ethereum blockchain.
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](#More-sample-tasks).  You can install Truebit using Docker or build it from source for Linux or MacOS.  One can install the system locally or run over a public Ethereum blockchain.
 
 Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki), start a new one, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -34,7 +34,7 @@ Building the image above will take some minutes, but thereafter running the cont
 
 ### "Start container"
 
-We first open a new container with two parts
+We first open a new container with two parts:
 
 1. **Truebit-OS**. Solvers and Verifiers can solve and verify tasks via command-line interface.
 
@@ -63,7 +63,7 @@ Here `f7b994c94911` is the name of the container's ID.To exit a container, type 
 ### "Connect to the network"
 
 One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, start IPFS in the background and configure the compiler with the following pair of commands (in this order).
-```
+```bash
 source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
@@ -77,7 +77,7 @@ If you don't already have a local Görli account in your Docker container, creat
 ```
 geth --goerli account new
 ```
-Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `geth-docker-cache` folder.  For example, your password file might have the name `supersecret.txt` might look something like this:
+Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `geth-docker-cache` folder.  For example, your password file might have the name `supersecret.txt` and might look something like this:
 ```
 truebit
 task
@@ -106,7 +106,7 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 To view a list of connected addresses inside the `geth console`, type `personal.listWallets` at the Geth command line.
 
-# Issue, solve, and verify sample tasks
+# Solve, and verify tasks
 
 We are now ready to run Truebit Solver and Verifier nodes.  Use an ["open terminal window"](Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!
 ```
@@ -136,27 +136,27 @@ For a self-guided tour or additional options not provided in this tutorial, type
 ## Staking tokens
 
 In order to start a Solver or Verifier, one must first stake TRU into the incentive layer.  Let's purchase 100 TRU tokens for account 0.
-```
+```sh
 token purchase -v 1000 -a 0
 ```
 Now we can stake some of our TRU.
-```
+```sh
 token deposit -v 500 -a 0
 ```
 We can repeat this process for account 1, if desired.  We are ready to start a Verifier, but if we wish to run a Solver, there is one additional step.  We must purchase a Solver license.
-```
+```sh
 license purchase -a 0
 ```
 
 ## Running Solvers and Verifiers
 
 We can now start our Solver and Verifier as follows.
-```
+```sh
 start solve -a 0
 start verify -a 1
 ```
 If the Solver and Verifier do not immediately find a task on the network, try issuing a sample task yourself.
-```
+```sh
 task -f factorial.json submit -a 0
 ```
 The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your task here:
@@ -164,58 +164,115 @@ The Task Submitter address always has first right-of-refusal to solve its own ta
 https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E
 ```
 
-## "Real" sample tasks
+# Getting data into and out of Truebit
 
-In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your Truebit container.  One can deploy all of the samples onto the blockchain as follows.
+Truebit can read and write data to three file types.
+
+0. **BYTES.**  These are standard Ethereum bytes stored in Truebit's filesystem smart contract.  Note that Truebit does *not* read data from arbitrary smart contracts.
+
+1. **CONTRACT.**  This method uses a smart contract whose program code consists of the task data itself.  This is not a typical contract deployment as the contract may not function.
+
+2. **IPFS.** Truebit can read and write to IPFS, a peer-to-peer, content-addressed storage system.
+
+Ethereum has a limit of 5 million gas per contract deploy (~ 24 kilobytes) and roughly the same limit for other transactions.  This means that larger files should always sit on IPFS.
+
+## Writing task outputs via Truebit OS
+
+Let's inspect a sample task meta file called `reverse.json` which can be found in the `/truebit-eth` directory:
+```json
+{
+    "codeFile": {
+      "path": "/data/reverse_alphabet.wasm",
+      "fileType": "IPFS"
+    },
+    "dataFiles": {
+      "/data/alphabet.txt": "CONTRACT",
+      "/data/reverse_alphabet.txt": "BYTES"
+    },
+    "outputs": {
+      "reverse_alphabet.txt": "BYTES"
+    },
+    "solverReward": "2",
+    "verifierTax": "6",
+    "minDeposit": "10",
+    "stackSize":"14",
+    "memorySize":"20",
+    "globalsSize":"8",
+    "tableSize":"8",
+    "callSize":"10",
+    "blockLimit":"1"
+}
+```
+You can experiment with its filesystem configuration by adjusting parameters below.
+
+1. `codeFile`.  This keyword specifies the compiled code that the Task Giver wishes to execute.  Truebit OS automatically detects code type based on the code file extension (.wasm or .wast), however the Task Giver must specify a file type for the code (BYTES, CONTRACT, or IPFS) telling Solvers and Verifiers where to find it.  Each task has exactly one `codeFile`.
+
+2. `dataFiles`.  All input and output files for the task program must be listed under this keyword, and each must have a file type (BYTES, CONTRACT, or IPFS).
+
+3. `outputs`.  The value(s) here are the subset of the data files which are produced and uploaded by the Solver.  In this example both the empty data file `/data/reverse_alphabet.txt` and the corresponding output file `reverse_alphabet.txt` have the same file type (BYTES), however in general they need not match.
+
+4. `solverReward`, `verifierTax`, and `minDeposit` pertain to task economics.  Note that the task owner fee is automatically 0 since the Task Submitter is always the Task Owner when deploying from Truebit OS.
+
+5. `stackSize`, `memorySize`, `globalsSize`, `tableSize`, and `callSize`.  These are virtual machine parameters.  You may need to tweak `memorySize` when you create your own task.
+
+6. `blockLimit`.  This is the length of time (in blocks) for which Solvers and Verifiers will attempt to run the task before reporting a timeout.
+
+To run this example, enter the following commands in Truebit OS.
+```sh
+start solve
+task -f reverse.json submit
+```
+
+
+## Sample tasks via smart contracts
+
+In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your Truebit container.  One can deploy each of the samples onto the blockchain as follows.
 ```
 cd wasm-ports/samples
 sh deploy.sh
 ```
-To run a sample task, `cd` into that directory and run `node send.js` as detailed below.  You may wish to edit `../deploy.js` or `send.js` by replacing `accounts[0]` with the index for your Geth account.  
+To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your Geth account.  
 
 ### Scrypt
  ```
  cd /wasm-ports/samples/scrypt
  node send.js <text>
  ```
- Computes scrypt, the string is extended to 80 bytes. See source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/scrypthash.cpp
- Originally by @chriseth
+ Computes scrypt.  The string is extended to 80 bytes. See the source code [here]( https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
- ### Bilinear pairing (enter a string with more than 32 characters)
+ ### Bilinear pairing
  ```
  cd /wasm-ports/samples/pairing
  node send.js <text>
  ```
- Uses libff to compute bilinear pairing for bn128 curve. Reads two 32 byte data pieces `a` and `b`, they are used like private keys to get `a*O` and `b*O`. Then bilinear pairing is computed. The result has several components, one of them is posted. (To be clear, the code just shows that libff can be used to implement bilinear pairings with Truebit)
- See source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/pairing/pairing.cpp
+ For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
+ See the source code [here](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/pairing/pairing.cpp).
 
  ### Chess
  ```
  cd /wasm-ports/samples/chess
  node send.js <text>
  ```
- Checks a game of chess. For example the players could use a state channel to play a match. If there is a disagreement, then the game can be posted to Truebit. This will always work for state channels, because both parties have the data available.
- Source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/chess/chess.cpp
- Doesn't implement all the rules, and not much tested.
+ This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/chess/chess.cpp).
+ The source code doesn't implement all the rules chess rules, and is not much tested.
 
  ### Validate WASM file
  ```
  cd /wasm-ports/samples/wasm
  node send.js <wasm file>
  ```
- Uses parity-wasm to read and write a WASM file.
- Source at https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/wasm/src/main.rs
+ Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/wasm-ports/blob/v2/samples/wasm/src/main.rs).
 
  ### Size of video packets in a file:
  ```
  cd /wasm-ports/samples/ffmpeg
  node send.js input.ts
  ```
- Source at https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c
+ See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
 
 # Building your own tasks with the Truebit toolchain
 If you haven't already, from your Truebit container, run the following commands (in order):
-```
+```bash
 source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
@@ -232,7 +289,7 @@ sh compile.sh
 ```
 For Rust tasks, take a look @georgeroman's [workaround](
 https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  You can use his guide to build the `../wasm` task via the steps below.
-```
+```console
 ( ipfs daemon & )
 mv /truebit-eth/wasm-ports/samples/wasm /
 cd /
@@ -244,7 +301,7 @@ cd /wasm
 npm i
 sh compile.sh
 ```
-Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.
+Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 
