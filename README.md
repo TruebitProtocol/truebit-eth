@@ -284,6 +284,8 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
  ```
  See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
 
+ You may wish to experiment with this part of the tutorial on your native command line rather than running it inside the Docker container.  To set up natively, clone or copy the truebit-eth repo, `cd` into its top-level directory, and then run `npm i`. An [npm](https://nodejs.org/en/download/) installation is a prerequisite for running the samples.
+
 # Building your own tasks with the Truebit toolchain
 If you haven't already, from your Truebit container, run the following commands (in order):
 ```bash
