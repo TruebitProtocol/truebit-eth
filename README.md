@@ -15,16 +15,25 @@ Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki)
 * [Writing a Truebit Task in Rust](https://medium.com/truebit/writing-a-truebit-task-in-rust-6d96f2ee0a4b)
 * [JIT for Truebit](https://medium.com/truebit/jit-for-truebit-e5299afc72d8)
 
-If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.  
+If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.
+
+# Table of contents
+1. [Quickstart guide: computational playground](Quickstart-guide:-computational-playground)
+2. [Solve and verify tasks](Solve-and-verify-tasks)
+3. [Getting data into and out of Truebit](Getting-data-into-and-out-of-Truebit)
+4. [Building your own tasks with the Truebit toolchain](Building-your-own-tasks-with-the-Truebit-toolchain)
+5. [Native installation](Native-installation)
+6. [Contract API reference](Contract-API-reference)
+7. [Further development references](Further-development-references)
 
 # Quickstart guide: computational playground
 
 This tutorial shows how to install Truebit, connect to Görli or Ethereum mainnet networks, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and solve tasks with your friends!
 
-## Install or update Truebit-OS
+## Install or update Truebit OS
 
-Follow the following steps to run a containerized Truebit-OS client for Solvers, Verifiers, and Task Givers on any system.  Docker provides a replicable interface for running Truebit-OS and streamlines the installation process.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
-```
+Follow the following steps to run a containerized Truebit OS client for Solvers, Verifiers, and Task Givers on any system.  Docker provides a replicable interface for running Truebit OS and streamlines the installation process.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
+```bash
 docker pull truja/truebit-beta:latest
 ```
 
@@ -36,12 +45,12 @@ Building the image above will take some minutes, but thereafter running the cont
 
 We first open a new container with two parts:
 
-1. **Truebit-OS**. Solvers and Verifiers can solve and verify tasks via command-line interface.
+1. **Truebit OS**. Solvers and Verifiers can solve and verify tasks via command-line interface.
 
 2. **Truebit Toolchain** Task Givers can build and issue tasks.
 
 Select a directory where you plan to usually run the Docker container and store your private keys and type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  To get the full path for your current working directory in UNIX, type `pwd`.
-```
+```bash
 docker run --network host -v YYY/geth-docker-cache:/root/.ethereum --rm -it truja/truebit-beta:latest /bin/bash
 ```
 Docker will then store your files in the folder you specified as `geth-docker-cache`.  The incantation `--network host -v YYY/geth-docker-cache:/root/.ethereum` avoids having to synchronize the blockchain and your accounts from genesis when you later restart the container.
@@ -49,13 +58,13 @@ Docker will then store your files in the folder you specified as `geth-docker-ca
 ### "Open terminal window"
 
 When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truja/truebit-beta:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
-```
+```bash
 docker exec -it _yourContainerName_ /bin/bash
 ```
 _yourContainerName_ might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
 You can share files between your native machine and the Docker container by copying them into your `geth-docker-cache` folder.  Alternatively, you may copy into (or out of) the container with commands of the following form.
-```
+```bash
 docker cp truebit-eth/supersecret.txt f7b994c94911:/truebit-eth/supersecret.txt
 ```
 Here `f7b994c94911` is the name of the container's ID.To exit a container, type `exit`.  Your container process will remain alive in other windows.
@@ -74,7 +83,7 @@ Geth demands more nuanced setup compared to IPFS.  Below we'll connect to Truebi
 #### Initializing accounts
 
 If you don't already have a local Görli account in your Docker container, create a new one inside the Docker container with the following command.
-```
+```bash
 geth --goerli account new
 ```
 Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `geth-docker-cache` folder.  For example, your password file might have the name `supersecret.txt` and might look something like this:
@@ -93,7 +102,7 @@ https://faucet.goerli.mudit.blog/
 #### Connecting with Geth
 
 In your Truebit Docker container, connect your account(s) to the Görli network using an incantation of the following form:
-```
+```bash
 geth --goerli --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
 Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit OS.  If we wanted to connect to mainnet instead of Görli, we would simply delete the term `--goerli` in the incantation above.  Your Geth client should now begin syncing with the network and be up to date within a minute.  If you are have trouble connecting to a light client peer, try the following.
@@ -109,7 +118,7 @@ To view a list of connected addresses inside the `geth console`, type `personal.
 # Solve and verify tasks
 
 We are now ready to run Truebit Solver and Verifier nodes.  Use an ["open terminal window"](Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!
-```
+```bash
 cd truebit-eth
 ./truebit-os
 ```
@@ -173,10 +182,19 @@ If the Solver and Verifier do not immediately find a task on the network, try is
 ```sh
 task -f factorial.json submit -a 0
 ```
-The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your task here:
+The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here:
+
+<https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E>
+
+## Logging sessions
+
+The file `truebit-eth/combined.log.json` contains a log spanning across all Truebit OS terminals but does not include everything displayed on the terminal screens.  It is safe to delete this file.
+
+If one wishes to record a more detailed log for a Truebit OS container, one can use a command of the following form to obtain the full terminal output:
+```bash
+./truebit-os 2>&1 | tee mylog.txt
 ```
-https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E
-```
+
 
 # Getting data into and out of Truebit
 
@@ -209,12 +227,12 @@ Let's inspect a sample task meta file called `reverse.json` which can be found i
     "solverReward": "2",
     "verifierTax": "6",
     "minDeposit": "10",
-    "stackSize":"14",
-    "memorySize":"20",
-    "globalsSize":"8",
-    "tableSize":"8",
-    "callSize":"10",
-    "blockLimit":"1"
+    "stackSize": "14",
+    "memorySize": "20",
+    "globalsSize": "8",
+    "tableSize": "8",
+    "callSize": "10",
+    "blockLimit": "1"
 }
 ```
 You can experiment with its filesystem configuration by adjusting parameters below.
@@ -237,25 +255,24 @@ start solve
 task -f reverse.json submit
 ```
 
-
 ## Sample tasks via smart contracts
 
 In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your Truebit container.  One can deploy each of the samples onto the blockchain as follows.
-```
+```bash
 cd wasm-ports/samples
 sh deploy.sh
 ```
 To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your Geth account.  
 
 ### Scrypt
- ```
+ ```bash
  cd /wasm-ports/samples/scrypt
  node send.js <text>
  ```
  Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
  ### Bilinear pairing
- ```
+ ```bash
  cd /wasm-ports/samples/pairing
  node send.js <text>
  ```
@@ -263,7 +280,7 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/pairing/pairing.cpp).
 
  ### Chess
- ```
+ ```bash
  cd /wasm-ports/samples/chess
  node send.js <text>
  ```
@@ -271,20 +288,18 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
  The source code doesn't implement all the rules chess rules, and is not much tested.
 
  ### Validate WASM file
- ```
+ ```bash
  cd /wasm-ports/samples/wasm
  node send.js <wasm file>
  ```
  Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/wasm/src/main.rs).
 
  ### Size of video packets in a file:
- ```
+ ```bash
  cd /wasm-ports/samples/ffmpeg
  node send.js input.ts
  ```
  See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
-
- You may wish to experiment with this part of the tutorial on your native command line rather than running it inside the Docker container.  To set up natively, clone or copy the truebit-eth repo, `cd` into its top-level directory, and then run `npm i`. An [npm](https://nodejs.org/en/download/) installation is a prerequisite for running the samples.
 
 # Building your own tasks with the Truebit toolchain
 If you haven't already, from your Truebit container, run the following commands (in order):
@@ -293,7 +308,7 @@ source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
 You should now be able to compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
-```
+```bash
 cd /truebit-eth/wasm-ports/samples/chess
 sh compile.sh
 cd ../scrypt
@@ -305,9 +320,9 @@ sh compile.sh
 ```
 For Rust tasks, take a look @georgeroman's [workaround](
 https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  You can use his guide to build the `../wasm` task via the steps below.
-```console
+```bash
 ( ipfs daemon & )
-mv /truebit-eth/wasm-ports/samples/wasm /
+mv /truebit-eth/wasm-ports/samples/wasm
 cd /
 git clone https://github.com/georgeroman/emscripten-module-wrapper.git
 cd /emscripten-module-wrapper && npm install
@@ -334,6 +349,197 @@ When building and executing your own tasks, you may have to adjust some of the i
  See this [file](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
+# Native installation
+
+You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  To set up natively, clone truebit-eth repo:
+```bash
+git clone https://github.com/TrueBitFoundation/truebit-eth
+```
+## Running samples at native command prompt
+A [Node.js](https://nodejs.org/en/download/) installation is a prerequisite for running the smart contract samples.  If you are running MacOS, the software can be obtained via [Brew](https://formulae.brew.sh/formula/node).  Now install Truebit's node packages from the repository's top-level directory:
+```bash
+cd truebit-eth
+npm i
+```
+Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complicated](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile).
+
+## Running Truebit OS natively
+
+If you wish to run Truebit OS on the native machine, you will need to build the Truebit WASM interpreter.  You must run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.
+
+### Ubuntu interpreter install
+In Linux, your interpreter install might look something like the following:
+```bash
+apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev
+opam init -y
+eval `opam config env`
+opam update
+opam install cryptokit ctypes ctypes-foreign yojson -y
+cd /ocaml-offchain/interpreter
+make
+```
+Check the [Dockerfile](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile) for missing `'apt-get` dependencies.  
+
+### macOS interpreter install
+
+In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the truebit-eth directory:
+```bash
+brew install libffi ocaml ocamlbuild opam pkg-config
+opam init -y
+eval $(opam config env)
+opam install cryptokit ctypes ctypes-foreign yojson -y
+cd wasm-client/ocaml-offchain/interpreter
+make
+```
+### Windows interpreter install
+
+Follow the patterns above for Linux and macOS.
+
+
+# Contract API reference
+
+The following references highlights some key functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
+
+## fileSystem
+
+### creating files
+
+```solidity
+function addIPFSCodeFile(string memory name, uint size, string memory hash, bytes32 root, bytes32 codeRoot, uint nonce) public returns (bytes32)
+```
+
+```solidity
+function addIPFSFile(string calldata name, uint size, string calldata hash, bytes32 root, uint nonce) external returns (bytes32);
+```
+
+```solidity
+function addContractFile(string memory name, uint size, address _address, bytes32 root, uint nonce) public returns (bytes32)
+```
+
+```solidity
+function createFileFromBytes(string calldata name, uint nonce, bytes calldata arr) external returns (bytes32);
+```
+
+```solidity
+function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
+```
+
+```solidity
+function setCodeRoot(uint nonce, bytes32 codeRoot) public returns (uint)
+```
+
+### managing bundles
+
+```solidity
+function addToBundle(bytes32 id, bytes32 file_id) external returns (bytes32);
+```
+
+```solidity
+function finalizeBundle(bytes32 bundleID, bytes32 codeFileID) external;
+```
+
+```solidity
+function makeBundle(uint num) external view returns (bytes32);
+```
+
+
+### reading data
+
+```solidity
+function forwardData(bytes32 id, address a) external;
+```
+
+
+<!-- ```solidity
+function getSize(bytes32 id) external view returns (uint);
+``` -->
+```solidity
+function getFileType(bytes32 id) public view returns (uint)
+```
+
+```solidity
+function getByteData(bytes32 id) public view returns (bytes memory)
+```
+
+```solidity
+function getByteSize(bytes32 id) public view returns (uint)
+```
+
+```solidity
+function getCode(bytes32 id) public view returns (bytes memory)
+```
+
+```solidity
+function getCodeAtAddress(address a) internal view returns (bytes memory)
+```
+
+```solidity
+function getData(bytes32 id) external view returns (bytes32[] memory);
+```
+
+```solidity
+function getHash(bytes32 id) public view returns (string memory)
+```
+IPFS
+
+
+<!-- getcoderoot -->
+
+<!-- ```solidity
+function getInitHash(bytes32 bid) external view returns (bytes32);
+``` -->
+<!-- getLeaf, checkProof -->
+
+<!-- ```solidity
+function getRoot(bytes32 id) external view returns (bytes32);
+``` -->
+
+<!-- ```solidity
+function hashName(string calldata name) external returns (bytes32);
+``` -->
+<!-- getByteSize, -->
+<!-- setByteSize, getName, getNameHash -->
+
+## incentiveLayer
+
+### creating tasks
+
+```solidity
+function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external returns (bytes32);
+```
+
+```solidity
+function requireFile(bytes32 id, bytes32 hash, uint8 fileType) external;
+```
+
+```solidity
+function commitRequiredFiles(bytes32 id) external payable;
+```
+
+```solidity
+function submitEmitTask(bytes32 initTaskHash, CodeType codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32)
+```
+
+### token payments
+
+```solidity
+function getLiquidityFeeTaskGiver() external view returns (uint);
+```
+
+```solidity
+function makeDeposit(uint _deposit) external returns (uint);
+```
+
+```solidity
+function getBondedDeposit(bytes32 taskID, address account) public view returns (uint);
+```
+
+## miscellaneous
+
+```solidity
+function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
+```
+
 # Further development references
 
-Here are a [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Here are a [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's legancy [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
