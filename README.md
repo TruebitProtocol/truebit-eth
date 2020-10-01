@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./images/truebit-logo.png"/>
+  <img src="./images/truebit-logo.png" width="650">
 </p>
 
 <!-- [![Build Status](https://travis-ci.org/TrueBitFoundation/Truebit2020.svg?branch=master)](https://travis-ci.org/TrueBitFoundation/Truebit2020) -->
@@ -18,13 +18,13 @@ Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki)
 If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.
 
 # Table of contents
-1. [Quickstart guide: computational playground](Quickstart-guide:-computational-playground)
-2. [Solve and verify tasks](Solve-and-verify-tasks)
-3. [Getting data into and out of Truebit](Getting-data-into-and-out-of-Truebit)
-4. [Building your own tasks with the Truebit toolchain](Building-your-own-tasks-with-the-Truebit-toolchain)
-5. [Native installation](Native-installation)
-6. [Contract API reference](Contract-API-reference)
-7. [Further development references](Further-development-references)
+1. [Quickstart guide: computational playground](#Quickstart-guide:-computational-playground)
+2. [Solve and verify tasks](#Solve-and-verify-tasks)
+3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
+4. [Building your own tasks with the Truebit toolchain](#Building-your-own-tasks-with-the-Truebit-toolchain)
+5. [Native installation](#Native-installation)
+6. [Contract API reference](#Contract-API-reference)
+7. [Further development references](#Further-development-references)
 
 # Quickstart guide: computational playground
 
@@ -243,7 +243,7 @@ You can experiment with its filesystem configuration by adjusting parameters bel
 
 3. `outputs`.  The value(s) here are the subset of the data files which are produced and uploaded by the Solver.  In this example both the empty data file `/data/reverse_alphabet.txt` and the corresponding output file `reverse_alphabet.txt` have the same file type (BYTES), however in general they need not match.
 
-4. `solverReward`, `verifierTax`, and `minDeposit` pertain to task economics.  Note that the task owner fee is automatically 0 since the Task Submitter is always the Task Owner when deploying from Truebit OS.
+4. `solverReward`, `verifierTax`, and `minDeposit` pertain to task economics.  The `solverReward` is the reward paid to the Solver for a correct computation, the `verifierTax` is the fee split among Verifiers, and `minDeposit` is the minimum unbonded deposit that Solvers and Verifiers must have staked in the Incentive Layer in order participate.  Note that the task owner fee is automatically 0 since the Task Submitter is always the Task Owner when deploying from Truebit OS.
 
 5. `stackSize`, `memorySize`, `globalsSize`, `tableSize`, and `callSize`.  These are virtual machine parameters.  You may need to tweak `memorySize` when you create your own task.
 
@@ -265,41 +265,41 @@ sh deploy.sh
 To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your Geth account.  
 
 ### Scrypt
- ```bash
- cd /wasm-ports/samples/scrypt
- node send.js <text>
- ```
- Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/scrypt/scrypthash.cpp).  Originally by @chriseth.
+```bash
+cd /wasm-ports/samples/scrypt
+node send.js <text>
+```
+Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
- ### Bilinear pairing
- ```bash
- cd /wasm-ports/samples/pairing
- node send.js <text>
- ```
- For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
- See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/pairing/pairing.cpp).
+### Bilinear pairing
+```bash
+cd /wasm-ports/samples/pairing
+node send.js <text>
+```
+For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
+See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/pairing/pairing.cpp).
 
- ### Chess
- ```bash
- cd /wasm-ports/samples/chess
- node send.js <text>
- ```
- This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/chess/chess.cpp).
- The source code doesn't implement all the rules chess rules, and is not much tested.
+### Chess
+```bash
+cd /wasm-ports/samples/chess
+node send.js <text>
+```
+This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/chess/chess.cpp).
+The source code doesn't implement all the rules chess rules, and is not much tested.
 
- ### Validate WASM file
- ```bash
- cd /wasm-ports/samples/wasm
- node send.js <wasm file>
- ```
- Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/wasm/src/main.rs).
+### Validate WASM file
+```bash
+cd /wasm-ports/samples/wasm
+node send.js <wasm file>
+```
+Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/wasm/src/main.rs).
 
- ### Size of video packets in a file:
- ```bash
- cd /wasm-ports/samples/ffmpeg
- node send.js input.ts
- ```
- See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
+### Size of video packets in a file:
+```bash
+cd /wasm-ports/samples/ffmpeg
+node send.js input.ts
+```
+See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
 
 # Building your own tasks with the Truebit toolchain
 If you haven't already, from your Truebit container, run the following commands (in order):
@@ -332,19 +332,19 @@ cd /wasm
 npm i
 sh compile.sh
 ```
-Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.
+Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 
-`memory-size`: how deep the merkle tree for memory should be
+`memory-size`: how deep the Merkle tree for memory should be
 
-`table-size`: how deep the merkle tree for the call table should be
+`table-size`: how deep the Merkle tree for the call table should be
 
-`globals-size`: how deep the merkle tree for the globals table have
+`globals-size`: how deep the Merkle tree for the globals table have
 
-`stack-size`: how deep the merkle tree for the stack have
+`stack-size`: how deep the Merkle tree for the stack have
 
-`call-stack-size`: how deep the merkle tree for the call stack have
+`call-stack-size`: how deep the Merkle tree for the call stack have
 
  See this [file](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
@@ -398,148 +398,291 @@ Follow the patterns above for Linux and macOS.
 
 # Contract API reference
 
-The following references highlights some key functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
+The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
 
 ## fileSystem
 
+Recall that Truebit reads and writes three [file types](#Getting-data-into-and-out-of-Truebit), 0: BYTES, 1: CONTRACT, and 2: IPFS.  Truebit stores BYTES file contents as bytes32 arrays.
+
+### Auxiliary functions
+
+We present three functions to assist in preparing data for use in Truebit.
+
+#### getRoot
+When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
+
+```js
+const fs = require("fs")
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(host))
+const merkleRoot = require('truebit-util').merkleRoot.web3
+
+async function getRoot(filePath) {
+  let fileBuf = fs.readFileSync(filePath)
+  return merkleRoot(web3, fileBuf)
+}
+
+let root = getRoot("./example.txt")
+```
+
+#### getSize
+Truebit also needs to know the size of the file being created.  This can be done as follows:
+```js
+const fs = require("fs")
+
+async function getSize(filePath) {
+  let fileBuf = await readFile(filePath)
+  return fileBuf.byteLength
+}
+
+let size = getSize("./example.txt")
+```
+
+#### uploadOnchain
+CONTRACT files themselves should be created with [web3.js](https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html#new-contract) using the template function `uploadOnchain` below.  This function returns the contract address for the new CONTRACT file prefixed with a string needed for retrieval.
+```js
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider(host))
+const accounts = await web3.eth.getAccounts()
+
+async function uploadOnchain(filePath) {
+  let fileBuf = await readFile(filePath)
+
+  let sz = fileBuf.length.toString(16)
+  if (sz.length == 1) sz = "000" + sz
+  else if (sz.length == 2) sz = "00" + sz
+  else if (sz.length == 3) sz = "0" + sz
+
+  let init_code = "61" + sz + "600061" + sz + "600e600039f3"
+  let contract = new web3.eth.Contract([])
+  let hex_data = Buffer.from(fileBuf).toString("hex")
+
+  contract = await contract.deploy({ data: '0x' + init_code + hex_data }).send({ from: accounts[0], gas: 200000, gasPrice: web3.gp })
+  return contract.options.address
+}
+
+let contractAddress = uploadOnchain("./example.txt")
+```
+
+#### obtaining codeRoot and hash
+
+The `codeRoot` and `hash` for a task program file can be obtained inside Truebit OS using the `task initial` command, read off as `vm.code` and `hash` respectively:
+```sh
+$ task -f scrypt.json initial
+[09-30 20:34:04] info: TASK GIVER: Created local directory: /Users/truebit-eth/tmp.giver_rldinm89n300
+Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -input -memory-size 20 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -wasm task.wasm
+{
+  vm: {
+    code: '0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d',
+    stack: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
+    memory: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
+    input_size: '0xf9dc3e7fe016e050eff260334f18a5d4fe391d82092319f5964f2e2eb7c1c3a5',
+    input_name: '0xf9dc3e7fe016e050eff260334f18a5d4fe391d82092319f5964f2e2eb7c1c3a5',
+    input_data: '0xe026cc5a4aed3c22a58cbd3d2ac754c9352c5436f638042dca99034e83636516',
+    call_stack: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
+    globals: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
+    calltable: '0x7bf9aa8e0ce11d87877e8b7a304e8e7105531771dbff77d1b00366ecb1549624',
+    calltypes: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
+    pc: 0,
+    stack_ptr: 0,
+    call_ptr: 0,
+    memsize: 0
+  },
+  hash: '0xa4a3ba42f33ca42ce51ecd61c7955239806d416e6d93ceb8416f686f2649f3ad'
+}
+```
+In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d` and its `hash` is `0xa4a3ba42f33ca42ce51ecd61c7955239806d416e6d93ceb8416f686f2649f3ad`.
+
 ### creating files
 
-```solidity
-function addIPFSCodeFile(string memory name, uint size, string memory hash, bytes32 root, bytes32 codeRoot, uint nonce) public returns (bytes32)
-```
+We enumerate methods for creating Truebit files.
 
 ```solidity
-function addIPFSFile(string calldata name, uint size, string calldata hash, bytes32 root, uint nonce) external returns (bytes32);
+function createFileFromBytes(string memory name, uint nonce, bytes calldata arr) external returns (bytes32);
 ```
+`createFileFromBytes` returns a fileID for a BYTES file called `name` with content `data`.  Here `nonce` is a random, non-negative integer that uniquely identifies the newly created file.
+
+*EXAMPLE:*
+
+`bytes32 fileID = createFileFromBytes("input.data", 12345, "hello world!");`
+
 
 ```solidity
-function addContractFile(string memory name, uint size, address _address, bytes32 root, uint nonce) public returns (bytes32)
+function createFileWithContents(string memory name, uint nonce, bytes32[] calldata arr, uint fileSize) external returns (bytes32);
 ```
+`createFileWithContents` returns a fileID for a BYTES file called `name` whose contents consist of a concatenation of array `arr`.  `nonce` can be any random, non-negative integer that uniquely identifies the new file, and `fileSize` should be the total number of bytes in the concatenation of elements in `arr`, excluding any "empty" bytes in the final element.
+
+*EXAMPLE:*
+
+`bytes32[] memory empty = new bytes32[](0);`
+
+`filesystem.createFileWithContents("output.data", 67890, empty, 0);`
 
 ```solidity
-function createFileFromBytes(string calldata name, uint nonce, bytes calldata arr) external returns (bytes32);
+function addContractFile(string memory name, uint size, address contractAddress, bytes32 root, uint nonce) external returns (bytes32);
 ```
+`addContractFile` returns a fileID for a CONTRACT file called `name` using existing data stored at address `contractAddress`.  The data stored at `contractAddress` must conform to the [`uploadOnchain`](####uploadOnchain) format above, and `root` must conform to [`getRoot`](####getRoot).  The `size` parameter can be obtained using [`getSize`](####getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
-function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
+function addIPFSFile(string memory name, uint size, string calldata IPFShash, bytes32 root, uint nonce) external returns (bytes32);
 ```
+`addIPFSFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](####getRoot), and the `size` parameter can be obtained using [`getSize`](####getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
-function setCodeRoot(uint nonce, bytes32 codeRoot) public returns (uint)
+function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint nonce) external returns (bytes32);
 ```
+`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](obtaining-codeRoot-and-hash).
+
+```solidity
+function setCodeRoot(uint nonce, bytes32 codeRoot) external;
+```
+`setCodeRoot` sets the `codeRoot` (see template [above](obtaining-codeRoot-and-hash)) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
 
 ### managing bundles
 
-```solidity
-function addToBundle(bytes32 id, bytes32 file_id) external returns (bytes32);
-```
-
-```solidity
-function finalizeBundle(bytes32 bundleID, bytes32 codeFileID) external;
-```
+Bundles are the glue that hold together the files for tasks.  Each task has a single bundle which in turn references a program file, input files, and output files.
 
 ```solidity
 function makeBundle(uint num) external view returns (bytes32);
 ```
-
-
-### reading data
+`makeBundle` returns a bundleID corresponding to the nonce `num`.  Distinct addresses will yield distinct bundleID's for the same `num`.
 
 ```solidity
-function forwardData(bytes32 id, address a) external;
+function addToBundle(bytes32 bid, bytes32 fid) external;
 ```
-
-
-<!-- ```solidity
-function getSize(bytes32 id) external view returns (uint);
-``` -->
-```solidity
-function getFileType(bytes32 id) public view returns (uint)
-```
+`addtoBundle` adds a fileID `fid` to bundleID `bid`.
 
 ```solidity
-function getByteData(bytes32 id) public view returns (bytes memory)
+function finalizeBundle(bytes32 bid, bytes32 codeFileID) external;
 ```
+`finalizeBundle` adds the initial machine state to the bundleID `bid`.  The caller must designate a program file `codeFileID`.  This method must be called after all fileID's have
+
+
+### reading file data
+
+The following methods retrieve data from fileID's
 
 ```solidity
-function getByteSize(bytes32 id) public view returns (uint)
+function getByteData(bytes32 id) external view returns (bytes memory);
 ```
-
-```solidity
-function getCode(bytes32 id) public view returns (bytes memory)
-```
-
-```solidity
-function getCodeAtAddress(address a) internal view returns (bytes memory)
-```
+`getByteData` returns the data for fileID `id` as a string of bytes.  `id` must have file type BYTES.
 
 ```solidity
 function getData(bytes32 id) external view returns (bytes32[] memory);
 ```
+`getData` returns the data for fileID `id` as an bytes32 array, as it is stored in the EVM.  `id` must have file type BYTES.
+
 
 ```solidity
-function getHash(bytes32 id) public view returns (string memory)
+function getCode(bytes32 id) external view returns (bytes memory);
 ```
-IPFS
+`getCode` returns the data for filedID `id` as a string of bytes.  `id` must have file type CONTRACT.
 
+```solidity
+function getContractAddress(bytes32 id) external view returns (address);
+```
+`getContractAddress` returns the contract address associated with fileID `id`.  `id` must have file type CONTRACT.
 
-<!-- getcoderoot -->
+```solidity
+function getHash(bytes32 id) external view returns (string memory);
+```
+`getHash` returns the IPFS content address associated with fileID `id`.  `id` must have file type IPFS.
 
-<!-- ```solidity
-function getInitHash(bytes32 bid) external view returns (bytes32);
-``` -->
-<!-- getLeaf, checkProof -->
+```solidity
+function forwardData(bytes32 id, address a) external;
+```
+`forwardData` sends the data associated with fileID `id` to the contract at address `a`.  `id` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 id, bytes32[] calldata dta) external;` that determines how to process the incoming data.
 
-<!-- ```solidity
-function getRoot(bytes32 id) external view returns (bytes32);
-``` -->
+### reading metadata
 
-<!-- ```solidity
-function hashName(string calldata name) external returns (bytes32);
-``` -->
-<!-- getByteSize, -->
-<!-- setByteSize, getName, getNameHash -->
+The following methods retrieve metadata from files of any type.
+
+```solidity
+function getByteSize(bytes32 id) external view returns (uint);
+```
+`getByteSize` returns the size of the data associated with fileID `id`, in bytes, as indicated by the file's creator.
+
+```solidity
+function getFileType(bytes32 id) external view returns (uint);
+```
+`getFileType` returns an integer corresponding to the file type for fileID `id`.  0 = BYTES, 1 = CONTRACT, and 2 = IPFS.
+
+```solidity
+function getName(bytes32 id) external view returns (string memory)
+```
+`getName` returns the file name associated with fileID `id`.
+
+```solidity
+function getRoot(bytes32 id) external view returns (bytes32)
+```
+`getRoot` returns the Merkle root associated with fileID `id`.
 
 ## incentiveLayer
 
+We describe some methods used to issue tasks, manage payments, and enhance security.
+
 ### creating tasks
 
-```solidity
-function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external returns (bytes32);
-```
+Task Givers must specify task parameters, including filesystem, economic, virtual machine (VM), and output files when requesting a computation from the network.  The network uniquely identifies each task by its taskID.
 
 ```solidity
-function requireFile(bytes32 id, bytes32 hash, uint8 fileType) external;
+function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint blockLimit) external returns (bytes32);
 ```
+`submitTask` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
+* `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](####obtaining-codeRoot-and-hash).
+* `codeType`: The program file is either WAST or WASM as determined by the file extension.
+* `bundleID`: The bundleID containing all fileID's for the task.
+* `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
+* `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: see sample task [above](##Writing-task-outputs-via-Truebit-OS).
+* `stack`, `mem`, `globals`, `table`, `call`: these are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain)
+
+```solidity
+function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
+```
+`requireFile` tells the Solver that data for fileID `fid` must uploaded at part of task `tid` as a file of type `fileType`.  This method must be called once for each output file after calling `submitTask` but before calling `commitRequiredFiles`.
 
 ```solidity
 function commitRequiredFiles(bytes32 id) external payable;
 ```
+`commitRequiredFiles` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the liquidity fee.
 
 ```solidity
-function submitEmitTask(bytes32 initTaskHash, CodeType codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32)
+function submitEmitTask(bytes32 initTaskHash, CodeType codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
 ```
+`submitEmitTask` combines `submitTask` with `commitRequiredFiles` into a single transaction.  It can be used when there are no output files.  This method may overload the EVM when called from a smart contract.
 
 ### token payments
 
 ```solidity
+function makeDeposit(uint amount) external returns (uint);
+```
+`makeDeposit` deposits `amount` TRU (in wei) from the sender's account into the Incentive Layer.
+
+```solidity
+function withdrawDeposit(uint amount) external returns (uint)
+```
+`withdrawDeposit` withdraws `amount` TRU (in wei) from the Incentive Layer into the sender's account.
+
+```solidity
+function getBondedDeposit(bytes32 id, address account) external view returns (uint);
+```
+`getBondedDeposit` returns the amount of TRU (in wei) that `account` has bonded to task `id`.
+
+```solidity
 function getLiquidityFeeTaskGiver() external view returns (uint);
 ```
+`getLiquidityFeeTaskGiver` returns the ETH liquidity fee (in wei) for Task Submitters.
 
-```solidity
-function makeDeposit(uint _deposit) external returns (uint);
-```
+### security
 
-```solidity
-function getBondedDeposit(bytes32 taskID, address account) public view returns (uint);
-```
-
-## miscellaneous
-
+If a Solver reveals his private random bits before the designated time, anyone can call the method below to claim his deposit.  See the [Truebit whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf), Section A.1..
 ```solidity
 function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
 ```
+`prematureReveal` slashes the Solver's deposit and transfers half of it to the caller of this method if both:
+* a Solver has been selected but not yet instructed to reveal his solution in the clear, and
+* the Solver's private `originalRandombits` match those of the `taskID`.
 
 # Further development references
 
-Here are a [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's legancy [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Here are is a helpful legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.

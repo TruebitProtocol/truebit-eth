@@ -77,8 +77,3 @@ docker run --name tb-offchain -ti hswick/ocaml-offchain:latest`
 cd webasm/interpreter
 ./wasm -t -m ../test/core/fac.wast
 ```
-
-# License
-The license for the test folder is the original Apache 2.0 license.<br/>
-We have re-licensed the interpreter folder to MIT.<br/>
-The license for the rest of the repo is MIT.<br/>
