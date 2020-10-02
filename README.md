@@ -24,7 +24,6 @@ If you would like to speak with developers working on this project, come say hel
 4. [Building your own tasks with the Truebit toolchain](#Building-your-own-tasks-with-the-Truebit-toolchain)
 5. [Native installation](#Native-installation)
 6. [Contract API reference](#Contract-API-reference)
-7. [Further development references](#Further-development-references)
 
 # Quickstart guide: computational playground
 
@@ -347,6 +346,10 @@ When building and executing your own tasks, you may have to adjust some of the i
 `call-stack-size`: how deep the Merkle tree for the call stack have
 
  See this [file](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
+
+ ## Further development references
+
+ Here are is a helpful, legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 
 # Native installation
@@ -682,7 +685,3 @@ function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
 `prematureReveal` slashes the Solver's deposit and transfers half of it to the caller of this method if both:
 * a Solver has been selected but not yet instructed to reveal his solution in the clear, and
 * the Solver's private `originalRandombits` match those of the `taskID`.
-
-# Further development references
-
-Here are is a helpful, legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
