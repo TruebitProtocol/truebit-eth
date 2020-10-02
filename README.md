@@ -331,25 +331,22 @@ cd /wasm
 npm i
 sh compile.sh
 ```
-Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.
+Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 
-`memory-size`: how deep the Merkle tree for memory should be
+`memory-size`: depth of the Merkle tree for memory
 
-`table-size`: how deep the Merkle tree for the call table should be
+`table-size`: depth of Merkle tree for the call table
 
-`globals-size`: how deep the Merkle tree for the globals table have
+`globals-size`: depth of Merkle tree for the globals table
 
-`stack-size`: how deep the Merkle tree for the stack have
+`stack-size`: depth of Merkle tree for the stack
 
-`call-stack-size`: how deep the Merkle tree for the call stack have
+`call-stack-size`: depth of Merkle tree for the call stack
 
  See this [file](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
- ## Further development references
-
- Here are is a helpful, legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 
 # Native installation
