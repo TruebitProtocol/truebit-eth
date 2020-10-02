@@ -6,7 +6,7 @@
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit?style=flat-square)](https://hub.docker.com/repository/docker/TrueBitFoundation/truebit-eth)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](#More-sample-tasks).  You can install Truebit using Docker or build it from source for Linux or MacOS.  One can install the system locally or run over a public Ethereum blockchain.
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](#More-sample-tasks).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
 Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki), start a new one, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -18,7 +18,7 @@ Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki)
 If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.
 
 # Table of contents
-1. [Quickstart guide: computational playground](#Quickstart-guide:-computational-playground)
+1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
 2. [Solve and verify tasks](#Solve-and-verify-tasks)
 3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
 4. [Building your own tasks with the Truebit toolchain](#Building-your-own-tasks-with-the-Truebit-toolchain)
@@ -294,7 +294,7 @@ node send.js <wasm file>
 ```
 Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/wasm/src/main.rs).
 
-### Size of video packets in a file:
+### Size of video packets in a file
 ```bash
 cd /wasm-ports/samples/ffmpeg
 node send.js input.ts
@@ -378,7 +378,7 @@ opam install cryptokit ctypes ctypes-foreign yojson -y
 cd /ocaml-offchain/interpreter
 make
 ```
-Check the [Dockerfile](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile) for missing `'apt-get` dependencies.  
+Check the [Dockerfile](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile) for missing `apt-get` dependencies.  
 
 ### macOS interpreter install
 
@@ -531,12 +531,12 @@ function addIPFSFile(string memory name, uint size, string calldata IPFShash, by
 ```solidity
 function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint nonce) external returns (bytes32);
 ```
-`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](obtaining-codeRoot-and-hash).
+`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](####obtaining-codeRoot-and-hash).
 
 ```solidity
 function setCodeRoot(uint nonce, bytes32 codeRoot) external;
 ```
-`setCodeRoot` sets the `codeRoot` (see template [above](obtaining-codeRoot-and-hash)) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
+`setCodeRoot` sets the `codeRoot` (see template [above](####obtaining-codeRoot-and-hash)) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
 
 ### managing bundles
 
@@ -633,8 +633,8 @@ function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint
 * `codeType`: The program file is either WAST or WASM as determined by the file extension.
 * `bundleID`: The bundleID containing all fileID's for the task.
 * `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
-* `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: see sample task [above](##Writing-task-outputs-via-Truebit-OS).
-* `stack`, `mem`, `globals`, `table`, `call`: these are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain)
+* `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](##Writing-task-outputs-via-Truebit-OS).
+* `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain)
 
 ```solidity
 function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
@@ -656,12 +656,12 @@ function submitEmitTask(bytes32 initTaskHash, CodeType codeType, bytes32 bundleI
 ```solidity
 function makeDeposit(uint amount) external returns (uint);
 ```
-`makeDeposit` deposits `amount` TRU (in wei) from the sender's account into the Incentive Layer.
+`makeDeposit` deposits `amount` TRU (in wei) from the sender's account into the Incentive Layer and returns the sender's resulting deposit balance.
 
 ```solidity
 function withdrawDeposit(uint amount) external returns (uint)
 ```
-`withdrawDeposit` withdraws `amount` TRU (in wei) from the Incentive Layer into the sender's account.
+`withdrawDeposit` withdraws `amount` TRU (in wei) from the Incentive Layer into the sender's account and returns the sender's resulting deposit balance.
 
 ```solidity
 function getBondedDeposit(bytes32 id, address account) external view returns (uint);
@@ -675,7 +675,7 @@ function getLiquidityFeeTaskGiver() external view returns (uint);
 
 ### security
 
-If a Solver reveals his private random bits before the designated time, anyone can call the method below to claim his deposit.  See the [Truebit whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf), Section A.1..
+If a Solver reveals his private random bits before the designated time, anyone can call the method below to claim his deposit.  See the [Truebit whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf), Section A.1.
 ```solidity
 function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
 ```
@@ -685,4 +685,4 @@ function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
 
 # Further development references
 
-Here are is a helpful legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Here are is a helpful, legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.

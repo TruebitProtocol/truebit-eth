@@ -11,7 +11,7 @@ interface Filesystem {
    function forwardData(bytes32 id, address a) external;
 
    function makeBundle(uint num) external view returns (bytes32);
-   function addToBundle(bytes32 id, bytes32 file_id) external returns (bytes32);
+   function addToBundle(bytes32 id, bytes32 file_id) external;
    function finalizeBundle(bytes32 bundleID, bytes32 codeFileID) external;
    function getInitHash(bytes32 bid) external view returns (bytes32);
    function addIPFSFile(string calldata name, uint size, string calldata hash, bytes32 root, uint nonce) external returns (bytes32);
