@@ -608,12 +608,12 @@ function getFileType(bytes32 id) external view returns (uint);
 `getFileType` returns an integer corresponding to the file type for fileID `id`.  0 = BYTES, 1 = CONTRACT, and 2 = IPFS.
 
 ```solidity
-function getName(bytes32 id) external view returns (string memory)
+function getName(bytes32 id) external view returns (string memory);
 ```
 `getName` returns the file name associated with fileID `id`.
 
 ```solidity
-function getRoot(bytes32 id) external view returns (bytes32)
+function getRoot(bytes32 id) external view returns (bytes32);
 ```
 `getRoot` returns the Merkle root associated with fileID `id`.
 
@@ -634,7 +634,7 @@ function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint
 * `bundleID`: The bundleID containing all fileID's for the task.
 * `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
 * `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](##Writing-task-outputs-via-Truebit-OS).
-* `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain)
+* `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain).
 
 ```solidity
 function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
@@ -659,7 +659,7 @@ function makeDeposit(uint amount) external returns (uint);
 `makeDeposit` deposits `amount` TRU (in wei) from the sender's account into the Incentive Layer and returns the sender's resulting deposit balance.
 
 ```solidity
-function withdrawDeposit(uint amount) external returns (uint)
+function withdrawDeposit(uint amount) external returns (uint);
 ```
 `withdrawDeposit` withdraws `amount` TRU (in wei) from the Incentive Layer into the sender's account and returns the sender's resulting deposit balance.
 
