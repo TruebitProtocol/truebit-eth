@@ -576,17 +576,17 @@ function getData(bytes32 id) external view returns (bytes32[] memory);
 ```solidity
 function getCode(bytes32 id) external view returns (bytes memory);
 ```
-`getCode` returns the data for filedID `id` as a string of bytes.  `id` must have file type CONTRACT.
+`getCode` returns the data for fileID `id` as a string of bytes.  `id` must have file type CONTRACT.
 
 ```solidity
 function getContractAddress(bytes32 id) external view returns (address);
 ```
-`getContractAddress` returns the contract address associated with fileID `id`.  `id` must have file type CONTRACT.
+`getContractAddress` returns the contract address associated with fileID `id` where `id` must have file type CONTRACT.
 
 ```solidity
 function getHash(bytes32 id) external view returns (string memory);
 ```
-`getHash` returns the IPFS content address associated with fileID `id`.  `id` must have file type IPFS.
+`getHash` returns the IPFS content address associated with fileID `id` where `id` must have file type IPFS.
 
 ```solidity
 function forwardData(bytes32 id, address a) external;
