@@ -682,3 +682,18 @@ function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
 `prematureReveal` slashes the Solver's deposit and transfers half of it to the caller of this method if both:
 * a Solver has been selected but not yet instructed to reveal his solution in the clear, and
 * the Solver's private `originalRandombits` match those of the `taskID`.
+
+## callbacks
+
+Upon completion of a task, Truebit will call back to the Task Owner's (contract) address with a result.  In order to make use of the result, the Task Owner's contract must include one or more of the following methods.
+
+```solidity
+function solved(bytes32 taskID, bytes32[] calldata files) external;
+```
+Truebit calls the Task Owner's `solved` method when `taskID` successfully terminates with a solution.  The input `files` will be an array consisting of fileID's for the Solver's uploaded solutions.
+
+
+```solidity
+function cancelled(bytes32 taskID) external;
+```
+Truebit calls the Task Owner's `cancelled` method when `taskID` terminates without a solution due to a Solver timeout, loss of verification game, blockLimit error, or prematureReveal.
