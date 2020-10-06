@@ -6,7 +6,7 @@
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit?style=flat-square)](https://hub.docker.com/repository/docker/TrueBitFoundation/truebit-eth)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](#More-sample-tasks).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
 Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki), start a new one, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -56,7 +56,7 @@ Docker will then store your files in the folder you specified as `geth-docker-ca
 
 ### "Open terminal window"
 
-When you [connect to the network](Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truja/truebit-beta:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When you [connect to the network](###Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truja/truebit-beta:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```bash
 docker exec -it _yourContainerName_ /bin/bash
 ```
@@ -116,7 +116,7 @@ To view a list of connected addresses inside the `geth console`, type `personal.
 
 # Solve and verify tasks
 
-We are now ready to run Truebit Solver and Verifier nodes.  Use an ["open terminal window"](Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!
+We are now ready to run Truebit Solver and Verifier nodes.  Use an ["open terminal window"](###Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!
 ```bash
 cd truebit-eth
 ./truebit-os
@@ -268,7 +268,7 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
 cd /wasm-ports/samples/scrypt
 node send.js <text>
 ```
-Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/scrypt/scrypthash.cpp).  Originally by @chriseth.
+Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
 ### Bilinear pairing
 ```bash
@@ -276,14 +276,14 @@ cd /wasm-ports/samples/pairing
 node send.js <text>
 ```
 For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
-See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/pairing/pairing.cpp).
+See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/pairing/pairing.cpp).
 
 ### Chess
 ```bash
 cd /wasm-ports/samples/chess
 node send.js <text>
 ```
-This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/chess/chess.cpp).
+This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/chess/chess.cpp).
 The source code doesn't implement all the rules chess rules, and is not much tested.
 
 ### Validate WASM file
@@ -291,7 +291,7 @@ The source code doesn't implement all the rules chess rules, and is not much tes
 cd /wasm-ports/samples/wasm
 node send.js <wasm file>
 ```
-Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/wasm/src/main.rs).
+Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/wasm/src/main.rs).
 
 ### Size of video packets in a file
 ```bash
@@ -345,7 +345,7 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 `call-stack-size`: depth of Merkle tree for the call stack
 
- See this [file](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
+ See this [file](https://github.com/TrueBitFoundation/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
 
@@ -365,7 +365,7 @@ Truebit toolchain task compilations should be done inside the Docker container a
 
 ## Running Truebit OS natively
 
-If you wish to run Truebit OS on the native machine, you will need to build the Truebit WASM interpreter.  You must run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.
+If you wish to run Truebit OS on the native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from the Docker container using `docker cp`.  For Linux, copy `truebit-os`, for MacOS, copy `other-builds/truebit-macos`, and for Windows, copy `other-builds/truebit-win.exe`.  Paste your chosen executable into the top level of the `truebit-eth` directory.
 
 ### Ubuntu interpreter install
 In Linux, your interpreter install might look something like the following:
