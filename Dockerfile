@@ -81,10 +81,15 @@ COPY docker_key .
 RUN eval $(ssh-agent) \
  && ssh-add docker_key \
  && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
- && git clone git@github.com:TruebitFoundation/truebit-eth
+ && git clone git@github.com:TruebitFoundation/truebit-eth \
+ && rm docker_key
 ADD https://truebit.io/downloads/truebit-linux /truebit-eth/truebit-os
 ADD https://truebit.io/downloads/truebit-macos /truebit-eth/other-builds/
 ADD https://truebit.io/downloads/truebit-win.exe /truebit-eth/other-builds/
+RUN cd /truebit-eth \
+ && chmod 755 truebit-os \
+ && chmod 755 other-builds/truebit-macos \
+ && chmod 644 other-builds/truebit-win.exe
 
 # Install ocaml-offchain interpreter
 RUN apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev \
