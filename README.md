@@ -144,20 +144,21 @@ For a self-guided tour or additional options not provided in this tutorial, type
 help [command...]         Provides help for a given command.
 exit                      Exits application.
 accounts                  List available network accounts.
-balance [options]         Show the balance of an account.
+balance [options]         Show account balances.
 bonus                     Display current per task bonus payout.
 ipfsnode [options] <cmd>  Manage IPFS nodes.
 license [options] <cmd>   Obtain a Solver license.
-ps                        List active Solvers and Verifiers along with their tasks and games.
+ps                        List active Solvers and Verifiers along with their games and tasks.
 start [options] <cmd>     Start a Solver or Verifier.
-stop <num>                Stop a Solver or Verifier.  Find process <num> with 'ps'.
-token [options] <cmd>     Swap ETH for TRU.  Deposit or withdraw from incentive layer.
+stop <num>                Stop a Solver or Verifier. Get process numbers with 'ps'.
+task [options] <cmd>      Submit a task or run a utility.
+token [options] <cmd>     Swap ETH for TRU.  Deposit to or withdraw from incentive layer.
 version                   Display Truebit OS version.
 ```
 
 ## Staking tokens
 
-In order to start a Solver or Verifier, one must first stake TRU into the incentive layer.  Let's purchase 100 TRU tokens for account 0.
+In order to start a Solver or Verifier, one must first stake TRU into the incentive layer.  Let's purchase 1000 TRU tokens for account 0.  Check the price using `token price`, then
 ```sh
 token purchase -v 1000 -a 0
 ```
@@ -165,9 +166,13 @@ Now we can stake some of our TRU.
 ```sh
 token deposit -v 500 -a 0
 ```
-We can repeat this process for account 1, if desired.  We are ready to start a Verifier, but if we wish to run a Solver, there is one additional step.  We must purchase a Solver license.
+We can repeat this process for account 1, if desired.  We are ready to start a Verifier, but if we wish to run a Solver, there is one additional step.  We must purchase a Solver license with ETH.  Check the price using `license price`, then
 ```sh
 license purchase -a 0
+```
+Finally, we can confirm account balances for ETH and TRU and the amount of TRU we have staked in Truebit's incentive layer.
+```sh
+balance -a 0
 ```
 
 ## Running Solvers and Verifiers
@@ -184,6 +189,17 @@ task -f factorial.json submit -a 0
 The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here:
 
 <https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E>
+
+## Faster IPFS uploads and downloads
+
+IPFS's peer-to-peer network can route data more efficiently when it knows where to find Truebit Task Submitters, Solvers, and Verifiers.  It is recommended to register your IPFS node with Truebit via the following command which makes it easier for others to find your node while you are issuing or solving tasks:
+```
+ipfsnode register
+```
+You can then try to discover other nodes on Truebit's network by running:
+```
+ipfsnode connect
+```
 
 ## Logging sessions
 
@@ -555,17 +571,17 @@ function addToBundle(bytes32 bid, bytes32 fid) external;
 ```solidity
 function finalizeBundle(bytes32 bid, bytes32 codeFileID) external;
 ```
-`finalizeBundle` adds the initial machine state to the bundleID `bid`.  The caller must designate a program file `codeFileID`.  This method must be called after all fileID's have
+`finalizeBundle` adds the initial machine state to the bundleID `bid`.  The caller must designate a program file `codeFileID`.  This method must be called after all fileID's have been added to `bid`.
 
 
 ### reading file data
 
 The following methods retrieve data from fileID's
 
-```solidity
+<!-- ```solidity
 function getByteData(bytes32 id) external view returns (bytes memory);
 ```
-`getByteData` returns the data for fileID `id` as a string of bytes.  `id` must have file type BYTES.
+`getByteData` returns the data for fileID `id` as a string of bytes.  `id` must have file type BYTES. -->
 
 ```solidity
 function getData(bytes32 id) external view returns (bytes32[] memory);
