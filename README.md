@@ -50,9 +50,9 @@ We first open a new container with two parts:
 
 Select a directory where you plan to usually run the Docker container and store your private keys and type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  To get the full path for your current working directory in UNIX, type `pwd`.
 ```bash
-docker run --network host -v YYY/geth-docker-cache:/root/.ethereum --rm -it truja/truebit-beta:latest /bin/bash
+docker run --network host -v YYY/truebit-docker-home:/root --rm -it truja/truebit-beta:latest /bin/bash
 ```
-Docker will then store your files in the folder you specified as `geth-docker-cache`.  The incantation `--network host -v YYY/geth-docker-cache:/root/.ethereum` avoids having to synchronize the blockchain and your accounts from genesis when you later restart the container.
+Docker will then store your Docker container's home directory files in the folder you specified as `truebit-docker-home`.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 
@@ -62,7 +62,7 @@ docker exec -it _yourContainerName_ /bin/bash
 ```
 _yourContainerName_ might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
-You can share files between your native machine and the Docker container by copying them into your `geth-docker-cache` folder.  Alternatively, you may copy into (or out of) the container with commands of the following form.
+You can share files between your native machine and the Docker container by copying them into your `truebit-docker-home` folder.  Alternatively, you may copy into (or out of) the container with commands of the following form.
 ```bash
 docker cp truebit-eth/supersecret.txt f7b994c94911:/truebit-eth/supersecret.txt
 ```
@@ -485,16 +485,16 @@ let contractAddress = uploadOnchain("./example.txt")
 The `codeRoot` and `hash` for a task program file can be obtained inside Truebit OS using the `task initial` command, read off as `vm.code` and `hash` respectively:
 ```sh
 $ task -f scrypt.json initial
-[09-30 20:34:04] info: TASK GIVER: Created local directory: /Users/truebit-eth/tmp.giver_rldinm89n300
-Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -input -memory-size 20 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -wasm task.wasm
+[10-12 12:25:20] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_fukrnufpj9g0
+Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -input -memory-size 20 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file input.data -wasm task.wasm
 {
   vm: {
     code: '0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d',
     stack: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
     memory: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
-    input_size: '0xf9dc3e7fe016e050eff260334f18a5d4fe391d82092319f5964f2e2eb7c1c3a5',
-    input_name: '0xf9dc3e7fe016e050eff260334f18a5d4fe391d82092319f5964f2e2eb7c1c3a5',
-    input_data: '0xe026cc5a4aed3c22a58cbd3d2ac754c9352c5436f638042dca99034e83636516',
+    input_size: '0x7c047c6a0b7e3f293efb6009eca04353577f88f7a88afd4b6d53c11d724c442f',
+    input_name: '0xd3e24e0303f49b3dd3032fa2523603b320c2b2b0eea3693532c6401d315e8a32',
+    input_data: '0xb9646f6bfbecf908827f695715a6774c4eb652c305f9da846d12157eaed6b428',
     call_stack: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
     globals: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
     calltable: '0x7bf9aa8e0ce11d87877e8b7a304e8e7105531771dbff77d1b00366ecb1549624',
@@ -504,7 +504,7 @@ Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -i
     call_ptr: 0,
     memsize: 0
   },
-  hash: '0xa4a3ba42f33ca42ce51ecd61c7955239806d416e6d93ceb8416f686f2649f3ad'
+  hash: '0x156eca8fb73785621b1bf3a28354ee8e022275a1ac1ffedcc049b029480de4c5'
 }
 ```
 In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d` and its `hash` is `0xa4a3ba42f33ca42ce51ecd61c7955239806d416e6d93ceb8416f686f2649f3ad`.
@@ -655,7 +655,7 @@ function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint
 ```solidity
 function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
 ```
-`requireFile` tells the Solver that data for fileID `fid` must uploaded at part of task `tid` as a file of type `fileType`.  This method must be called once for each output file after calling `submitTask` but before calling `commitRequiredFiles`.
+`requireFile` tells the Solver to upload fileID `fid` with file type `fileType` upon completion of task `tid`. `tid`'s filesystem bundle must include the file `fid`.  This method must be called once for each output file after calling `submitTask` but before calling `commitRequiredFiles`.
 
 ```solidity
 function commitRequiredFiles(bytes32 id) external payable;
