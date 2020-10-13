@@ -77,13 +77,6 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
  && rm -rf go-ipfs*
 
 # Download Truebit
-# COPY docker_key .
-# RUN chmod 400 docker_key \
-#  && eval $(ssh-agent) \
-#  && ssh-add docker_key \
-#  && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
-#  && git clone git@github.com:TruebitFoundation/truebit-eth \
-#  && rm docker_key
 COPY . truebit-eth/
 ADD https://truebit.io/downloads/truebit-linux /truebit-eth/truebit-os
 ADD https://truebit.io/downloads/truebit-macos /truebit-eth/other-builds/
@@ -166,7 +159,7 @@ RUN mv /truebit-eth/startup.sh /startup.sh \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
- && rm /root/.ipfs
+ && rm -r /root/.ipfs
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545
