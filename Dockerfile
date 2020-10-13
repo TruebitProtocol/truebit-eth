@@ -78,7 +78,8 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
 
 # Download Truebit
 COPY docker_key .
-RUN eval $(ssh-agent) \
+RUN chmod 400 docker_key \
+ && eval $(ssh-agent) \
  && ssh-add docker_key \
  && ssh-keyscan -H github.com >> /etc/ssh/ssh_known_hosts \
  && git clone git@github.com:TruebitFoundation/truebit-eth \

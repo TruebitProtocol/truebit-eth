@@ -506,7 +506,7 @@ Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -i
   hash: '0x156eca8fb73785621b1bf3a28354ee8e022275a1ac1ffedcc049b029480de4c5'
 }
 ```
-In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d` and its `hash` is `0xa4a3ba42f33ca42ce51ecd61c7955239806d416e6d93ceb8416f686f2649f3ad`.
+In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d` and its `hash` is `0x156eca8fb73785621b1bf3a28354ee8e022275a1ac1ffedcc049b029480de4c5`.
 
 ### creating files
 
