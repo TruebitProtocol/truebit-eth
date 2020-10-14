@@ -3,7 +3,7 @@ MAINTAINER Jason Teutsch
 
 SHELL ["/bin/bash", "-c"]
 
-# Get basic packages
+# Get packages list and tmux
 RUN apt-get update && apt-get install -y tmux
 
 # Set up Emscripten
@@ -78,13 +78,17 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
 
 # Download Truebit
 COPY . truebit-eth/
-ADD https://truebit.io/downloads/truebit-linux /truebit-eth/truebit-os
-ADD https://truebit.io/downloads/truebit-macos /truebit-eth/other-builds/
-ADD https://truebit.io/downloads/truebit-win.exe /truebit-eth/other-builds/
 RUN cd /truebit-eth \
+ && wget -O truebit-os https://truebit.io/downloads/truebit-linux \
+ && mkdir other-builds \
+ && cd other-builds \
+ && wget https://truebit.io/downloads/truebit-macos \
+ && wget https://truebit.io/downloads/truebit-win.exe \
+ && cd .. \
  && chmod 755 truebit-os \
  && chmod 755 other-builds/truebit-macos \
- && chmod 644 other-builds/truebit-win.exe
+ && chmod 644 other-builds/truebit-win.exe \
+ && rm -r .git
 
 # Install ocaml-offchain interpreter
 RUN apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev \
@@ -154,12 +158,13 @@ RUN  ( ipfs daemon & ) \
 #  && cd ../scrypt \
 #  && browserify public/app.js -o public/bundle.js
 
-# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples
+# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples, and reset IPFS ID
 RUN mv /truebit-eth/startup.sh /startup.sh \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
  && rm -r /root/.ipfs
+ # && rm -rf /var/lib/apt/lists/*
 
 # Set up IPFS and blockchain ports
 EXPOSE 4001 30303 80 8545
