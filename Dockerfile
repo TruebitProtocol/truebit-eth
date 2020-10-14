@@ -72,7 +72,6 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
  && tar xf go-ipfs_v0.4.19_linux-amd64.tar.gz \
  && cd go-ipfs \
  && ./install.sh \
- && ipfs init \
  && cd / \
  && rm -rf go-ipfs*
 
@@ -121,7 +120,8 @@ RUN apt-get install -y autoconf bison flex libtool lzip \
  && sh libpbc.sh
 
 # Compile  C/C++ sample tasks
-RUN ( ipfs daemon & ) \
+RUN ipfs init \
+ && ( ipfs daemon & ) \
  && source /emsdk/emsdk_env.sh \
  && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
  && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
@@ -132,10 +132,12 @@ RUN ( ipfs daemon & ) \
  && cd ../pairing \
  && sh compile.sh \
  && cd ../ffmpeg \
- && sh compile.sh
+ && sh compile.sh \
+ && rm -r /root/.ipfs
 
 # Compile Rust sample task
-RUN  ( ipfs daemon & ) \
+RUN ipfs init \
+ && ( ipfs daemon & ) \
  && source ~/.nvm/nvm.sh \
  && mv /truebit-eth/wasm-ports/samples/wasm / \
  && cd / \
@@ -149,7 +151,8 @@ RUN  ( ipfs daemon & ) \
  && npm i \
  && sh compile.sh \
  && rm -r /emscripten-module-wrapper \
- && mv /wasm /truebit-eth/wasm-ports/samples
+ && mv /wasm /truebit-eth/wasm-ports/samples \
+ && rm -r /root/.ipfs
 
 # Optional: set up Ganache, Mocha, and Browserify example
 # RUN npm install -g ganache-cli mocha@7.2.0 browserify \
@@ -158,12 +161,11 @@ RUN  ( ipfs daemon & ) \
 #  && cd ../scrypt \
 #  && browserify public/app.js -o public/bundle.js
 
-# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples, and reset IPFS ID
+# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples
 RUN mv /truebit-eth/startup.sh /startup.sh \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit \
- && rm -r /root/.ipfs
+ && ./emsdk activate binaryen-tag-1.37.36-64bit
  # && rm -rf /var/lib/apt/lists/*
 
 # Set up IPFS and blockchain ports

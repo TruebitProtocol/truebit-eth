@@ -45,7 +45,7 @@ We first open a new container with two parts:
 
 1. **Truebit OS**. Solvers and Verifiers can solve and verify tasks via command-line interface.
 
-2. **Truebit Toolchain** Task Givers can build and issue tasks.
+2. **Truebit Toolchain**. Task Givers can build and issue tasks.
 
 Select a directory where you plan to usually run the Docker container and store your private keys and type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  To get the full path for your current working directory in UNIX, type `pwd`.
 ```bash
