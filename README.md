@@ -26,18 +26,18 @@ If you would like to speak with developers working on this project, come say hel
 
 # Quickstart guide: computational playground
 
-This tutorial shows how to install Truebit, connect to Görli or Ethereum mainnet networks, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and solve tasks with your friends!
+This tutorial demonstrates how to install Truebit, connect to Görli or Ethereum mainnet networks, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and solve tasks with your friends!
 
 ## Install or update Truebit OS
 
-Follow the following steps to run a containerized Truebit OS client for Solvers, Verifiers, and Task Givers on any system.  Docker provides a replicable interface for running Truebit OS and streamlines the installation process.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
+Follow the following steps to run a containerized Truebit OS client for Solvers, Verifiers, and Task Givers on any Docker-supported system.  Docker provides a replicable interface for running Truebit OS and offers a streamlined installation process.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
 ```bash
 docker pull truja/truebit-beta:latest
 ```
 
 ## Docker incantations
 
-Building the image above will take some minutes, but thereafter running the container should give you a prompt instantly.  While you are waiting for the download to complete, familiarize yourself with the following three command classes with which you will access the Truebit network.
+Building the image above will take some minutes, but thereafter running the container will give an instant prompt.  While you are waiting for the image download to complete, familiarize yourself with the following three command classes with which you will access the Truebit network.
 
 ### "Start container"
 
@@ -49,9 +49,9 @@ We first open a new container with two parts:
 
 Select a directory where you plan to usually run the Docker container and store your private keys and type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  To get the full path for your current working directory in UNIX, type `pwd`.
 ```bash
-docker run --network host -v YYY/truebit-docker-home:/root --rm -it truja/truebit-beta:latest /bin/bash
+docker run --network host -v YYY/docker-geth:/root/.ethereum -v YYY/docker-ipfs:/root/.ipfs --rm -it truja/truebit-beta:latest /bin/bash
 ```
-Docker will then store your Docker container's home directory files in the folder you specified as `truebit-docker-home`.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
+Docker will then store your Geth and IPFS files configuration files in the directories`docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 
@@ -61,22 +61,22 @@ docker exec -it _yourContainerName_ /bin/bash
 ```
 _yourContainerName_ might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
-You can share files between your native machine and the Docker container by copying them into your `truebit-docker-home` folder.  Alternatively, you may copy into (or out of) the container with commands of the following form.
+You can share files between your native machine and the Docker container by copying them into your `docker-geth` or `docker-ipfs` folders.  Alternatively, you may copy into (or out of) the container with commands of the following form.
 ```bash
-docker cp truebit-eth/supersecret.txt f7b994c94911:/truebit-eth/supersecret.txt
+docker cp truebit-eth/supersecret.txt f7b994c94911:/docker-geth/supersecret.txt
 ```
 Here `f7b994c94911` is the name of the container's ID.To exit a container, type `exit`.  Your container process will remain alive in other windows.
 
 ### "Connect to the network"
 
-One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) nodes to communicate with the blockchain and collect data submitted to the network, respectively.  When you start up a new Truebit container, start IPFS in the background and configure the compiler with the following pair of commands (in this order).
+One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, start IPFS in the background and configure the compiler with the following pair of commands (in this order).
 ```bash
 source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
 You can terminate IPFS at any time by typing `ipfs shutdown`.
 
-Geth demands more nuanced setup compared to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we will see, connecting on Ethereum mainnet is quite similar.  Truebit OS automatically detects which Ethereum blockchain network you are connected to (Görli or Mainnet).
+Geth requires a more nuanced setup relative to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we shall see, connecting to Ethereum mainnet is quite similar.  Truebit OS automatically detects which blockchain network Geth is connected to (Görli testnet or Ethereum mainnet).
 
 #### Initializing accounts
 
@@ -115,7 +115,7 @@ To view a list of connected addresses inside the `geth console`, type `personal.
 
 # Solve and verify tasks
 
-We are now ready to run Truebit Solver and Verifier nodes.  Use an ["open terminal window"](###Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!
+We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](###Open-terminal-window) and ["connect to the network"](###Connect-to-the-network).  Now use the ["open terminal window"](###Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
 ```bash
 cd truebit-eth
 ./truebit-os
@@ -137,6 +137,7 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                                                    |___/
 $ [09-08 00:20:00] info: Truebit OS 1.0.0 has been initialized on goerli network at block 3365229.
 ```
+Note that you must be connected to a network (either Görli testnet or Ethereum mainnet) in order to run any command in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer.
 
 For a self-guided tour or additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
@@ -157,7 +158,7 @@ version                   Display Truebit OS version.
 
 ## Staking tokens
 
-In order to start a Solver or Verifier, one must first stake TRU into the incentive layer.  Let's purchase 1000 TRU tokens for account 0.  Check the price using `token price`, then
+In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  Check the price using `token price`, then
 ```sh
 token purchase -v 1000 -a 0
 ```
@@ -173,6 +174,7 @@ Finally, we can confirm account balances for ETH and TRU and the amount of TRU w
 ```sh
 balance -a 0
 ```
+It is recommended, but not required, to run each Solver or Verifier node in a separate terminal window from a distinct account.
 
 ## Running Solvers and Verifiers
 
@@ -202,9 +204,9 @@ ipfsnode connect
 
 ## Logging sessions
 
-The file `truebit-eth/combined.log.json` contains a log spanning across all Truebit OS terminals but does not include everything displayed on the terminal screens.  It is safe to delete this file.
+The file `/truebit-eth/combined.log.json` contains a log spanning across all Truebit OS terminals but does not include everything displayed on the terminal screens.  It is safe to delete this file.
 
-If one wishes to record a more detailed log for a Truebit OS container, one can use a command of the following form to obtain the full terminal output:
+If one wishes to record a more detailed log for a Truebit OS container, one can use a command of the following form to record the full terminal output:
 ```bash
 ./truebit-os 2>&1 | tee mylog.txt
 ```
@@ -257,7 +259,9 @@ You can experiment with its filesystem configuration by adjusting parameters bel
 
 3. `outputs`.  The value(s) here are the subset of the data files which are produced and uploaded by the Solver.  In this example both the empty data file `/data/reverse_alphabet.txt` and the corresponding output file `reverse_alphabet.txt` have the same file type (BYTES), however in general they need not match.
 
-4. `solverReward`, `verifierTax`, and `minDeposit` pertain to task economics.  The `solverReward` is the reward paid to the Solver for a correct computation, the `verifierTax` is the fee split among Verifiers, and `minDeposit` is the minimum unbonded deposit that Solvers and Verifiers must have staked in the Incentive Layer in order participate.  Note that the task owner fee is automatically 0 since the Task Submitter is always the Task Owner when deploying from Truebit OS.
+4. `solverReward`, `verifierTax`, and `minDeposit` pertain to task economics.  The `solverReward` is the reward paid to the Solver for a correct computation, the `verifierTax` is the fee split among Verifiers, and `minDeposit` is the minimum unbonded deposit that Solvers and Verifiers must have staked in the Incentive Layer in order participate.  Note that the Task Owner's fee is automatically 0 since the Task Submitter is always the Task Owner when deploying from Truebit OS.
+
+In a typical Ethereum deployment, the *Task Owner* is the Dapp smart contract that sends a task to Truebit which in turns calls back with a solution.  The *Task Submitter* is always a regular (i.e. human-controlled) blockchain address that initiates the task and pays for it.
 
 5. `stackSize`, `memorySize`, `globalsSize`, `tableSize`, and `callSize`.  These are virtual machine parameters.  You may need to tweak `memorySize` when you create your own task.
 
@@ -271,12 +275,12 @@ task -f reverse.json submit
 
 ## Sample tasks via smart contracts
 
-In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your Truebit container.  One can deploy each of the samples onto the blockchain as follows.
+In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  Typically the Task Owner smart contract fixes the task function code during deployment while the Task Submitter puts forth the function inputs at runtime.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your container.  One can deploy each of the samples onto the blockchain as follows.
 ```bash
 cd wasm-ports/samples
 sh deploy.sh
 ```
-To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your Geth account.  
+To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your desired Geth account.  
 
 ### Scrypt
 ```bash
@@ -299,7 +303,7 @@ cd /wasm-ports/samples/chess
 node send.js <text>
 ```
 This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/chess/chess.cpp).
-The source code doesn't implement all the rules chess rules, and is not much tested.
+The source code doesn't implement all the rules of chess, and is not much tested.
 
 ### Validate WASM file
 ```bash
@@ -376,7 +380,7 @@ A [Node.js](https://nodejs.org/en/download/) installation is a prerequisite for 
 cd truebit-eth
 npm i
 ```
-Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complicated](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile).
+Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TrueBitFoundation/truebit-eth/blob/master/Dockerfile).
 
 ## Running Truebit OS natively
 
@@ -421,7 +425,7 @@ Recall that Truebit reads and writes three [file types](#Getting-data-into-and-o
 
 ### Auxiliary functions
 
-We present three functions to assist in preparing data for use in Truebit.
+We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](###creating-files).
 
 #### getRoot
 When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
@@ -551,7 +555,7 @@ function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, 
 ```solidity
 function setCodeRoot(uint nonce, bytes32 codeRoot) external;
 ```
-`setCodeRoot` sets the `codeRoot` (see template [above](####obtaining-codeRoot-and-hash)) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
+`setCodeRoot` sets the [`codeRoot`](####obtaining-codeRoot-and-hash) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
 
 ### managing bundles
 
