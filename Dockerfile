@@ -161,11 +161,13 @@ RUN ipfs init \
 #  && cd ../scrypt \
 #  && browserify public/app.js -o public/bundle.js
 
-# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples
+# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples.  Clean up root directory.
 RUN mv /truebit-eth/startup.sh /startup.sh \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit
+ && ./emsdk activate binaryen-tag-1.37.36-64bit \
+ && cd / \
+ && rm -r boot home media mnt opt srv
  # && rm -rf /var/lib/apt/lists/*
 
 # Set up IPFS and blockchain ports
