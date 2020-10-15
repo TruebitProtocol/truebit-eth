@@ -47,9 +47,10 @@ We first open a new container with two parts:
 
 2. **Truebit Toolchain**. Task Givers can build and issue tasks.
 
-Select a directory where you plan to usually run the Docker container and store your private keys and type the following, substituting `YYY` for the *full path* to a directory where you wish to cache files.  To get the full path for your current working directory in UNIX, type `pwd`.
+Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
 ```bash
-docker run --network host -v YYY/docker-geth:/root/.ethereum -v YYY/docker-ipfs:/root/.ipfs --rm -it truja/truebit-beta:latest /bin/bash
+YYY='/Users/Shared'
+docker run --network host -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truja/truebit-beta:latest /bin/bash
 ```
 Docker will then store your Geth and IPFS files configuration files in the directories`docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
