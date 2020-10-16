@@ -66,7 +66,7 @@ You can share files between your native machine and the Docker container by copy
 ```bash
 docker cp truebit-eth/supersecret.txt f7b994c94911:/docker-geth/supersecret.txt
 ```
-Here `f7b994c94911` is the name of the container's ID.To exit a container, type `exit`.  Your container process will remain alive in other windows.
+Here `f7b994c94911` is the name of the container's ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which you initiated with the `--rm` flag.
 
 ### "Connect to the network"
 
@@ -203,13 +203,25 @@ You can then try to discover other nodes on Truebit's network by running:
 ipfsnode connect
 ```
 
-## Logging sessions
+## Logging sessions and command line execution
 
-The file `/truebit-eth/combined.log.json` contains a log spanning across all Truebit OS terminals but does not include everything displayed on the terminal screens.  It is safe to delete this file.
+The vanilla `./truebit-os` command generates a file `combined.log.json` containing a .json log spanning across all Truebit OS terminals but does not include everything displayed on the terminal screens.  You can inspect this log as follows:
+```bash
+cat /truebit-eth/combined.log.json | more
+```
+It is safe to delete this file.
 
-If one wishes to record a more detailed log for a Truebit OS container, one can use a command of the following form to record the full terminal output:
+If one wishes to record a more detailed log for a Truebit OS interactive session, one can use a command of the following form to record the full terminal output:
 ```bash
 ./truebit-os 2>&1 | tee mylog.txt
+```
+One can also execute Truebit OS commands directly from the native (Docker) command line using a `-c` flag.  For example, try:
+```bash
+./truebit-os -c "start solve -a 1" --batch > mylog.txt 2>&1 &
+```
+Here the `--batch` flag tells Truebit OS to run non-interactively, and `> mylog.txt 2>&1 &` tells Truebit OS to write the output to a log file called `mylog.txt` rather than the terminal.  The command above will return a process number at the command line (e.g. `[1] 412`).  You can stop the Solver process later using the `kill` command, (e.g. `kill 412`).  The following Unix shell command will return a list of active Truebit processes from all windows.
+```bash
+ps a
 ```
 
 
@@ -371,11 +383,11 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 # Native installation
 
-You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  To set up natively, clone truebit-eth repo:
+You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  Moreover, native installation may enhance network communication performance.  To set up natively, first clone the Truebit repo.
 ```bash
 git clone https://github.com/TrueBitFoundation/truebit-eth
 ```
-## Running samples at native command prompt
+## Running samples natively
 A [Node.js](https://nodejs.org/en/download/) installation is a prerequisite for running the smart contract samples.  If you are running MacOS, the software can be obtained via [Brew](https://formulae.brew.sh/formula/node).  Now install Truebit's node packages from the repository's top-level directory:
 ```bash
 cd truebit-eth
@@ -385,7 +397,19 @@ Truebit toolchain task compilations should be done inside the Docker container a
 
 ## Running Truebit OS natively
 
-If you wish to run Truebit OS on the native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from the Docker container using `docker cp`.  For Linux, copy `truebit-os`, for MacOS, copy `other-builds/truebit-macos`, and for Windows, copy `other-builds/truebit-win.exe`.  Paste your chosen executable into the top level of the `truebit-eth` directory.
+If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from the Docker container using `docker cp`.  For Linux, copy `truebit-os`, for MacOS, copy `other-builds/truebit-macos`, and for Windows, copy `other-builds/truebit-win.exe`.  Paste your chosen executable into the top level of the `truebit-eth` directory.
+
+### macOS interpreter install
+
+In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the truebit-eth directory:
+```bash
+brew install libffi ocaml ocamlbuild opam pkg-config
+opam init -y
+eval $(opam config env)
+opam install cryptokit ctypes ctypes-foreign yojson -y
+cd wasm-client/ocaml-offchain/interpreter
+make
+```
 
 ### Ubuntu interpreter install
 In Linux, your interpreter install might look something like the following:
@@ -400,17 +424,6 @@ make
 ```
 Check the [Dockerfile](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile) for missing `apt-get` dependencies.  
 
-### macOS interpreter install
-
-In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the truebit-eth directory:
-```bash
-brew install libffi ocaml ocamlbuild opam pkg-config
-opam init -y
-eval $(opam config env)
-opam install cryptokit ctypes ctypes-foreign yojson -y
-cd wasm-client/ocaml-offchain/interpreter
-make
-```
 ### Windows interpreter install
 
 Follow the patterns above for Linux and macOS.
