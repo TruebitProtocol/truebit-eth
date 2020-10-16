@@ -90,7 +90,8 @@ RUN cd /truebit-eth \
  && rm -r .git
 
 # Install ocaml-offchain interpreter
-RUN apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev \
+RUN apt-get update \
+ && apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev \
  && opam init -y \
  && eval `opam config env` \
  && opam update \
