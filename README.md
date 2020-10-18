@@ -108,9 +108,11 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 1. Exit `geth` (`Ctrl-C` or `exit`) and re-run the `geth` incantation above.
 
-2. Change your IP address.
+2. Try running Truebit OS [natively](##Running-Truebit-OS-natively) instead of using Docker.
 
-3. Reconnect later, or consider running a full Ethereum node.
+3. Change your IP address.
+
+4. Reconnect later, or consider running a full Ethereum node.
 
 To view a list of connected addresses inside the `geth console`, type `personal.listWallets` at the Geth command line.
 
@@ -203,6 +205,7 @@ You can then discover other nodes on Truebit's network by running:
 ```
 ipfs connect
 ```
+If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.
 
 ## Logging sessions and command line execution
 
