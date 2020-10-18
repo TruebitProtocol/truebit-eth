@@ -66,7 +66,7 @@ You can share files between your native machine and the Docker container by copy
 ```bash
 docker cp truebit-eth/supersecret.txt f7b994c94911:/docker-geth/supersecret.txt
 ```
-Here `f7b994c94911` is the name of the container's ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which you initiated with the `--rm` flag.
+Here `f7b994c94911` is the name of the container's ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
 ### "Connect to the network"
 
@@ -136,25 +136,26 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  | || (_| \__ \   <  \__ \ (_) | |\ V /  __/  \ V /  __/ |  | |  _| |_| |
   \__\__,_|___/_|\_\ |___/\___/|_| \_/ \___|   \_/ \___|_|  |_|_|  \__, |
                                                                    |___/
-$ [09-08 00:20:00] info: Truebit OS 1.0.0 has been initialized on goerli network at block 3365229.
-```
-Note that you must be connected to a network (either Görli testnet or Ethereum mainnet) in order to run any command in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer.
 
-For a self-guided tour or additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
+[10-17 22:40:48] info: Truebit OS 1.0.6 has been initialized on goerli network at block 3594922.
 ```
-help [command...]         Provides help for a given command.
-exit                      Exits application.
-accounts                  List available network accounts.
-balance [options]         Show account balances.
-bonus                     Display current per task bonus payout.
-ipfsnode [options] <cmd>  Manage IPFS nodes.
-license [options] <cmd>   Obtain a Solver license.
-ps                        List active Solvers and Verifiers along with their games and tasks.
-start [options] <cmd>     Start a Solver or Verifier.
-stop <num>                Stop a Solver or Verifier. Get process numbers with 'ps'.
-task [options] <cmd>      Submit a task or run a utility.
-token [options] <cmd>     Swap ETH for TRU.  Deposit to or withdraw from incentive layer.
-version                   Display Truebit OS version.
+Note that you must be connected to a network (either Görli testnet or Ethereum mainnet) in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, quit and restart.
+
+For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
+```
+help [command...]        Provides help for a given command.
+exit                     Exits application.
+accounts                 List available network accounts.
+balance [options]        Show account balances.
+bonus                    Display current per task bonus payout.
+ipfs [options] <cmd>     Manage IPFS nodes.
+license [options] <cmd>  Obtain a Solver license.
+ps                       List active Solvers and Verifiers along with their games and tasks.
+start [options] <cmd>    Start a Solver or Verifier.
+stop <num>               Stop a Solver or Verifier. Get process numbers with 'ps'.
+task [options] <cmd>     Submit a task or run a utility.
+token [options] <cmd>    Swap ETH for TRU.  Deposit to or withdraw from incentive layer.
+version                  Display Truebit OS version.
 ```
 
 ## Staking tokens
@@ -196,11 +197,11 @@ The Task Submitter address always has first right-of-refusal to solve its own ta
 
 IPFS's peer-to-peer network can route data more efficiently when it knows where to find Truebit Task Submitters, Solvers, and Verifiers.  It is recommended to register your IPFS node with Truebit via the following command which makes it easier for others to find your node while you are issuing or solving tasks:
 ```
-ipfsnode register
+ipfs register
 ```
-You can then try to discover other nodes on Truebit's network by running:
+You can then discover other nodes on Truebit's network by running:
 ```
-ipfsnode connect
+ipfs connect
 ```
 
 ## Logging sessions and command line execution
@@ -223,6 +224,26 @@ Here the `--batch` flag tells Truebit OS to run non-interactively, and `> mylog.
 ```bash
 ps a
 ```
+
+## Client configuration
+
+In the `/truebit-eth/wasm-client/` directory, you will find a file called `config.json` which looks something like this.
+```json
+{
+    "http-url": "http://localhost:8545",
+    "ipfs" : {
+	     "host": "localhost",
+	     "port": "5001",
+	     "protocol": "http"
+    },
+    "gasPrice": "1000000000",
+    "throttle" : 20,
+    "incentiveLayer": "incentiveLayer"
+}
+```
+You may wish to increase the `gasPrice` to further incentivize miners to process your transactions (in case of fails). Here the price per unit gas is given in [wei](https://ethdocs.org/en/latest/ether.html).  `throttle` is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+
+You must restart Truebit OS for configuration changes to take effect.  For editing convenience you may wish to add a volume to your Docker run incantation, e.g. `-v $YYY/wasm-client:/truebit-eth/wasm-client`.
 
 
 # Getting data into and out of Truebit

@@ -5,6 +5,7 @@
 	     "port": "5001",
 	     "protocol": "http"
     },
-    "incentiveLayer": "incentiveLayer",
-    "throttle" : 20
+    "gasPrice": "1000000000",
+    "throttle" : 20,
+    "incentiveLayer": "incentiveLayer"
 }
