@@ -407,7 +407,7 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 # Native installation
 
-You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  Moreover, native installation may enhance network communication performance.  To set up natively, first clone the Truebit repo.
+You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  Moreover, native installation may enhance network communication performance.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
 ```bash
 git clone https://github.com/TrueBitFoundation/truebit-eth
 ```
@@ -425,7 +425,7 @@ If you wish to run Truebit OS on your native machine, you will need to build the
 
 ### macOS interpreter install
 
-In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the truebit-eth directory:
+In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the `truebit-eth` directory:
 ```bash
 brew install libffi ocaml ocamlbuild opam pkg-config
 opam init -y
@@ -435,9 +435,10 @@ cd wasm-client/ocaml-offchain/interpreter
 make
 ```
 
-### Ubuntu interpreter install
-In Linux, your interpreter install might look something like the following:
+### Linux interpreter install
+From the `truebit-eth` directory, use the following Ubuntu install (or modify it to suit your Linux flavor).
 ```bash
+apt-get update
 apt-get install -y libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev
 opam init -y
 eval `opam config env`
@@ -446,7 +447,6 @@ opam install cryptokit ctypes ctypes-foreign yojson -y
 cd /ocaml-offchain/interpreter
 make
 ```
-Check the [Dockerfile](https://github.com/TrueBitFoundation/truebit-eth/tree/master/Dockerfile) for missing `apt-get` dependencies.  
 
 ### Windows interpreter install
 
