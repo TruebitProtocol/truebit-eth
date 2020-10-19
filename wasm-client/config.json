@@ -1,11 +1,11 @@
 {
-    "http-url": "http://localhost:8545",
-    "ipfs" : {
-	     "host": "localhost",
-	     "port": "5001",
-	     "protocol": "http"
-    },
-    "gasPrice": "17000000000",
-    "throttle" : 3,
-    "incentiveLayer": "incentiveLayer"
+  "http-url": "http://localhost:8545",
+  "ipfs": {
+    "host": "localhost",
+    "port": "5001",
+    "protocol": "http"
+  },
+  "gasPrice": 20.1,
+  "throttle": 3,
+  "incentiveLayer": "incentiveLayer"
 }

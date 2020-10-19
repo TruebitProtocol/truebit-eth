@@ -150,6 +150,7 @@ exit                     Exits application.
 accounts                 List available network accounts.
 balance [options]        Show account balances.
 bonus                    Display current per task bonus payout.
+gas [options] <cmd>      Check or set gas price.
 ipfs [options] <cmd>     Manage IPFS nodes.
 license [options] <cmd>  Obtain a Solver license.
 ps                       List active Solvers and Verifiers along with their games and tasks.
@@ -233,18 +234,18 @@ ps a
 In the `/truebit-eth/wasm-client/` directory, you will find a file called `config.json` which looks something like this.
 ```json
 {
-    "http-url": "http://localhost:8545",
-    "ipfs" : {
-	     "host": "localhost",
-	     "port": "5001",
-	     "protocol": "http"
-    },
-    "gasPrice": "17000000000",
-    "throttle" : 3,
-    "incentiveLayer": "incentiveLayer"
+  "http-url": "http://localhost:8545",
+  "ipfs": {
+    "host": "localhost",
+    "port": "5001",
+    "protocol": "http"
+  },
+  "gasPrice": 20.1,
+  "throttle": 3,
+  "incentiveLayer": "incentiveLayer"
 }
 ```
-You may wish to increase the `gasPrice` to further incentivize miners to process your transactions (in case of fails). Here the price per unit gas is given in [wei](https://ethdocs.org/en/latest/ether.html).  `throttle` is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+You may wish to increase the `gasPrice` to further incentivize miners to process your transactions (in case of fails). Here the price per unit gas is given in [gwei](https://ethdocs.org/en/latest/ether.html).  `throttle` is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
 
 You must restart Truebit OS for configuration changes to take effect.  For editing convenience you may wish to add a volume to your Docker run incantation, e.g. `-v $YYY/wasm-client:/truebit-eth/wasm-client`.
 
