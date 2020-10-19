@@ -239,8 +239,8 @@ In the `/truebit-eth/wasm-client/` directory, you will find a file called `confi
 	     "port": "5001",
 	     "protocol": "http"
     },
-    "gasPrice": "1000000000",
-    "throttle" : 20,
+    "gasPrice": "17000000000",
+    "throttle" : 3,
     "incentiveLayer": "incentiveLayer"
 }
 ```
@@ -356,7 +356,7 @@ node send.js input.ts
 ```
 See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
 
-# Building your own tasks with the Truebit toolchain
+# Building your own tasks with the Truebit Toolchain
 If you haven't already, from your Truebit container, run the following commands (in order):
 ```bash
 source /emsdk/emsdk_env.sh
