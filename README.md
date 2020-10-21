@@ -5,16 +5,18 @@
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit-beta)](https://hub.docker.com/r/truja/truebit-beta)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs.  This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
 
-Feel free to browse the [legacy Wiki](https://github.com/TrueBitFoundation/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
+This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+
+Feel free to browse the [legacy wiki](https://github.com/TrueBitFoundation/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
 * [Using the Truebit Filesystem](https://medium.com/truebit/using-the-truebit-filesystem-f6a5d4ac9604)
 * [Truebit Toolchain & Transmute](https://medium.com/truebit/truebit-toolchain-transmute-4984928364a7)
 * [Writing a Truebit Task in Rust](https://medium.com/truebit/writing-a-truebit-task-in-rust-6d96f2ee0a4b)
 * [JIT for Truebit](https://medium.com/truebit/jit-for-truebit-e5299afc72d8)
 
-If you would like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.
+In addition, Truebit's [reddit](https://www.reddit.com/r/truebit/) channel features links to some excellent introductions and mainstream media articles about Truebit.  If you'd like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.
 
 # Table of contents
 1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
@@ -85,7 +87,7 @@ If you don't already have a local Görli account in your Docker container, creat
 ```bash
 geth --goerli account new
 ```
-Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `geth-docker-cache` folder.  For example, your password file might have the name `supersecret.txt` and might look something like this:
+Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `docker-geth` folder.  For example, your password file might have the name `supersecret.txt` and might look something like this:
 ```
 truebit
 task
@@ -118,7 +120,7 @@ To view a list of connected addresses inside the `geth console`, type `personal.
 
 # Solve and verify tasks
 
-We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](###Open-terminal-window) and ["connect to the network"](###Connect-to-the-network).  Now use the ["open terminal window"](###Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
+We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](###Start-container) and ["connect to the network"](###Connect-to-the-network).  Now use the ["open terminal window"](###Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
 ```bash
 cd truebit-eth
 ./truebit-os
@@ -141,7 +143,7 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 [10-17 22:40:48] info: Truebit OS 1.0.6 has been initialized on goerli network at block 3594922.
 ```
-Note that you must be connected to a network (either Görli testnet or Ethereum mainnet) in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, quit and restart.
+Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, quit and restart.
 
 For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
@@ -196,14 +198,20 @@ The Task Submitter address always has first right-of-refusal to solve its own ta
 
 <https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E>
 
+Your Solver and Verifier will continue to solve and verify new tasks until a `stop` command is issued (e.g. `stop 1`) or you `exit` Truebit OS.  Use `ps` to identify the appropriate process index.  If you lose Internet connectivity while your deposit is bonded to a task, try restarting in recovery mode.  For example,
+```sh
+start solve -r 20
+```
+will initialize a new Solver 20 blocks behind the current block and recover the intermediate events.
+
 ## Faster IPFS uploads and downloads
 
 IPFS's peer-to-peer network can route data more efficiently when it knows where to find Truebit Task Submitters, Solvers, and Verifiers.  It is recommended to register your IPFS node with Truebit via the following command which makes it easier for others to find your node while you are issuing or solving tasks:
-```
+```sh
 ipfs register
 ```
 You can then discover other nodes on Truebit's network by running:
-```
+```sh
 ipfs connect
 ```
 If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.
@@ -245,9 +253,19 @@ In the `/truebit-eth/wasm-client/` directory, you will find a file called `confi
   "incentiveLayer": "incentiveLayer"
 }
 ```
-You may wish to increase the `gasPrice` to further incentivize miners to process your transactions (in case of fails). Here the price per unit gas is given in [gwei](https://ethdocs.org/en/latest/ether.html).  `throttle` is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+When running on Ethereum mainnet, you may wish to modify the `gasPrice` parameter to increase the chances that Ethereum miners will process your Truebit OS transactions or to economize on ETH.  Every Ethereum transaction invokes some ETH gas cost, and price per unit gas is given in [gwei](https://ethdocs.org/en/latest/ether.html).  The `gasPrice` can be set within Truebit OS.  For example,
+```sh
+gas set -v 47.3 --default
+```
+will set the running client gas price to 47.3 gwei, and the optional `--default` flag tells Truebit OS to write to `config.json` above so that this value becomes the starting `gasPrice` the next time you start Truebit OS.  Beware that in Ethereum's capricious DeFi environment, gas prices can fluctuate wildly.  Use the following command to get a real-time, suggested range of gas prices on mainnet.
+```sh
+gas check
+```
+On Görli, a `gasPrice` of 1 gwei may suffice.
 
-You must restart Truebit OS for configuration changes to take effect.  For editing convenience you may wish to add a volume to your Docker run incantation, e.g. `-v $YYY/wasm-client:/truebit-eth/wasm-client`.
+The `throttle` parameter above is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+
+You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](###Start-container), you may wish to add a volume to your Docker run incantation, e.g. `-v $YYY/wasm-client:/truebit-eth/wasm-client`.
 
 
 # Getting data into and out of Truebit
