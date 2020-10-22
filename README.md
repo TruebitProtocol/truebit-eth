@@ -208,9 +208,9 @@ start solve -r 20
 ```
 will initialize a new Solver 20 blocks behind the current block and recover the intermediate events.
 
-## Platform fees
+## Platform Fees
 
-Solvers and Verifiers will each pay a Platform Fee of 0.005 ETH per task.  There is no Platform Fee for Verifiers.
+Task Submitter and Solvers will each pay a Platform Fee of 0.005 ETH per task.  There is no Platform Fee for Verifiers, however they must pay the usual gas costs for sending transactions.
 
 ## Faster IPFS uploads and downloads
 
@@ -273,14 +273,17 @@ On Görli, a `gasPrice` of 1 gwei may suffice.  Alternatively, one can use Geth'
 ```sh
 gas set -v geth
 ```
-By default, Geth's price oracle returns the 60th percentile among the 20 most recent blocks.  You can tweak these parameters by starting Geth with `--gpopercentile` and `--gpoblocks` flags, e.g.
+By default, Geth's price oracle returns the 60th percentile gas price among transactions in the 20 most recent blocks.  You can tweak these parameters by starting Geth with `--gpopercentile` and `--gpoblocks` flags, e.g.
 ```bash
 geth --gpopercentile 60 --gpoblocks 20 --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
 
 The `throttle` parameter [above](##Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
 
-You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](###Start-container), you may wish to add a volume to your Docker run incantation, e.g. `-v $YYY/wasm-client:/truebit-eth/wasm-client`.
+You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](###Start-container), you may wish to add a volume to your Docker run incantation, e.g.
+```bash
+docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truja/truebit-beta:latest /bin/bash
+```
 
 
 # Getting data into and out of Truebit
