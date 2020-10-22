@@ -11,16 +11,16 @@
 # What is Truebit?
 [Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
 
-This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WebAssembly library ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper), and a [Rust tool](https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust-tool) for generating new tasks, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WebAssembly library ports](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper), and a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating new tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
-Feel free to browse the [legacy wiki](https://github.com/TrueBitFoundation/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
+Feel free to browse the [legacy wiki](https://github.com/TruebitProtocol/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
 * [Using the Truebit Filesystem](https://medium.com/truebit/using-the-truebit-filesystem-f6a5d4ac9604)
 * [Truebit Toolchain & Transmute](https://medium.com/truebit/truebit-toolchain-transmute-4984928364a7)
 * [Writing a Truebit Task in Rust](https://medium.com/truebit/writing-a-truebit-task-in-rust-6d96f2ee0a4b)
 * [JIT for Truebit](https://medium.com/truebit/jit-for-truebit-e5299afc72d8)
 
-In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel features links to some excellent introductions and mainstream media articles about Truebit.  If you'd like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) and [Discord](https://discord.gg/CzpsQ66) channels.
+In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel features links to some excellent introductions and mainstream media articles about Truebit.  If you'd like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TruebitProtocol/Lobby) and [Discord](https://discord.gg/CzpsQ66) channels.
 
 # Table of contents
 1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
@@ -361,7 +361,7 @@ To run a sample task, `cd` into that directory and run `node send.js` as explain
 cd /wasm-ports/samples/scrypt
 node send.js <text>
 ```
-Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
+Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
 ### Bilinear pairing
 ```bash
@@ -369,14 +369,14 @@ cd /wasm-ports/samples/pairing
 node send.js <text>
 ```
 For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
-See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/pairing/pairing.cpp).
+See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/pairing/pairing.cpp).
 
 ### Chess
 ```bash
 cd /wasm-ports/samples/chess
 node send.js <text>
 ```
-This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/chess/chess.cpp).
+This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/chess/chess.cpp).
 The source code doesn't implement all the rules of chess, and is not much tested.
 
 ### Validate WASM file
@@ -384,7 +384,7 @@ The source code doesn't implement all the rules of chess, and is not much tested
 cd /wasm-ports/samples/wasm
 node send.js <wasm file>
 ```
-Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TrueBitFoundation/truebit-eth/blob/master/wasm-ports/samples/wasm/src/main.rs).
+Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/wasm/src/main.rs).
 
 ### Size of video packets in a file
 ```bash
@@ -411,7 +411,7 @@ cd ../ffmpeg
 sh compile.sh
 ```
 For Rust tasks, take a look @georgeroman's [walk-through](
-https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust-tool).  You can use his guide to build the `../wasm` task via the steps below.
+https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool).  You can use his guide to build the `../wasm` task via the steps below.
 ```bash
 ( ipfs daemon & )
 mv /truebit-eth/wasm-ports/samples/wasm
@@ -424,7 +424,7 @@ cd /wasm
 npm i
 sh compile.sh
 ```
-Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
 
@@ -438,7 +438,7 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 `call-stack-size`: depth of Merkle tree for the call stack
 
- See this [file](https://github.com/TrueBitFoundation/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
+ See this [file](https://github.com/TruebitProtocol/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
 
@@ -446,7 +446,7 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  Moreover, native installation may enhance network communication performance.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
 ```bash
-git clone https://github.com/TrueBitFoundation/truebit-eth
+git clone https://github.com/TruebitProtocol/truebit-eth
 ```
 ## Running samples natively
 A [Node.js](https://nodejs.org/en/download/) installation is a prerequisite for running the smart contract samples.  If you are running MacOS, the software can be obtained via [Brew](https://formulae.brew.sh/formula/node).  Now install Truebit's node packages from the repository's top-level directory:
@@ -454,7 +454,7 @@ A [Node.js](https://nodejs.org/en/download/) installation is a prerequisite for 
 cd truebit-eth
 npm i
 ```
-Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TrueBitFoundation/truebit-eth/blob/master/Dockerfile).
+Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile).
 
 ## Running Truebit OS natively
 

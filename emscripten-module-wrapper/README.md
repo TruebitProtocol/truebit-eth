@@ -31,7 +31,7 @@ For more instructions for running emscripten to compile wasm see
 https://gist.github.com/nolash/910ac3892d48d2e70232c997ffa9d55e
 and Dockerfile at https://hub.docker.com/r/mrsmkl/coindrop/
 
-Follow installation instructions for the ocaml-offchain interpreter [here](https://github.com/TrueBitFoundation/ocaml-offchain)
+Follow installation instructions for the ocaml-offchain interpreter [here](https://github.com/TruebitProtocol/truebit-eth#running-truebit-os-natively)
 
 If necessary edit `prepare.js` to include the correct path for wasm interpreter (default: `../ocaml-offchain/interpreter/wasm`).
 Also edit the IPFS host.
@@ -41,8 +41,6 @@ Also edit the IPFS host.
 ```
 node prepare.js file.js
 ```
-
-You can also follow along with this [tutorial](https://github.com/TrueBitFoundation/emscripten-module-wrapper/wiki/Tutorial)
 
 Options:
  * `--file fname`: add the file to the IO block of the task
