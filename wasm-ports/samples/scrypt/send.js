@@ -48,8 +48,8 @@ async function main() {
     console.log('Task submitted.  Waiting for solution...')
 
     // Broadcast task
-    let liquidityFee = await scryptSubmitter.methods.getLiquidityFee().call({from:account})
-    await scryptSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: liquidityFee, gasPrice: web3.gp })
+    let platformFee = await scryptSubmitter.methods.getPlatformFee().call({from:account})
+    await scryptSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: platformFee, gasPrice: web3.gp })
 
     // Wait for solution
     let solution = "0x0000000000000000000000000000000000000000000000000000000000000000"

@@ -25,7 +25,7 @@ interface TrueBit {
    function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint8 st) external;
    function commitRequiredFiles(bytes32 id) external payable;
    function makeDeposit(uint _deposit) external returns (uint);
-   function getLiquidityFeeTaskGiver() external view returns (uint);
+   function getPlatformFeeTaskGiver() external view returns (uint);
 }
 
 interface TRU {
@@ -62,8 +62,8 @@ contract SampleContract {
        blocklimit = _blocklimit;
    }
 
-   function getLiquidityFee() public view returns (uint) {
-      return truebit.getLiquidityFeeTaskGiver();
+   function getPlatformFee() public view returns (uint) {
+      return truebit.getPlatformFeeTaskGiver();
    }
 
     // this is an axiliary function for makeTaskID
@@ -101,7 +101,7 @@ contract SampleContract {
 
      // call this after makeTaskID
      function emitTask (bytes32 taskID) external payable {
-        truebit.commitRequiredFiles.value(getLiquidityFee())(taskID);
+        truebit.commitRequiredFiles.value(getPlatformFee())(taskID);
      }
 
    // this is the callback name

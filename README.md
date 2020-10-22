@@ -208,9 +208,9 @@ start solve -r 20
 ```
 will initialize a new Solver 20 blocks behind the current block and recover the intermediate events.
 
-## Platform Fees
+## Platform fees
 
-Task Submitter and Solvers will each pay a Platform Fee of 0.005 ETH per task.  There is no Platform Fee for Verifiers, however they must pay the usual gas costs for sending transactions.
+Task Submitter and Solvers will each pay a platform fee of 0.005 ETH per task.  There is no platform fee for Verifiers, however they must pay the usual gas costs for sending transactions.
 
 ## Faster IPFS uploads and downloads
 
@@ -738,7 +738,7 @@ function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
 ```solidity
 function commitRequiredFiles(bytes32 id) external payable;
 ```
-`commitRequiredFiles` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the liquidity fee.
+`commitRequiredFiles` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
 
 ```solidity
 function submitEmitTask(bytes32 initTaskHash, CodeType codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
@@ -763,9 +763,9 @@ function getBondedDeposit(bytes32 id, address account) external view returns (ui
 `getBondedDeposit` returns the amount of TRU (in wei) that `account` has bonded to task `id`.
 
 ```solidity
-function getLiquidityFeeTaskGiver() external view returns (uint);
+function getPlatformFeeTaskGiver() external view returns (uint);
 ```
-`getLiquidityFeeTaskGiver` returns the ETH liquidity fee (in wei) for Task Submitters.
+`getPlatformFeeTaskGiver` returns the ETH platform fee (in wei) for Task Submitters.
 
 ### security
 
