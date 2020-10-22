@@ -3,8 +3,10 @@
 </p>
 
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit-beta)](https://hub.docker.com/r/truja/truebit-beta)
-[![Gitter](https://img.shields.io/gitter/room/TruebitProtocol/community)](https://gitter.im/TruebitProtocol/community)
-[![Discord](https://img.shields.io/discord/681631420674080993?color=bright%20green&label=discord)](https://discord.gg/CzpsQ66)
+[![Image version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker)](https://hub.docker.com/r/truja/truebit-beta)
+[![Docker size](https://img.shields.io/docker/image-size/truebitprotocol/truebit-eth/latest)](https://hub.docker.com/r/truja/truebit-beta)
+[![Gitter](https://img.shields.io/gitter/room/TruebitProtocol/community?color=yellow)](https://gitter.im/TruebitProtocol/community)
+[![Discord](https://img.shields.io/discord/681631420674080993?color=yellow&label=discord)](https://discord.gg/CzpsQ66)
 
 # What is Truebit?
 [Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
