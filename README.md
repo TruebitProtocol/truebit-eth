@@ -2,7 +2,7 @@
   <img src="./data/images/truebit-logo.png" width="650">
 </p>
 
-[![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit-beta)](https://hub.docker.com/r/truja/truebit-beta)
+[![Docker Image](https://img.shields.io/docker/cloud/build/truebitprotocol/truebit-eth)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
 [![Image version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker)](https://hub.docker.com/r/truja/truebit-beta)
 [![Docker size](https://img.shields.io/docker/image-size/truebitprotocol/truebit-eth/latest)](https://hub.docker.com/r/truja/truebit-beta)
 [![Gitter](https://img.shields.io/gitter/room/TruebitProtocol/community?color=yellow)](https://gitter.im/TruebitProtocol/community)
@@ -38,7 +38,7 @@ This tutorial demonstrates how to install Truebit, connect to Görli or Ethereum
 
 Follow the following steps to run a containerized Truebit OS client for Solvers, Verifiers, and Task Givers on any Docker-supported system.  Docker provides a replicable interface for running Truebit OS and offers a streamlined installation process.  First, download and install [Docker](https://docs.docker.com/get-docker/).  Then run the following at your machine's command line.
 ```bash
-docker pull truja/truebit-beta:latest
+docker pull truebitprotocol/truebit-eth:latest
 ```
 
 ## Docker incantations
