@@ -3,6 +3,8 @@
 </p>
 
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit-beta)](https://hub.docker.com/r/truja/truebit-beta)
+[![Gitter](https://img.shields.io/gitter/room/TruebitProtocol/community)](https://gitter.im/TruebitProtocol/community)
+[![Discord](https://img.shields.io/discord/681631420674080993?color=bright%20green&label=discord)](https://discord.gg/CzpsQ66)
 
 # What is Truebit?
 [Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
@@ -16,7 +18,7 @@ Feel free to browse the [legacy wiki](https://github.com/TrueBitFoundation/wiki)
 * [Writing a Truebit Task in Rust](https://medium.com/truebit/writing-a-truebit-task-in-rust-6d96f2ee0a4b)
 * [JIT for Truebit](https://medium.com/truebit/jit-for-truebit-e5299afc72d8)
 
-In addition, Truebit's [reddit](https://www.reddit.com/r/truebit/) channel features links to some excellent introductions and mainstream media articles about Truebit.  If you'd like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) channel.
+In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel features links to some excellent introductions and mainstream media articles about Truebit.  If you'd like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TrueBitFoundation/Lobby) and [Discord](https://discord.gg/CzpsQ66) channels.
 
 # Table of contents
 1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
