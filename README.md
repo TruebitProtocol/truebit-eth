@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="./images/truebit-logo.png" width="650">
+  <img src="./data/images/truebit-logo.png" width="650">
 </p>
 
 [![Docker Image](https://img.shields.io/docker/cloud/build/truja/truebit-beta)](https://hub.docker.com/r/truja/truebit-beta)
@@ -9,7 +9,7 @@
 # What is Truebit?
 [Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
 
-This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WASM ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports) and [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper) for generating them, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain), as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, [WebAssembly library ports](https://github.com/TrueBitFoundation/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TrueBitFoundation/truebit-eth/tree/master/emscripten-module-wrapper), and a [Rust tool](https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust-tool) for generating new tasks, the [off-chain interpreter](https://github.com/TrueBitFoundation/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
 Feel free to browse the [legacy wiki](https://github.com/TrueBitFoundation/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -394,8 +394,8 @@ sh compile.sh
 cd ../ffmpeg
 sh compile.sh
 ```
-For Rust tasks, take a look @georgeroman's [workaround](
-https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust_workaround).  You can use his guide to build the `../wasm` task via the steps below.
+For Rust tasks, take a look @georgeroman's [walk-through](
+https://github.com/TrueBitFoundation/truebit-eth/tree/master/rust-tool).  You can use his guide to build the `../wasm` task via the steps below.
 ```bash
 ( ipfs daemon & )
 mv /truebit-eth/wasm-ports/samples/wasm
