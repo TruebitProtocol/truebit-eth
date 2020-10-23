@@ -56,13 +56,13 @@ We first open a new container with two parts:
 Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
 ```bash
 YYY='/Users/Shared'
-docker run --network host -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truja/truebit-beta:latest /bin/bash
+docker run --network host -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
 Docker will then store your Geth and IPFS files configuration files in the directories`docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 
-When you [connect to the network](###Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truja/truebit-beta:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When you [connect to the network](###Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```bash
 docker exec -it _yourContainerName_ /bin/bash
 ```
@@ -282,7 +282,7 @@ The `throttle` parameter [above](##Client-configuration) is the maximum number o
 
 You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](###Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
-docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truja/truebit-beta:latest /bin/bash
+docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
 
 
