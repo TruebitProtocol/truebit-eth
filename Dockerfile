@@ -79,14 +79,7 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz
 COPY . truebit-eth/
 RUN cd /truebit-eth \
  && wget -O truebit-os https://truebit.io/downloads/truebit-linux \
- && mkdir other-builds \
- && cd other-builds \
- && wget https://truebit.io/downloads/truebit-macos \
- && wget https://truebit.io/downloads/truebit-win.exe \
- && cd .. \
  && chmod 755 truebit-os \
- && chmod 755 other-builds/truebit-macos \
- && chmod 644 other-builds/truebit-win.exe \
  && rm -r .git
 
 # Install ocaml-offchain interpreter

@@ -3,15 +3,15 @@
 </p>
 
 [![Docker Image](https://img.shields.io/docker/cloud/build/truebitprotocol/truebit-eth)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
-[![Image version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
 [![Docker size](https://img.shields.io/docker/image-size/truebitprotocol/truebit-eth/latest)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
+[![Truebit OS version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker?label=truebit-os)](https://truebit.io/downloads/)
 [![Gitter](https://img.shields.io/gitter/room/TruebitProtocol/community?color=yellow)](https://gitter.im/TruebitProtocol/community)
 [![Discord](https://img.shields.io/discord/681631420674080993?color=yellow&label=discord)](https://discord.gg/CzpsQ66)
 
 # What is Truebit?
 [Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
 
-This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, some [libraries ported to WebAssembly](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) for adding runtime hooks, a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](##Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, some [libraries ported to WebAssembly](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) for adding runtime hooks, a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](#Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
 Feel free to browse the [legacy wiki](https://github.com/TruebitProtocol/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -62,7 +62,7 @@ Docker will then store your Geth and IPFS files configuration files in the direc
 
 ### "Open terminal window"
 
-When you [connect to the network](###Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```bash
 docker exec -it _yourContainerName_ /bin/bash
 ```
@@ -81,9 +81,9 @@ One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https:
 source /emsdk/emsdk_env.sh
 bash startup.sh
 ```
-You can terminate IPFS at any time by typing `ipfs shutdown`.
+You may wish to [connect with Geth](#Connecting-with-Geth) before executing the above commands as then `startup.sh` can connect your IPFS node to other registered IPFS nodes on the Truebit network.  Check `ipfs-connect.log` for logged connection results.  Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  
 
-Geth requires a more nuanced setup relative to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we shall see, connecting to Ethereum mainnet is quite similar.  Truebit OS automatically detects which blockchain network Geth is connected to (Görli testnet or Ethereum mainnet).
+Geth requires a more nuanced setup relative to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we shall see, connecting to Ethereum mainnet is quite similar.  Truebit OS automatically detects the blockchain network to which Geth is connected (either Görli testnet or Ethereum mainnet).
 
 #### Initializing accounts
 
@@ -114,7 +114,7 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 1. Exit `geth` (`Ctrl-C` or `exit`) and re-run the `geth` incantation above.
 
-2. Try running Truebit OS [natively](##Running-Truebit-OS-natively) instead of using Docker.
+2. Try running Truebit OS [natively](#Running-Truebit-OS-natively) instead of using Docker.
 
 3. Change your IP address.
 
@@ -124,7 +124,7 @@ To view a list of connected addresses inside the `geth console`, type `personal.
 
 # Solve and verify tasks
 
-We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](###Start-container) and ["connect to the network"](###Connect-to-the-network).  Now use the ["open terminal window"](###Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
+We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](#Start-container) and ["connect to the network"](#Connect-to-the-network).  Now use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
 ```bash
 cd truebit-eth
 ./truebit-os
@@ -230,20 +230,19 @@ The vanilla `./truebit-os` command generates a file `combined.log.json` containi
 ```bash
 cat /truebit-eth/combined.log.json | more
 ```
-It is safe to delete this file.
-
-If one wishes to record a more detailed log for a Truebit OS interactive session, one can use a command of the following form to record the full terminal output:
+It is safe to delete this file.  If one wishes a more detailed log for a Truebit OS interactive session, one can use a command of the following form to record the full terminal output:
 ```bash
 ./truebit-os 2>&1 | tee mylog.txt
 ```
 One can also execute Truebit OS commands directly from the native (Docker) command line using a `-c` flag.  For example, try:
 ```bash
-./truebit-os -c "start solve -a 1" --batch > mylog.txt 2>&1 &
+./truebit-os -c "start solve -a 1" --batch > mylog.txt &
 ```
-Here the `--batch` flag tells Truebit OS to run non-interactively, and `> mylog.txt 2>&1 &` tells Truebit OS to write the output to a log file called `mylog.txt` rather than the terminal.  The command above will return a process number at the command line (e.g. `[1] 412`).  You can stop the Solver process later using the `kill` command, (e.g. `kill 412`).  The following Unix shell command will return a list of active Truebit processes from all windows.
+Here the `--batch` flag tells Truebit OS to run non-interactively, and `> mylog.txt &` tells Truebit OS to write the output to a log file called `mylog.txt` rather than the terminal.  The command above will return a process number at the command line (e.g. `[1] 412`).  You can stop the Solver process later using the `kill` command, (e.g. `kill 412`).  The following Unix shell command will return a list of active Truebit processes from all windows.
 ```bash
 ps a
 ```
+Use `cat mylog.txt` to review these logs with proper formatting.
 
 ## Client configuration
 
@@ -278,9 +277,9 @@ By default, Geth's price oracle returns the 60th percentile gas price among tran
 geth --gpopercentile 60 --gpoblocks 20 --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
 
-The `throttle` parameter [above](##Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
 
-You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](###Start-container), you may wish to add a volume to your Docker run incantation, e.g.
+You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
 docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
@@ -300,7 +299,7 @@ Ethereum has a limit of 5 million gas per contract deploy (~ 24 kilobytes) and r
 
 ## Writing task outputs via Truebit OS
 
-Let's inspect a sample task meta file called `reverse.json` which can be found in the `/truebit-eth` directory:
+Let's inspect a sample task meta-file called `reverse.json` which can be found in the `/truebit-eth` directory:
 ```json
 {
     "codeFile": {
@@ -346,6 +345,7 @@ To run this example, enter the following commands in Truebit OS.
 start solve
 task -f reverse.json submit
 ```
+You can find names of other sample .json meta-files using `ls` and then view file contents with the `cat` command.
 
 ## Sample tasks via smart contracts
 
@@ -458,7 +458,11 @@ Truebit toolchain task compilations should be done inside the Docker container a
 
 ## Running Truebit OS natively
 
-If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from the Docker container using `docker cp`.  For Linux, copy `truebit-os`, for MacOS, copy `other-builds/truebit-macos`, and for Windows, copy `other-builds/truebit-win.exe`.  Paste your chosen executable into the top level of the `truebit-eth` directory.
+If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from here:
+
+<https://truebit.io/downloads/>
+
+Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.
 
 ### macOS interpreter install
 
@@ -500,7 +504,7 @@ Recall that Truebit reads and writes three [file types](#Getting-data-into-and-o
 
 ### Auxiliary functions
 
-We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](###creating-files).
+We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).
 
 #### getRoot
 When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
@@ -615,22 +619,22 @@ function createFileWithContents(string memory name, uint nonce, bytes32[] callda
 ```solidity
 function addContractFile(string memory name, uint size, address contractAddress, bytes32 root, uint nonce) external returns (bytes32);
 ```
-`addContractFile` returns a fileID for a CONTRACT file called `name` using existing data stored at address `contractAddress`.  The data stored at `contractAddress` must conform to the [`uploadOnchain`](####uploadOnchain) format above, and `root` must conform to [`getRoot`](####getRoot).  The `size` parameter can be obtained using [`getSize`](####getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
+`addContractFile` returns a fileID for a CONTRACT file called `name` using existing data stored at address `contractAddress`.  The data stored at `contractAddress` must conform to the [`uploadOnchain`](#uploadOnchain) format above, and `root` must conform to [`getRoot`](#getRoot).  The `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
 function addIPFSFile(string memory name, uint size, string calldata IPFShash, bytes32 root, uint nonce) external returns (bytes32);
 ```
-`addIPFSFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](####getRoot), and the `size` parameter can be obtained using [`getSize`](####getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
+`addIPFSFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](#getRoot), and the `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
 function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint nonce) external returns (bytes32);
 ```
-`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](####obtaining-codeRoot-and-hash).
+`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot-and-hash).
 
 ```solidity
 function setCodeRoot(uint nonce, bytes32 codeRoot) external;
 ```
-`setCodeRoot` sets the [`codeRoot`](####obtaining-codeRoot-and-hash) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
+`setCodeRoot` sets the [`codeRoot`](#obtaining-codeRoot-and-hash) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
 
 ### managing bundles
 
@@ -723,11 +727,11 @@ Task Givers must specify task parameters, including filesystem, economic, virtua
 function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint blockLimit) external returns (bytes32);
 ```
 `submitTask` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
-* `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](####obtaining-codeRoot-and-hash).
+* `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash).
 * `codeType`: The program file is either WAST or WASM as determined by the file extension.
 * `bundleID`: The bundleID containing all fileID's for the task.
 * `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
-* `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](##Writing-task-outputs-via-Truebit-OS).
+* `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](#Writing-task-outputs-via-Truebit-OS).
 * `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain).
 
 ```solidity
