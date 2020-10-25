@@ -2717,7 +2717,7 @@
       {
         "constant": true,
         "inputs": [],
-        "name": "LIQUIDITY_FEE_SOLVER",
+        "name": "PLATFORM_FEE_SOLVER",
         "outputs": [
           {
             "internalType": "uint256",
@@ -2732,7 +2732,7 @@
       {
         "constant": true,
         "inputs": [],
-        "name": "LIQUIDITY_FEE_TASK_GIVER",
+        "name": "PLATFORM_FEE_TASK_GIVER",
         "outputs": [
           {
             "internalType": "uint256",
@@ -3087,7 +3087,7 @@
       {
         "constant": true,
         "inputs": [],
-        "name": "getLiquidityFeeTaskGiver",
+        "name": "getPlatformFeeTaskGiver",
         "outputs": [
           {
             "internalType": "uint256",
@@ -3786,12 +3786,12 @@
         "inputs": [
           {
             "internalType": "uint256",
-            "name": "newLiquidityFeeTaskGiver",
+            "name": "newPlatformFeeTaskGiver",
             "type": "uint256"
           },
           {
             "internalType": "uint256",
-            "name": "newLiquidityFeeSolver",
+            "name": "newPlatformFeeSolver",
             "type": "uint256"
           },
           {
