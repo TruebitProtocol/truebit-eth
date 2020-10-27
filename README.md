@@ -26,7 +26,7 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
 2. [Solve and verify tasks](#Solve-and-verify-tasks)
 3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
-4. [Building your own tasks with the Truebit toolchain](#Building-your-own-tasks-with-the-Truebit-toolchain)
+4. [Building your own tasks](#Building-your-own-tasks)
 5. [Native installation](#Native-installation)
 6. [Contract API reference](#Contract-API-reference)
 
@@ -79,7 +79,7 @@ Here `f7b994c94911` is the name of the container's ID.  To exit a container, typ
 One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, start IPFS in the background and configure the compiler with the following pair of commands (in this order).
 ```bash
 source /emsdk/emsdk_env.sh
-bash startup.sh
+bash /startup.sh
 ```
 You may wish to [connect with Geth](#Connecting-with-Geth) before executing the above commands as then `startup.sh` can connect your IPFS node to other registered IPFS nodes on the Truebit network.  Check `ipfs-connect.log` for logged connection results.  Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  
 
@@ -393,11 +393,11 @@ node send.js input.ts
 ```
 See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
 
-# Building your own tasks with the Truebit Toolchain
-If you haven't already, from your Truebit container, run the following commands (in order):
+# Building your own tasks
+We now explore the Truebit Toolchain.  If you haven't already, from your Truebit container, run the following commands (in order):
 ```bash
 source /emsdk/emsdk_env.sh
-bash startup.sh
+bash /startup.sh
 ```
 You should now be able to compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
 ```bash
@@ -443,8 +443,7 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 
 # Native installation
-
-You may wish to experiment with this tutorial on your native command line rather than running them inside the Docker container.  Moreover, native installation may enhance network communication performance.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
+For file editing convenience, you may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  Native installation may enhance network communication performance and facilitate hardware wallet connections in Geth.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
 ```bash
 git clone https://github.com/TruebitProtocol/truebit-eth
 ```
@@ -732,7 +731,7 @@ function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint
 * `bundleID`: The bundleID containing all fileID's for the task.
 * `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
 * `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](#Writing-task-outputs-via-Truebit-OS).
-* `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks-with-the-Truebit-toolchain).
+* `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).
 
 ```solidity
 function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
