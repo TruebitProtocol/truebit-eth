@@ -60,12 +60,12 @@ RUN cd bin \
  && chmod 744 solc
 
 # Install Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.9.14-6d74d1e5.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.9.23-8c2f2715.tar.gz \
  && tar xf geth*tar.gz \
  && rm geth*tar.gz \
  && cd geth* \
  && cp geth /bin \
- && rm -rf /geth-linux-amd64-1.9.14-6d74d1e5
+ && rm -rf /geth-linux-amd64-1.9.23-8c2f2715
 
 # Install IPFS
 RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
