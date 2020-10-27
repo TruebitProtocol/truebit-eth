@@ -283,7 +283,11 @@ By default, Geth's price oracle returns the 60th percentile gas price among tran
 geth --gpopercentile 60 --gpoblocks 20 --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
 
-The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  You can update `throttle` in the `config.json` file via a command of the following form.
+```
+task throttle -v 3
+```
+`http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
 
 You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
