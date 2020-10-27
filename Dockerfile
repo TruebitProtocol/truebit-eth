@@ -68,8 +68,8 @@ RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.9.14-
  && rm -rf /geth-linux-amd64-1.9.14-6d74d1e5
 
 # Install IPFS
-RUN wget https://dist.ipfs.io/go-ipfs/v0.4.19/go-ipfs_v0.4.19_linux-amd64.tar.gz \
- && tar xf go-ipfs_v0.4.19_linux-amd64.tar.gz \
+RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
+ && tar xf go-ipfs_v0.7.0_linux-amd64.tar.gz \
  && cd go-ipfs \
  && ./install.sh \
  && cd / \

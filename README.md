@@ -81,7 +81,7 @@ One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https:
 source /emsdk/emsdk_env.sh
 bash /startup.sh
 ```
-You may wish to [connect with Geth](#Connecting-with-Geth) before executing the above commands as then `startup.sh` can connect your IPFS node to other registered IPFS nodes on the Truebit network.  Check `ipfs-connect.log` for logged connection results.  Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  
+You may wish to [connect with Geth](#Connecting-with-Geth) before executing the above commands as then `startup.sh` can connect your IPFS node to other registered IPFS nodes on the Truebit network.  Check `/ipfs-connect.log` for logged connection results.  Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)`, rerun the `/startup.sh` command again.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
 
 Geth requires a more nuanced setup relative to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we shall see, connecting to Ethereum mainnet is quite similar.  Truebit OS automatically detects the blockchain network to which Geth is connected (either Görli testnet or Ethereum mainnet).
 
@@ -116,11 +116,17 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 2. Try running Truebit OS [natively](#Running-Truebit-OS-natively) instead of using Docker.
 
-3. Change your IP address.
+3. Test your connection with a vanilla command, e.g. `geth --goerli --syncmode "light"`, especially if you get the message `Fatal: Failed to read password file: open /root/.ethereum/supersecret.txt: no such file or directory`.
 
-4. Reconnect later, or consider running a full Ethereum node.
+4. Change your IP address.
 
-To view a list of connected addresses inside the `geth console`, type `personal.listWallets` at the Geth command line.
+5. Connect to the blockchain via a non-Geth interface, e.g. [Infura](https://infura.io/).
+
+6. Consider running a full Ethereum node via Geth or dedicated [hardware](https://ava.do/).
+
+7. Reconnect later.
+
+To view a list of your connected addresses inside the `geth console`, type `personal.listWallets` at the Geth command line.
 
 # Solve and verify tasks
 
@@ -147,7 +153,7 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
 
 [10-17 22:40:48] info: Truebit OS 1.0.6 has been initialized on goerli network at block 3594922.
 ```
-Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, quit and restart.
+Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` and restart.
 
 For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
