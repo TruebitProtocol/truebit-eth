@@ -284,7 +284,7 @@ geth --gpopercentile 60 --gpoblocks 20 --rpc --unlock "0,1,2,3" --password /root
 ```
 
 The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  You can update `throttle` in the `config.json` file via a command of the following form.
-```
+```bash
 task throttle -v 3
 ```
 `http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
