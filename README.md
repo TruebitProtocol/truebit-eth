@@ -70,7 +70,7 @@ _yourContainerName_ might look something like `xenodochial_fermat`.  If you inst
 
 You can share files between your native machine and the Docker container by copying them into your `docker-geth` or `docker-ipfs` folders.  Alternatively, you may copy into (or out of) the container with commands of the following form.
 ```bash
-docker cp truebit-eth/supersecret.txt f7b994c94911:/docker-geth/supersecret.txt
+docker cp truebit-eth/supersecret.txt f7b994c94911:/root/.ethereum/supersecret.txt
 ```
 Here `f7b994c94911` is the name of the container's ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
