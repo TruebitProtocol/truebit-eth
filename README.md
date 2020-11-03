@@ -458,7 +458,7 @@ For file editing convenience, you may wish to experiment with this tutorial on y
 git clone https://github.com/TruebitProtocol/truebit-eth
 ```
 ## Running samples natively
-A [Node.js](https://nodejs.org/en/download/) installation is a prerequisite for running the smart contract samples.  If you are running MacOS, the software can be obtained via [Brew](https://formulae.brew.sh/formula/node).  Now install Truebit's node packages from the repository's top-level directory:
+A Node.js [installation](https://nodejs.org/en/download/package-manager/) is a prerequisite for running the smart contract samples. Once you have [confirmed](https://www.npmjs.com/get-npm) that your Node.js installation includes npm, install Truebit's node packages from the Truebit repository's top-level directory:
 ```bash
 cd truebit-eth
 npm i
@@ -513,62 +513,70 @@ Recall that Truebit reads and writes three [file types](#Getting-data-into-and-o
 
 ### Auxiliary functions
 
-We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).
+We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).  To execute the functions, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
+```bash
+npm i fs truebit-util web3
+```
+Each function below can then be pasted into a `.js` file and run using Node.js, e.g. `node getroot.js`.  Your working directory must include a data file called `example.txt` containing the input you wish to process.
 
 #### getRoot
 When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
 
 ```js
-const fs = require("fs")
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider(host))
+const fs = require('fs')
 const merkleRoot = require('truebit-util').merkleRoot.web3
+const Web3 = require('web3')
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 
-async function getRoot(filePath) {
+function getRoot(filePath) {
   let fileBuf = fs.readFileSync(filePath)
   return merkleRoot(web3, fileBuf)
 }
 
 let root = getRoot("./example.txt")
+console.log(root)
 ```
 
 #### getSize
-Truebit also needs to know the size of the file being created.  This can be done as follows:
+Truebit also needs to know the size of the file being created.  Size can be computed as follows in [web3.js](https://github.com/ethereum/web3.js):
 ```js
-const fs = require("fs")
+const fs = require('fs')
 
-async function getSize(filePath) {
-  let fileBuf = await readFile(filePath)
+function getSize(filePath) {
+  let fileBuf = fs.readFileSync(filePath)
   return fileBuf.byteLength
 }
 
 let size = getSize("./example.txt")
+console.log(size)
 ```
 
 #### uploadOnchain
-CONTRACT files themselves should be created with [web3.js](https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html#new-contract) using the template function `uploadOnchain` below.  This function returns the contract address for the new CONTRACT file prefixed with a string needed for retrieval.
+CONTRACT files should be created with [web3.js](https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html#new-contract) using the template function `uploadOnchain` below.  This function returns the contract address for the new CONTRACT file prefixed with a string needed for retrieval.  You must be connected to an Ethereum-compatible backend, (e.g. geth) in order to run this function.
 ```js
+const fs = require('fs')
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider(host))
-const accounts = await web3.eth.getAccounts()
+const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
 
 async function uploadOnchain(filePath) {
-  let fileBuf = await readFile(filePath)
 
+  let fileBuf = fs.readFileSync(filePath)
   let sz = fileBuf.length.toString(16)
   if (sz.length == 1) sz = "000" + sz
   else if (sz.length == 2) sz = "00" + sz
   else if (sz.length == 3) sz = "0" + sz
 
   let init_code = "61" + sz + "600061" + sz + "600e600039f3"
-  let contract = new web3.eth.Contract([])
   let hex_data = Buffer.from(fileBuf).toString("hex")
 
-  contract = await contract.deploy({ data: '0x' + init_code + hex_data }).send({ from: accounts[0], gas: 200000, gasPrice: web3.gp })
-  return contract.options.address
+  let contract = new web3.eth.Contract([])
+  let accounts = await web3.eth.getAccounts()
+  deployedContract = await contract.deploy({ data: '0x' + init_code + hex_data }).send({ from: accounts[0], gas: 1000000 })
+  return deployedContract.options.address
 }
 
 let contractAddress = uploadOnchain("./example.txt")
+contractAddress.then(address => console.log(address))
 ```
 
 #### obtaining codeRoot and hash
