@@ -116,7 +116,7 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 2. Try running Truebit OS [natively](#Running-Truebit-OS-natively) instead of using Docker.
 
-3. Test your connection with a vanilla command, e.g. `geth --goerli --syncmode "light"`, especially if you get the message `Fatal: Failed to read password file: open /root/.ethereum/supersecret.txt: no such file or directory`.
+3. Test your connection with a vanilla command, e.g. `geth --goerli --syncmode "light"`, especially if you get the message `Fatal: Failed to read password file: open /root/.ethereum/supersecret.txt: no such file or directory`.  On Ethereum mainnet, try `geth --syncmode "fast"`.
 
 4. Change your IP address.
 
