@@ -284,10 +284,14 @@ geth --gpopercentile 60 --gpoblocks 20 --rpc --unlock "0,1,2,3" --password /root
 ```
 
 The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  You can update `throttle` in the `config.json` file via a command of the following form.
-```bash
+```sh
 task throttle -v 3
 ```
-`http-url` and `ipfs` must match the network settings for Geth and IPFS.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+`http-url` and `ipfs` must match the network settings for Geth and IPFS.  You can override the default `http-url` setting at startup using the `-p` flag.  For example
+```bash
+./truebit-os -p 1234
+```
+will set the HTTP-RPC server listening port to http://localhost:1234.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
 
 You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
