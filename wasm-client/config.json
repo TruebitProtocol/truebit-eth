@@ -1,5 +1,8 @@
 {
-  "http-url": "http://localhost:8545",
+  "geth": {
+    "RPCport": "http://localhost:8545",
+    "providerType": "http"
+  },
   "ipfs": {
     "host": "localhost",
     "port": "5001",

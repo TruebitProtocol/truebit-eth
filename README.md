@@ -108,7 +108,7 @@ https://faucet.goerli.mudit.blog/
 
 In your Truebit Docker container, connect your account(s) to the Görli network using an incantation of the following form:
 ```bash
-geth --goerli --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
+geth --goerli --http --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
 Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit OS.  If we wanted to connect to mainnet instead of Görli, we would simply delete the term `--goerli` in the incantation above.  Your Geth client should now begin syncing with the network and be up to date within a minute.  If you are have trouble connecting to a light client peer, try the following.
 
@@ -255,7 +255,10 @@ Use `cat mylog.txt` to review these logs with proper formatting.
 In the `/truebit-eth/wasm-client/` directory, you will find a file called `config.json` which looks something like this.
 ```json
 {
-  "http-url": "http://localhost:8545",
+  "geth": {
+    "RPCport": "http://localhost:8545",
+    "providerType": "http"
+  },
   "ipfs": {
     "host": "localhost",
     "port": "5001",
@@ -280,23 +283,24 @@ gas set -v geth
 ```
 By default, Geth's price oracle returns the 60th percentile gas price among transactions in the 20 most recent blocks.  You can tweak these parameters by starting Geth with `--gpopercentile` and `--gpoblocks` flags, e.g.
 ```bash
-geth --gpopercentile 60 --gpoblocks 20 --rpc --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
+geth --gpopercentile 60 --gpoblocks 20 --http --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
 ```
 
 The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  You can update `throttle` in the `config.json` file via a command of the following form.
 ```sh
 task throttle -v 3
 ```
-`http-url` and `ipfs` must match the network settings for Geth and IPFS.  You can override the default `http-url` setting at startup using the `-p` flag.  For example
+The `geth` and `ipfs` subkeys must match your network settings for Geth and IPFS.  You can override the default `RPCport` setting at startup using the `-p` flag and override the default [providerType](https://geth.ethereum.org/docs/rpc/server) (either `http` or `ws`) using the `-t` flag.  For example
 ```bash
-./truebit-os -p 1234
+./truebit-os -p 1234 -t ws
 ```
-will set the HTTP-RPC server listening port to http://localhost:1234.  Do not change `incentiveLayer` as Truebit currently only supports a single incentive layer.
+will set the RPC server listening port to http://localhost:1234 and connect via WebSocket.
 
 You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
 docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
+Do not change the `incentiveLayer` key in `config.json` as Truebit currently only supports a single incentive layer.
 
 
 # Getting data into and out of Truebit
