@@ -23,12 +23,11 @@
     "coverage": "nyc mocha"
   },
   "keywords": [
-    "to",
-    "the",
-    "moon"
+    "verifiable",
+    "computation"
   ],
   "author": "hswick",
-  "license": "none",
+  "license": "UNLICENSED",
   "dependencies": {
     "chalk": "^2.4.1",
     "ethereumjs-util": "^5.2.0",
