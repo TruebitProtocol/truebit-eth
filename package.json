@@ -26,7 +26,6 @@
     "verifiable",
     "computation"
   ],
-  "author": "hswick",
   "license": "UNLICENSED",
   "dependencies": {
     "chalk": "^2.4.1",
