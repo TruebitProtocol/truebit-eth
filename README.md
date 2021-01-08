@@ -9,7 +9,7 @@
 [![Discord](https://img.shields.io/discord/681631420674080993?color=yellow&label=discord)](https://discord.gg/CzpsQ66)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.  You may wish to familiarize yourself with this practical, high-level user guide [ADD LINK] before proceeding.
 
 This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, some [libraries ported to WebAssembly](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) for adding runtime hooks, a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](#Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
@@ -81,7 +81,9 @@ One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https:
 source /emsdk/emsdk_env.sh
 bash /startup.sh
 ```
-You may wish to [connect with Geth](#Connecting-with-Geth) before executing the above commands as then `startup.sh` can register your IPFS address and connect it to other registered IPFS nodes on the Truebit network.  Check `/ipfs-connect.log` for connection results.  Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)`, rerun the `/startup.sh` command again.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
+In order to register your IPFS address and connect it to other registered IPFS nodes on the Truebit network, you may wish to [connect with Geth](#Connecting-with-Geth) and uncomment the last three lines in `startup.sh` before executing the above commands (using `vim` or `nano` text editors).  Then check `/ipfs-connect.log` for connection results.  As an alternative performance option, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS host rather than running your own node in Docker.
+
+Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)`, rerun the `/startup.sh` command again.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
 
 Geth requires a more nuanced setup relative to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we shall see, connecting to Ethereum mainnet is quite similar.  Truebit OS automatically detects the blockchain network to which Geth is connected (either Görli testnet or Ethereum mainnet).
 
@@ -120,9 +122,9 @@ Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit 
 
 4. Change your IP address.
 
-5. Connect to the blockchain via a non-Geth interface, e.g. [Infura](https://infura.io/).
+5. Test Truebit OS with a plug-and-play API, e.g. [Infura](https://infura.io/) or [others](https://ethereumnodes.com/).  See [below](#Client-configuration) for configuration instructions.
 
-6. Consider running a full Ethereum node via Geth or dedicated [hardware](https://ava.do/).
+6. Consider running a full Ethereum node via Geth on dedicated [hardware](https://ava.do/).
 
 7. Reconnect later.
 
@@ -256,13 +258,12 @@ In the `/truebit-eth/wasm-client/` directory, you will find a file called `confi
 ```json
 {
   "geth": {
-    "RPCport": "http://localhost:8545",
-    "providerType": "http"
+    "providerURL": "http://localhost:8545"
   },
   "ipfs": {
+    "protocol": "http",
     "host": "localhost",
-    "port": "5001",
-    "protocol": "http"
+    "port": "5001"
   },
   "gasPrice": 20.1,
   "throttle": 3,
@@ -290,17 +291,21 @@ The `throttle` parameter [above](#Client-configuration) is the maximum number of
 ```sh
 task throttle -v 3
 ```
-The `geth` and `ipfs` subkeys must match your network settings for Geth and IPFS.  You can override the default `RPCport` setting at startup using the `-p` flag and override the default [providerType](https://geth.ethereum.org/docs/rpc/server) (either `http` or `ws`) using the `-t` flag.  For example
+The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  Valid prefixes for `geth.providerURL` are `http`, `https`, `ws`, and `wss` and determine the provider type for the connection.  You can override the default `geth.providerURL` setting at Truebit OS startup using the `-p`.  For example
 ```bash
-./truebit-os -p 1234 -t ws
+./truebit-os -p ws://localhost:8546
 ```
-will set the RPC server listening port to http://localhost:1234 and connect via WebSocket.
+will set the RPC server listening port to 8546 and connect via WebSocket. Similarly, the `-i` flag will adjust the IPFS connection settings, e.g.
+```bash
+./truebit-os -i http://localhost:5001
+```
+will connect to IPFS via http on local port 5001.  If you choose to connect to the blockchain via a non-Geth API endpoint, you may not be able to access to your accounts through Truebit OS.
 
-You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
+You must restart Truebit OS for `config.json` changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
 docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Do not change the `incentiveLayer` key in `config.json` as Truebit currently only supports a single incentive layer.
+Do not change the `incentiveLayer` key in `config.json` as Truebit on Ethereum only supports a single incentive layer.
 
 
 # Getting data into and out of Truebit

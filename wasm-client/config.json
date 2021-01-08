@@ -1,12 +1,11 @@
 {
   "geth": {
-    "RPCport": "http://localhost:8545",
-    "providerType": "http"
+    "providerURL": "http://localhost:8545"
   },
   "ipfs": {
+    "protocol": "http",
     "host": "localhost",
-    "port": "5001",
-    "protocol": "http"
+    "port": "5001"
   },
   "gasPrice": 20.1,
   "throttle": 3,

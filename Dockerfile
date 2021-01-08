@@ -4,7 +4,7 @@ MAINTAINER Jason Teutsch
 SHELL ["/bin/bash", "-c"]
 
 # Get packages list and tmux
-RUN apt-get update && apt-get install -y tmux
+RUN apt-get update && apt-get install -y tmux vim nano
 
 # Set up Emscripten
 RUN apt-get install -y cmake g++ git python \
