@@ -26,9 +26,10 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
 2. [Solve and verify tasks](#Solve-and-verify-tasks)
 3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
-4. [Building your own tasks](#Building-your-own-tasks)
-5. [Native installation](#Native-installation)
-6. [Contract API reference](#Contract-API-reference)
+4. [Client configuration](#Client-configuration)
+5. [Building your own tasks](#Building-your-own-tasks)
+6. [Native installation](#Native-installation)
+7. [Contract API reference](#Contract-API-reference)
 
 # Quickstart guide: computational playground
 
@@ -252,7 +253,8 @@ ps a
 ```
 Use `cat mylog.txt` to review these logs with proper formatting.
 
-## Client configuration
+
+# Client configuration
 
 In the `/truebit-eth/wasm-client/` directory, you will find a file called `config.json` which looks something like this.
 ```json
