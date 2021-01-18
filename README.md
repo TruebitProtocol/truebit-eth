@@ -73,7 +73,7 @@ You can share files between your native machine and the Docker container by copy
 ```bash
 docker cp truebit-eth/supersecret.txt f7b994c94911:/root/.ethereum/supersecret.txt
 ```
-Here `f7b994c94911` is the name of the container's ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
+Here `f7b994c94911` is the container's name or ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
 ### "Connect to the network"
 
@@ -219,7 +219,7 @@ will initialize a new Solver 20 blocks behind the current block and recover the 
 
 ## Platform fees
 
-Task Submitter and Solvers will each pay a platform fee of 0.005 ETH per task.  There is no platform fee for Verifiers, however they must pay the usual gas costs for sending transactions.
+Task Submitter and Solvers will each pay a small, per-task platform fee.  Check `task fees` for the amount.  There is no platform fee for Verifiers, however they must pay the usual gas costs for sending transactions.
 
 ## Faster IPFS uploads and downloads
 
@@ -293,7 +293,7 @@ The `throttle` parameter [above](#Client-configuration) is the maximum number of
 ```sh
 task throttle -v 3
 ```
-The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  Valid prefixes for `geth.providerURL` are `http`, `https`, `ws`, and `wss` and determine the provider type for the connection.  You can override the default `geth.providerURL` setting at Truebit OS startup using the `-p`.  For example
+The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  Valid prefixes for `geth.providerURL` are `http`, `https`, `ws`, and `wss` and determine the provider type for the connection.  If `geth.providerURL` does not have a valid prefix, it must have a `.ipc` suffix, e.g. `/root/.ethereum/goerli/geth.ipc`.  You can override the default `geth.providerURL` setting at Truebit OS startup using the `-p`.  For example
 ```bash
 ./truebit-os -p ws://localhost:8546
 ```
@@ -451,7 +451,7 @@ sh compile.sh
 ```
 Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
-When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
+When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters (within range 5 to 30), including:
 
 `memory-size`: depth of the Merkle tree for memory
 
@@ -463,7 +463,7 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 `call-stack-size`: depth of Merkle tree for the call stack
 
- See this [file](https://github.com/TruebitProtocol/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
+Try adjusting `memory-size` first.  Greater parameters make the task more likely to execute.  See this [file](https://github.com/TruebitProtocol/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
 
