@@ -157,7 +157,9 @@ RUN ipfs init \
 #  && browserify public/app.js -o public/bundle.js
 
 # Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples.  Clean up root directory.
-RUN mv /truebit-eth/startup.sh /startup.sh \
+RUN mv /truebit-eth/goerli.sh / \
+ && mv /truebit-eth/mainnet.sh/ / \
+ && mv /truebit-eth/ruleset.js /root/.clef \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \

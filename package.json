@@ -1,6 +1,6 @@
 {
   "name": "truebit",
-  "version": "1.2.5",
+  "version": "1.2.6",
   "description": "Client software for interacting with the Truebit system",
   "bin": {
     "truebit-os": "cli/index.js"
