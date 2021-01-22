@@ -23,8 +23,3 @@ selectp -U \; swap-pane -U
 # cd /truebit-eth
 # ./truebit-os -c "ipfs register" --batch > /ipfs-connect.log &
 # ./truebit-os -c "ipfs connect" --batch >> /ipfs-connect.log &
-
-# For first-time use
-clef init
-echo ''
-clef attest f163a1738b649259bb9b369c593fdc4c6b6f86cc87e343c3ba58faee03c2a178

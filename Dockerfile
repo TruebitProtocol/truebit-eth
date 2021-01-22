@@ -149,14 +149,7 @@ RUN ipfs init \
  && mv /wasm /truebit-eth/wasm-ports/samples \
  && rm -r /root/.ipfs
 
-# Optional: set up Ganache, Mocha, and Browserify example
-# RUN npm install -g ganache-cli mocha@7.2.0 browserify \
-#  && cd /truebit-eth/wasm-ports/samples/pairing \
-#  && browserify public/app.js -o public/bundle.js \
-#  && cd ../scrypt \
-#  && browserify public/app.js -o public/bundle.js
-
-# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples.  Clean up root directory.
+# Move initialization scripts for compiling, network, and authentication.  Re-configure for C/C++ samples.  Clean up root directory.
 RUN mv /truebit-eth/goerli.sh / \
  && mv /truebit-eth/mainnet.sh/ / \
  && mv /truebit-eth/ruleset.js /root/.clef \
@@ -165,10 +158,9 @@ RUN mv /truebit-eth/goerli.sh / \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
  && cd / \
  && rm -r boot home media mnt opt srv
- # && rm -rf /var/lib/apt/lists/*
 
-# Set up IPFS and blockchain ports
-EXPOSE 4001 30303 80 8545
+# Open IPFS and blockchain ports
+EXPOSE 4001 8545 30303
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest

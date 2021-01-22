@@ -44,7 +44,7 @@ docker pull truebitprotocol/truebit-eth:latest
 
 ## Docker incantations
 
-Building the image above will take some minutes, but thereafter running the container will give an instant prompt.  While you are waiting for the image download to complete, familiarize yourself with the following two command classes with which you will access the Truebit network.
+Building the image above will take some minutes, but thereafter running the container will give an instant prompt.  While you are waiting for the image download to complete, familiarize yourself with the following three command classes with which you will access the Truebit network.
 
 ### "Start container"
 
@@ -57,44 +57,67 @@ We first open a new container with two parts:
 Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
 ```bash
 YYY='/Users/Shared'
-docker run --network host -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+docker run --network host -v $YYY/docker-clef/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Docker will then store your Geth and IPFS files configuration files in the directories`docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
+Docker will then store your Clef, Geth, and IPFS configuration files in the directories `'docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 
 When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```bash
-docker exec -it _yourContainerName_ /bin/bash
+docker exec -it <YOUR CONTAINER NAME> /bin/bash
 ```
-_yourContainerName_ might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
+`<YOUR CONTAINER NAME>` might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
-You can share files between your native machine and the Docker container by copying them into your `docker-geth` or `docker-ipfs` folders.  Alternatively, you may copy into (or out of) the container with commands of the following form.
+To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
+
+### "Share files"
+You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  Alternatively, you may copy into (or out of) the container with commands of the following [form](https://docs.docker.com/engine/reference/commandline/cp/).
 ```bash
-docker cp truebit-eth/supersecret.txt f7b994c94911:/root/.ethereum/supersecret.txt
+docker cp truebit-eth/mydata.txt f7b994c94911:/root/.ethereum/mydata.txt
 ```
-Here `f7b994c94911` is the container's name or ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
+Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.
 
 ## Initializing accounts
 
-If you don't already have a local Görli account in your Docker container, create a new one inside the Docker container with the following command.
-```bash
-geth --goerli account new
+In order to interact with the Truebit network, you'll need account(s) to handle both Ethereum (ETH) and Truebit (TRU) tokens.  We'll use [Clef](https://geth.ethereum.org/docs/getting-started) to securely manage account keys and addresses.  The first time you [start](#Start-container) the Docker container, you'll need to initialize Clef with the following command.
+```sh
+clef init
 ```
-Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `docker-geth` folder.  For example, your password file might have the name `supersecret.txt` and might look something like this:
+Clef will ask you to create a master seed password which you'll use to unlock all your accounts.  Also run
+```sh
+clef attest 1b7adf8011a50d0460d1069744adab87041163725e65049977983796dd2a6e2d
 ```
-truebit
-task
-solve
-verify
+which will allow Clef to sign all transactions automatically.  Task Givers, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`.
+
+### New accounts
+First, create a new account for Görli testnet.
+```sh
+clef newaccount --keystore ~/.ethereum/goerli/keystore
 ```
-Finally, fund your accounts!  You can obtain Görli ETH from one of the faucets below, or send your accounts ETH from your favorite wallet (e.g. [Metamask](https://metamask.io/) or [MyCrypto](https://mycrypto.com/)).
+Clef returns a "generated account" which is `<YOUR PUBLIC ADDRESS>`.  To add an account for mainnet instead, just use the command `clef newaccount`.  Clef will ask you to create a password for this account, and the next command will attach the account password to your master seed password keychain.
+```sh
+clef setpw <YOUR PUBLIC ADDRESS>
+```
+Clef can now autofill the keystore password for <YOUR PUBLIC ADDRESS> whenever you log in with your master seed password.  Repeat these steps to create additional accounts.  If you used the `docker run ...` command [above](#Start-container), you'll find your keystore files on your local computer in a folder called `docker-geth`, and the `masterseed.json` file in `docker-clef`.
+
+On testnet one can create keystore files with shorter passwords using `geth --goerli account new`.
+
+### Importing existing accounts
+For hardware wallets, you can either add the [`--privileged`](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) flag when starting Docker or run Truebit OS outside the Docker container using a [native install](#Running-Truebit-OS-natively).
+
+If you wish to use an existing keystore file with Truebit, simply paste it into your local folder `docker-geth/goerli/keystore` (for testnet) or `docker-geth/keystore` (for mainnet).  Alternatively use [`docker cp`](#Share-files) to paste into the Docker container at `~/.ethereum/goerli/keystore` (testnet) or `~/.ethereum/keystore` (mainnet).
+
+### Funding your accounts with ETH
+
+Finally, get some ETH!  You can obtain Görli ETH from one of the free faucets below, or send ETH to your accounts from your favorite wallet (e.g. [Metamask](https://metamask.io/) or [MyCrypto](https://mycrypto.com/)).
 
 https://goerli-faucet.slock.it/
 
 https://faucet.goerli.mudit.blog/
 
-HARDWARE WALLETS? - run locally
+As Ethereum mainnet lacks a faucet, you'll have to source ETH from an existing account (or mining).
+
 
 ## Connect to the network
 
@@ -173,7 +196,7 @@ version                  Display Truebit OS version.
 
 ## Staking tokens
 
-In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the indices for your available accounts using `accounts` and the price in ETH using `token price -v 1000`.  Check your balances for account 0 using `balance -a 0` Then
+In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the indices for available accounts using `accounts` and the price in ETH using `token price -v 1000`.  After checking balances for account 0 using `balance -a 0`, we are ready to purchase some TRU.
 ```sh
 token purchase -v 1000 -a 0
 ```
@@ -196,7 +219,7 @@ Eventually, when you are ready to discard TRU and recover ETH, you can retire th
 token retire -v 1000 -a 1
 ```
 The `token price` command will provide the current buyback rate.  For convenience, you can transfer TRU and ETH among your accounts in Truebit OS using `token transfer-eth` and `token transfer-tru`.  For example,
-```
+```sh
 token transfer-tru -a 0 -t 1 -v 20
 ```
 will transfer 20 TRU from account 0 to account 1.
