@@ -57,9 +57,9 @@ We first open a new container with two parts:
 Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
 ```bash
 YYY='/Users/Shared'
-docker run --network host -v $YYY/docker-clef/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+docker run --network host -v $YYY/docker-clef/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs $YYY/truebit-eth/wasm-client/config.json:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Docker will then store your Clef, Geth, and IPFS configuration files in the directories `'docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
+Docker will then store your Clef, Geth, and IPFS configuration files in the directories `'docker-clef`, `docker-geth` and `docker-ipfs` respectively, and your Truebit configuration in `config.json`.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 

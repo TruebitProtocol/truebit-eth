@@ -66,7 +66,7 @@ RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd6
  && cd geth* \
  && cp geth /bin \
  && cp clef /bin \
- && rm -rf /geth-linux-amd64-1.9.23-8c2f2715
+ && rm -rf /geth*
 
 # Install IPFS
 RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
@@ -151,8 +151,9 @@ RUN ipfs init \
 
 # Move initialization scripts for compiling, network, and authentication.  Re-configure for C/C++ samples.  Clean up root directory.
 RUN mv /truebit-eth/goerli.sh / \
- && mv /truebit-eth/mainnet.sh/ / \
- && mv /truebit-eth/ruleset.js /root/.clef \
+ # && mv /truebit-eth/mainnet.sh/ / \
+ && mkdir ~/.clef \
+ && mv /truebit-eth/ruleset.js ~/.clef \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
@@ -160,7 +161,7 @@ RUN mv /truebit-eth/goerli.sh / \
  && rm -r boot home media mnt opt srv
 
 # Open IPFS and blockchain ports
-EXPOSE 4001 8545 30303
+EXPOSE 4001 8545 8546 30303
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest
