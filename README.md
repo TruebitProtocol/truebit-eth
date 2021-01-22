@@ -282,7 +282,7 @@ You can then discover other nodes on Truebit's network by running:
 ```sh
 ipfs connect
 ```
-If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.
+If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.  You can use `ipfs id` to display your IPFS ID and `ipfs list` to display a list of all registered nodes.
 
 ## Logging sessions and command line execution
 
