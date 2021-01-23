@@ -151,7 +151,7 @@ RUN ipfs init \
 
 # Move initialization scripts for compiling, network, and authentication.  Re-configure for C/C++ samples.  Clean up root directory.
 RUN mv /truebit-eth/goerli.sh / \
- # && mv /truebit-eth/mainnet.sh/ / \
+ && mv /truebit-eth/mainnet.sh/ / \
  && mkdir ~/.clef \
  && mv /truebit-eth/ruleset.js ~/.clef \
  && cd emsdk \

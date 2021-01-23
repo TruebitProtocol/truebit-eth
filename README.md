@@ -81,22 +81,22 @@ Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) o
 ## Initializing accounts
 
 In order to interact with the Truebit network, you'll need account(s) to handle both Ethereum (ETH) and Truebit (TRU) tokens.  We'll use [Clef](https://geth.ethereum.org/docs/getting-started) to securely manage account keys and addresses.  The first time you [start](#Start-container) the Docker container, you'll need to initialize Clef with the following command.
-```sh
+```bash
 clef init
 ```
-Clef will ask you to create a master seed password which you'll use to unlock all your accounts.  Also run
-```sh
+Clef will ask you to create a master seed password which you'll use to unlock all your accounts.  Next run
+```bash
 clef attest 1b7adf8011a50d0460d1069744adab87041163725e65049977983796dd2a6e2d
 ```
 which will allow Clef to sign all transactions automatically.  Task Givers, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`.
 
 ### New accounts
 First, create a new account for Görli testnet.
-```sh
+```bash
 clef newaccount --keystore ~/.ethereum/goerli/keystore
 ```
 Clef returns a "generated account" which is `<YOUR PUBLIC ADDRESS>`.  To add an account for mainnet instead, just use the command `clef newaccount`.  Clef will ask you to create a password for this account, and the next command will attach the account password to your master seed password keychain.
-```sh
+```bash
 clef setpw <YOUR PUBLIC ADDRESS>
 ```
 Clef can now autofill the keystore password for <YOUR PUBLIC ADDRESS> whenever you log in with your master seed password.  Repeat these steps to create additional accounts.  If you used the `docker run ...` command [above](#Start-container), you'll find your keystore files on your local computer in a folder called `docker-geth`, and the `masterseed.json` file in `docker-clef`.
@@ -126,11 +126,11 @@ One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https:
 source /emsdk/emsdk_env.sh
 sh /goerli.sh
 ```
-You may skip the `source /emsdk/emsdk_env.sh` line if you are not planning to build new tasks in your current session, and igaf you wish to connect to Ethereum mainnet rather than Görli, use `sh /mainnet.sh` instead.  After running the startup script(s), the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split screen with Geth paused above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
+You may skip the `source /emsdk/emsdk_env.sh` line if you are not planning to build new tasks in your current session, and if you wish to connect to Ethereum mainnet rather than Görli, use `sh /mainnet.sh` instead.  After running the startup script(s), the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
 
-Once your Geth node is fully synchronized, you may wish to boost IPFS performance by running the last four lines in `goerli.sh` (sans comment symbol `#`) or by following the instructions [below](#Faster-IPFS-uploads-and-downloads).  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, then cut and paste to your command line.  Then `cat /ipfs-connect.log` for connection results.  As an alternative performance option, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS host rather than running your own Docker node.
+Once your Geth node is fully synchronized, you may enhance IPFS connectivity by running the last four lines in `goerli.sh` (sans comment symbol `#`) or by running the [equivalent](#Faster-IPFS-uploads-and-downloads) commands in Truebit OS.  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, cut and paste to your command line, and `cat /ipfs-connect.log` for connection results.  Alternatively, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS node rather than running one in Docker.
 
-Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)`, check your connection in the Geth window and rerun the offending command.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
+Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)` when running the commands described in the previous paragraph, check your connection in the Geth window and rerun the offending command.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
 
 Note that Truebit OS automatically detects the blockchain network to which Geth is connected (either Görli testnet or Ethereum mainnet).  If you are have trouble connecting to a light client peer, try the following.
 
@@ -152,7 +152,7 @@ To view a list of your connected addresses inside the `geth console`, type `pers
 
 # Solve and verify tasks
 
-We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](#Start-container) and ["connect to the network"](#Connect-to-the-network).  Now use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
+We are now ready to run Truebit Solver and Verifier nodes.  This walk-through assumes you've already [set up your accounts](#Initializing-accounts) and [connected to the network](#Connect-to-the-network).  Use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
 ```bash
 cd truebit-eth
 ./truebit-os
@@ -174,7 +174,7 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                                                    |___/
 [01-21 14:42:00] info: Truebit OS 1.2.6 has been initialized on goerli network at block 4145800 with throttle 3 and gas price 20.1 gwei.
 ```
-Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` and restart.
+Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` Truebit OS and restart.
 
 For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
@@ -239,7 +239,7 @@ The Task Submitter address always has first right-of-refusal to solve its own ta
 
 <https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E>
 
-Solvers and Verifiers will continue to solve and verify new tasks until instructed to stop.  To limit task participation based on TRU rewards, Solvers and Verifiers can use the `-l` flag to set a minimum, non-zero (constant) reward threshold per task, or use `-p` to fix a minimum TRU reward per block of computation.  For example,
+Solvers and Verifiers will continue to solve and verify new tasks until instructed to stop.  To limit task participation based on TRU rewards, Solvers and Verifiers can use the `-l` flag to set a minimum, (constant) non-zero reward threshold per task, or use `-p` to fix a minimum TRU reward per block of computation.  For example,
 ```sh
 start verify -l 10 -p 0.5
 ```
@@ -348,11 +348,17 @@ The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  V
 ```bash
 ./truebit-os -p ws://localhost:8546
 ```
-will set the RPC server listening port to 8546 and connect via WebSocket. Similarly, the `-i` flag will adjust the IPFS connection settings, e.g.
+will set the RPC server listening port to 8546 and connect via WebSocket.  You can also try to use an external hosting provider, like
+`
+/truebit-os -p https://goerli.infura.io/v3/<YOUR API KEY>
+`.
+As such APIs are not trusted, however, you will not be able to unlock your accounts for use in Truebit OS. Finally, **never unlock you accounts on a mainnet node using http or ws connections**, as anyone with access to the node can issue transactions on behalf of your account(s).
+
+The `-i` flag adjusts the IPFS connection settings analogously, e.g.
 ```bash
 ./truebit-os -i http://localhost:5001
 ```
-will connect to IPFS via http on local port 5001.  If you choose to connect to the blockchain via a non-Geth API endpoint, you may not be able to access to your accounts through Truebit OS.
+will connect to IPFS via http on local port 5001.
 
 You must restart Truebit OS for `config.json` changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
 ```bash
