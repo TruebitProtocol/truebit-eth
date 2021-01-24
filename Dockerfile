@@ -161,7 +161,7 @@ RUN mv /truebit-eth/goerli.sh / \
  && rm -r boot home media mnt opt srv tmp/*
 
 # Open IPFS and blockchain ports
-EXPOSE 4001 8545 8546 30303
+EXPOSE 4001 8080 8545 8546 30303
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest
