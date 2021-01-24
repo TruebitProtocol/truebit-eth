@@ -73,7 +73,7 @@ docker exec -it <YOUR CONTAINER NAME> /bin/bash
 To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
 ### "Share files"
-You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  If you wish to synchronize a specific local file with a container file, say `config.json`, first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume.
+You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  If you wish to synchronize a specific local file with a container file, say [`config.json`](#Client-configuration), first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume.
 `
 -v $YYY/config.json:/truebit-eth/wasm-client/config.json
 `
@@ -372,10 +372,7 @@ The `-i` flag adjusts the IPFS connection settings analogously, e.g.
 ```
 will connect to IPFS via http on local port 5001.
 
-You must restart Truebit OS for `config.json` changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
-```bash
-docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
-```
+You must restart Truebit OS for `config.json` changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to [add](Share-files) a volume to your Docker run incantation.
 Do not change the `incentiveLayer` key in `config.json` as Truebit on Ethereum only supports a single incentive layer.
 
 
