@@ -105,7 +105,7 @@ First, create a new account for Görli testnet.
 ```bash
 clef newaccount --keystore ~/.ethereum/goerli/keystore
 ```
-Clef returns a "generated account" which is `<YOUR PUBLIC ADDRESS>`.  To add an account for mainnet instead, just use the command `clef newaccount`.  Clef will ask you to create a password for this account, and the next command will attach the account password to your master seed password keychain.
+Clef returns a "generated account" which is `<YOUR PUBLIC ADDRESS>`.  To add an account for mainnet instead, just use the vanilla command `clef newaccount`.  Clef will ask you to create a password for this account, and the next command will attach the account password to your master seed password keychain.
 ```bash
 clef setpw <YOUR PUBLIC ADDRESS>
 ```
@@ -134,11 +134,11 @@ As Ethereum mainnet lacks a faucet, you'll have to source ETH from an existing a
 One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, initialize the Truebit toolchain compiler, start IPFS, and start Geth as with the following pair of commands (in this order).
 ```bash
 source /emsdk/emsdk_env.sh
-sh /goerli.sh
+bash /goerli.sh
 ```
-You may skip the `source /emsdk/emsdk_env.sh` line if you are not planning to build new tasks in your current session, and if you wish to connect to Ethereum mainnet rather than Görli, use `sh /mainnet.sh` instead.  After running the startup script(s), the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
+You may skip the `source /emsdk/emsdk_env.sh` line if you are not planning to build new tasks in your current session, and if you wish to connect to Ethereum mainnet rather than Görli, use `bash /mainnet.sh` instead.  After running the startup script(s), the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
 
-Once your Geth node is fully synchronized, you may enhance IPFS connectivity by running the last four lines in `goerli.sh` (sans comment symbol `#`) or by running the [equivalent](#Faster-IPFS-uploads-and-downloads) commands in Truebit OS.  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, cut and paste to your command line, and `cat /ipfs-connect.log` for connection results.  Alternatively, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS node rather than running one in Docker.
+Once your Geth node is fully synchronized, you may enhance IPFS connectivity by running the last four lines in `/goerli.sh` (sans comment symbol `#`) or by running the [equivalent](#Faster-IPFS-uploads-and-downloads) commands in Truebit OS.  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, cut and paste to your command line, and `cat /ipfs-connect.log` for connection results.  Alternatively, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS node rather than running one in Docker.
 
 Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)` when running the commands described in the previous paragraph, check your connection in the Geth window and rerun the offending command.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
 
@@ -164,7 +164,7 @@ To view a list of your connected addresses inside the `geth console`, type `pers
 
 We are now ready to run Truebit Solver and Verifier nodes.  This walk-through assumes you've already [set up your accounts](#Initializing-accounts) and [connected to the network](#Connect-to-the-network).  Use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
 ```bash
-cd truebit-eth
+cd /truebit-eth
 ./truebit-os
 ```
 You should now see a new shell prompt.

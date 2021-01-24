@@ -6,7 +6,6 @@ sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_6
 sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten
 emcc -v
 
-
 # Start IPFS
 if [ ! -f ~/.ipfs/api ]; then
   ipfs init
@@ -17,7 +16,7 @@ until [ -f ~/.ipfs/api ]; do sleep 0.1; done
 # Start clef and geth
 CLEF='/root/.clef/clef.ipc'
 GETH=$(echo 'geth console --nousb --syncmode light --signer' $CLEF)
-sed -i "s|http://localhost:8545|/root/.ethereum/geth.ipc|" /truebit-eth/wasm-client/config.json
+cat <<< $(jq '.geth.providerURL="/root/.ethereum/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
 tmux \
 new-session 'clef --advanced --nousb --chainid 1 --keystore ~/.ethereum/keystore --rules /root/.clef/ruleset.js' \; \
 split-window "echo 'Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $GETH" \; \
