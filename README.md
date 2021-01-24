@@ -41,6 +41,7 @@ Follow the following steps to run a containerized Truebit OS client for Solvers,
 ```bash
 docker pull truebitprotocol/truebit-eth:latest
 ```
+If you are running older version of Truebit OS and receive errors in your client, you should update to the latest Docker container via the same command.  The current Truebit OS version is listed in the badge at the top of this README file, and you can compare this against the local version which Truebit OS displays at startup.
 
 ## Docker incantations
 
@@ -76,7 +77,9 @@ You can share files between your native machine and the Docker container by copy
 ```bash
 docker cp truebit-eth/mydata.txt f7b994c94911:/root/.ethereum/mydata.txt
 ```
-Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.
+Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.  This command copies into the container.  If you wish to copy from container to local, reverse the order of the files.
+
+Finally, when sharing a text file from your local machine, you can simply copy the text into a buffer and paste into a file on the Docker container using the `vim` or `nano` text editors.
 
 ## Initializing accounts
 
@@ -89,6 +92,8 @@ Clef will ask you to create a master seed password which you'll use to unlock al
 clef attest 1b7adf8011a50d0460d1069744adab87041163725e65049977983796dd2a6e2d
 ```
 which will allow Clef to sign all transactions automatically.  Task Givers, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`.
+
+You may check your existing accounts in Geth's console using `personal.listWallets`, in Truebit OS using [`accounts -r`](#Purchasing-staking-and-retiring-TRU-tokens), or at the main Docker command prompt using `geth --goerli account list` (sans `--goerli` for mainnet).
 
 ### New accounts
 First, create a new account for Görli testnet.
@@ -104,7 +109,7 @@ Clef can now autofill the keystore password for <YOUR PUBLIC ADDRESS> whenever y
 On testnet one can create keystore files with shorter passwords using `geth --goerli account new`.
 
 ### Importing existing accounts
-For hardware wallets, you can either add the [`--privileged`](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) flag when starting Docker or run Truebit OS outside the Docker container using a [native install](#Running-Truebit-OS-natively).
+For hardware wallets, you can either add the [`--privileged`](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) flag when starting Docker or run Truebit OS outside the Docker container using a [native install](#Running-Truebit-OS-natively).  In either case, you will need to remove the `--nousb` flag from both the `clef` and `geth` startup incantations.
 
 If you wish to use an existing keystore file with Truebit, simply paste it into your local folder `docker-geth/goerli/keystore` (for testnet) or `docker-geth/keystore` (for mainnet).  Alternatively use [`docker cp`](#Share-files) to paste into the Docker container at `~/.ethereum/goerli/keystore` (testnet) or `~/.ethereum/keystore` (mainnet).
 
@@ -180,8 +185,8 @@ For a self-guided tour or to explore additional options not provided in this tut
 ```
 help [command...]        Provides help for a given command.
 exit                     Exits application.
-accounts                 List available network accounts.
-balance [options]        Show account balances.
+accounts [options]       List web3 account indices (-r to refresh).
+balance [options]        Show account balances (-a account index).
 bonus                    Display current per task subsidy.
 gas [options] <cmd>      Check or set gas price.
 ipfs [options] <cmd>     Manage IPFS nodes.
@@ -194,13 +199,17 @@ token [options] <cmd>    Swap ETH for TRU.  Deposit to or withdraw from incentiv
 version                  Display Truebit OS version.
 ```
 
-## Staking tokens
+## Purchasing, staking, and retiring TRU tokens
 
-In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the indices for available accounts using `accounts` and the price in ETH using `token price -v 1000`.  After checking balances for account 0 using `balance -a 0`, we are ready to purchase some TRU.
+In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the indices for available accounts using `accounts` and the price in ETH using `token price -v 1000`.  If you add or remove node accounts while Truebit OS is open, you can refresh and synchronize the account list in Truebit OS with
+```sh
+accounts -r
+```
+Truebit OS will retain the current list of account indices until one runs this command.  After checking balances for account 0 using `balance`, we are ready to purchase some TRU.  
 ```sh
 token purchase -v 1000 -a 0
 ```
-We can now stake some of our TRU which will enable us to solve or verify a task.
+We should now have 1000 freshly minted TRU in account 0.  We can now stake some of our TRU which will enable us to solve or verify a task.
 ```sh
 token deposit -v 500 -a 0
 ```
@@ -212,13 +221,11 @@ Finally, we can confirm account balances for ETH and TRU and the amount of TRU w
 ```sh
 balance -a 0
 ```
-It is recommended, but not required, to run each Solver or Verifier node in a separate terminal window from a distinct account.
-
-Eventually, when you are ready to discard TRU and recover ETH, you can retire the tokens as follows:
+Eventually, when we are ready to discard TRU and recover ETH, we can retire the tokens as follows.  First check the buyback price using `token price -v 100`.  Then
 ```sh
-token retire -v 1000 -a 1
+token retire -v 100 -a 1
 ```
-The `token price` command will provide the current buyback rate.  For convenience, you can transfer TRU and ETH among your accounts in Truebit OS using `token transfer-eth` and `token transfer-tru`.  For example,
+This transaction will destroy 100 TRU and send ETH from the reserve to account 1.  We can conveniently transfer TRU and ETH among accounts in Truebit OS using `token transfer-eth` and `token transfer-tru`.  For example,
 ```sh
 token transfer-tru -a 0 -t 1 -v 20
 ```
@@ -226,7 +233,7 @@ will transfer 20 TRU from account 0 to account 1.
 
 ## Running Solvers and Verifiers
 
-We can now start our Solver and Verifier as follows.
+We can now start our Solver and Verifier as follows.  For clarity it is recommended, but not required, to run each Task Submitter, Solver, or Verifier in a [separate terminal window](#Open-terminal-window) with a distinct account.
 ```sh
 start solve -a 0
 start verify -a 1
@@ -243,7 +250,7 @@ Solvers and Verifiers will continue to solve and verify new tasks until instruct
 ```sh
 start verify -l 10 -p 0.5
 ```
-will initialize a Solver who participates when the the total reward for Verifiers is at least 10 TRU and pays at least 0.5 TRU per block of computation.
+will initialize a Solver who participates when the the total reward for Verifiers is at least 10 TRU and pays at least 0.5 TRU per block of computation.  Neither the `-l` nor the `-p` flag takes subsidy payments into consideration, so choose parameters accordingly.
 
 You can terminate all Solvers and Verifiers in your terminal by `exit`ing Truebit OS, however it is safer to end them using `ps` and `stop`, illustrated below, as this will allow them to complete active tasks(s), active verification game(s) and unbond deposits before terminating.
 ```sh
@@ -282,7 +289,7 @@ You can then discover other nodes on Truebit's network by running:
 ```sh
 ipfs connect
 ```
-If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.  You can use `ipfs id` to display your IPFS ID and `ipfs list` to display a list of all registered nodes.
+If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.  You can use `ipfs id` to display your IPFS ID and `ipfs list` to display a list of all registered nodes.  If you are running Truebit OS [natively](Running-Truebit-OS-natively), updating IPFS to the latest version may improve performance.
 
 ## Logging sessions and command line execution
 
@@ -567,7 +574,7 @@ Try adjusting `memory-size` first.  Greater parameters make the task more likely
 
 
 # Native installation
-For file editing convenience, you may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  Native installation may enhance network communication performance and facilitate hardware wallet connections in Geth.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
+You may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
 ```bash
 git clone https://github.com/TruebitProtocol/truebit-eth
 ```
@@ -580,12 +587,27 @@ npm i
 Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile).
 
 ## Running Truebit OS natively
-
-If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from here:
+If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source as described below.  You must also install and run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The following instructions assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from here:
 
 <https://truebit.io/downloads/>
 
-Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.
+Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.  This downloads page contains the latest Truebit OS version, and you should keep your local copy updated to avoid client errors.  Truebit OS displays your local version at startup, and you can compare this against the latest one listed in the badge at the top of this README file.
+
+Note that, by default, MacOS stores Geth files in `~/Library/Ethereum/` and Clef files in `~/Library/Signer/` These locations differ from the location in the Ubuntu-based Docker container, so mind the changes when you follow the `/goerli.sh` or `/mainnet.sh` startup templates.  This means that you'll probably find Clef's IPC socket at:
+```
+/Users/<YOUR USERNAME>/Library/Signer/clef.ipc
+```
+Geth's IPC socket at one of these:
+```
+/Users/<YOUR USERNAME>/Library/Ethereum/geth.ipc
+/Users/<YOUR USERNAME>/Library/Ethereum/goerli/geth.ipc
+```
+and the keystore files at one of these:
+```
+/Users/<YOUR USERNAME>/Library/Ethereum/keystore
+/Users/<YOUR USERNAME>/Library/Ethereum/goerli/keystore
+```
+The `--chainid` for Görli is still 5, and the `--chainid` for mainnet is still 1.
 
 ### macOS interpreter install
 

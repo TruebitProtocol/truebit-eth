@@ -17,9 +17,9 @@ until [ -f ~/.ipfs/api ]; do sleep 0.1; done
 # Start clef and geth
 CLEF='/root/.clef/clef.ipc'
 GETH=$(echo 'geth console --nousb --syncmode light --signer' $CLEF)
-sed -i "s|http://localhost:8545|~/.ethereum/geth.ipc|" /truebit-eth/wasm-client/config.json
+sed -i "s|http://localhost:8545|/root/.ethereum/geth.ipc|" /truebit-eth/wasm-client/config.json
 tmux \
-new-session 'clef --advanced --nousb --chainid 5 --keystore ~/.ethereum/keystore --rules /root/.clef/ruleset.js' \; \
+new-session 'clef --advanced --nousb --chainid 1 --keystore ~/.ethereum/keystore --rules /root/.clef/ruleset.js' \; \
 split-window "echo 'Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $GETH" \; \
 selectp -U \; swap-pane -U
 

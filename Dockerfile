@@ -151,14 +151,14 @@ RUN ipfs init \
 
 # Move initialization scripts for compiling, network, and authentication.  Re-configure for C/C++ samples.  Clean up root directory.
 RUN mv /truebit-eth/goerli.sh / \
- && mv /truebit-eth/mainnet.sh/ / \
+ && mv /truebit-eth/mainnet.sh / \
  && mkdir ~/.clef \
  && mv /truebit-eth/ruleset.js ~/.clef \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
  && cd / \
- && rm -r boot home media mnt opt srv
+ && rm -r boot home media mnt opt srv tmp/*
 
 # Open IPFS and blockchain ports
 EXPOSE 4001 8545 8546 30303
