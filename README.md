@@ -58,9 +58,9 @@ We first open a new container with two parts:
 Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
 ```bash
 YYY='/Users/Shared'
-docker run --network host -v $YYY/docker-clef/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs $YYY/truebit-eth/wasm-client/config.json:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Docker will then store your Clef, Geth, and IPFS configuration files in the directories `'docker-clef`, `docker-geth` and `docker-ipfs` respectively, and your Truebit configuration in `config.json`.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
+Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 
@@ -73,13 +73,18 @@ docker exec -it <YOUR CONTAINER NAME> /bin/bash
 To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
 ### "Share files"
-You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  Alternatively, you may copy into (or out of) the container with commands of the following [form](https://docs.docker.com/engine/reference/commandline/cp/).
+You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  If you wish to synchronize a specific local file with a container file, say `config.json`, first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume.
+`
+-v $YYY/config.json:/truebit-eth/wasm-client/config.json
+`
+
+Alternatively, you may copy into (or out of) the container with commands of the following [form](https://docs.docker.com/engine/reference/commandline/cp/).
 ```bash
 docker cp truebit-eth/mydata.txt f7b994c94911:/root/.ethereum/mydata.txt
 ```
 Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.  This command copies into the container.  If you wish to copy from container to local, reverse the order of the files.
 
-Finally, when sharing a text file from your local machine, you can simply copy the text into a buffer and paste into a file on the Docker container using the `vim` or `nano` text editors.
+Finally, when sharing a text file from your local machine, you can simply copy the text into a buffer and then paste into a file on the Docker container via the `vim` or `nano` text editors.
 
 ## Initializing accounts
 
