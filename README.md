@@ -422,7 +422,7 @@ Let's inspect a sample task meta-file called `reverse.json` which can be found i
 
 ### Task parameters
 
-You can experiment with its filesystem and economic configuration by adjusting parameters below.
+The filepaths above, e.g. `/data/reverse_alphabet.wasm`, are given relative to the working `truebit-os` directory.  The leading `/` does not refer to the top level system directory; instead Truebit OS reads from the concatenation of the working directory and this input string (e.g. `/truebit-eth/data/reverse_alphabet.wasm`).  You can experiment with the meta-file's configuration by adjusting parameters below.
 
 1. `codeFile`.  This keyword specifies the compiled code that the Task Giver wishes to execute.  Truebit OS automatically detects code type based on the code file extension (.wasm or .wast), however the Task Giver must specify a file type for the code (BYTES, CONTRACT, or IPFS) telling Solvers and Verifiers where to find it.  Each task has exactly one `codeFile`.
 
