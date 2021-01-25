@@ -9,7 +9,7 @@
 [![Discord](https://img.shields.io/discord/681631420674080993?color=yellow&label=discord)](https://discord.gg/CzpsQ66)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.  You may wish to familiarize yourself with the practical, high-level [user guide](https://medium.com/truebit/getting-started-with-truebit-on-ethereum-ac1c7cdb0907) before proceeding.
 
 This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, some [libraries ported to WebAssembly](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) for adding runtime hooks, a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](#Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
@@ -26,9 +26,10 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 1. [Quickstart guide: computational playground](#Quickstart-guide-computational-playground)
 2. [Solve and verify tasks](#Solve-and-verify-tasks)
 3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
-4. [Building your own tasks](#Building-your-own-tasks)
-5. [Native installation](#Native-installation)
-6. [Contract API reference](#Contract-API-reference)
+4. [Client configuration](#Client-configuration)
+5. [Building your own tasks](#Building-your-own-tasks)
+6. [Native installation](#Native-installation)
+7. [Contract API reference](#Contract-API-reference)
 
 # Quickstart guide: computational playground
 
@@ -40,6 +41,7 @@ Follow the following steps to run a containerized Truebit OS client for Solvers,
 ```bash
 docker pull truebitprotocol/truebit-eth:latest
 ```
+If you are running older version of Truebit OS and receive errors in your client, you should update to the latest Docker container via the same command.  The current Truebit OS version is listed in the badge at the top of this README file, and you can compare this against the local version which Truebit OS displays at startup.
 
 ## Docker incantations
 
@@ -53,76 +55,106 @@ We first open a new container with two parts:
 
 2. **Truebit Toolchain**. Task Givers can build and issue tasks.
 
-Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
+Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `~/truebit-docker`, we would write
 ```bash
-YYY='/Users/Shared'
-docker run --network host -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+YYY=$HOME'/truebit-docker'
+docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Docker will then store your Geth and IPFS files configuration files in the directories`docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
+Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
 
 ### "Open terminal window"
 
 When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
 ```bash
-docker exec -it _yourContainerName_ /bin/bash
+docker exec -it <YOUR CONTAINER NAME> /bin/bash
 ```
-_yourContainerName_ might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
+`<YOUR CONTAINER NAME>` might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
-You can share files between your native machine and the Docker container by copying them into your `docker-geth` or `docker-ipfs` folders.  Alternatively, you may copy into (or out of) the container with commands of the following form.
+To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
+
+### "Share files"
+You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  If you wish to synchronize a specific local file with a container file, say [`config.json`](#Client-configuration), first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume.
+`
+-v $YYY/config.json:/truebit-eth/wasm-client/config.json
+`
+
+Alternatively, you may copy into (or out of) the container with commands of the following [form](https://docs.docker.com/engine/reference/commandline/cp/).
 ```bash
-docker cp truebit-eth/supersecret.txt f7b994c94911:/root/.ethereum/supersecret.txt
+docker cp truebit-eth/mydata.txt f7b994c94911:/root/.ethereum/mydata.txt
 ```
-Here `f7b994c94911` is the name of the container's ID.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
+Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.  This command copies into the container.  If you wish to copy from container to local, reverse the order of the files.
 
-### "Connect to the network"
+Finally, when sharing a text file from your local machine, you can simply copy the text into a buffer and then paste into a file on the Docker container via the `vim` or `nano` text editors.
 
-One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, start IPFS in the background and configure the compiler with the following pair of commands (in this order).
+## Initializing accounts
+
+In order to interact with the Truebit network, you'll need account(s) to handle both Ethereum (ETH) and Truebit (TRU) tokens.  We'll use [Clef](https://geth.ethereum.org/docs/getting-started) to securely manage account keys and addresses.  The first time you [start](#Start-container) the Docker container, you'll need to initialize Clef with the following command.
 ```bash
-source /emsdk/emsdk_env.sh
-bash /startup.sh
+clef init
 ```
-You may wish to [connect with Geth](#Connecting-with-Geth) before executing the above commands as then `startup.sh` can register your IPFS address and connect it to other registered IPFS nodes on the Truebit network.  Check `/ipfs-connect.log` for connection results.  Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)`, rerun the `/startup.sh` command again.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
-
-Geth requires a more nuanced setup relative to IPFS.  Below we'll connect to Truebit on the Görli testnet.  As we shall see, connecting to Ethereum mainnet is quite similar.  Truebit OS automatically detects the blockchain network to which Geth is connected (either Görli testnet or Ethereum mainnet).
-
-#### Initializing accounts
-
-If you don't already have a local Görli account in your Docker container, create a new one inside the Docker container with the following command.
+Clef will ask you to create a master seed password which you'll use to unlock all your accounts.  Next run
 ```bash
-geth --goerli account new
+clef attest 1b7adf8011a50d0460d1069744adab87041163725e65049977983796dd2a6e2d
 ```
-Geth will prompt you for an account password.  You may wish to create more than one account.  Paste each of your account passwords on separate lines, in order, into a text file.  Drop this text file into your `docker-geth` folder.  For example, your password file might have the name `supersecret.txt` and might look something like this:
+which will allow Clef to sign all transactions automatically.  Task Givers, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`.
+
+You may check your existing accounts in Geth's console using `personal.listWallets`, in Truebit OS using [`accounts -r`](#Purchasing-staking-and-retiring-TRU-tokens), or at the main Docker command prompt using `geth --goerli account list` (sans `--goerli` for mainnet).
+
+### New accounts
+First, create a new account for Görli testnet.
+```bash
+clef newaccount --keystore ~/.ethereum/goerli/keystore
 ```
-truebit
-task
-solve
-verify
+Clef returns a "generated account" which is `<YOUR PUBLIC ADDRESS>`.  To add an account for mainnet instead, just use the vanilla command `clef newaccount`.  Clef will ask you to create a password for this account, and the next command will attach the account password to your master seed password keychain.
+```bash
+clef setpw <YOUR PUBLIC ADDRESS>
 ```
-Finally, fund your accounts!  You can obtain Görli ETH from one of the faucets below, or send your accounts ETH from your favorite wallet (e.g. [Metamask](https://metamask.io/) or [MyCrypto](https://mycrypto.com/)).
+Clef can now autofill the keystore password for <YOUR PUBLIC ADDRESS> whenever you log in with your master seed password.  Repeat these steps to create additional accounts.  If you used the `docker run ...` command [above](#Start-container), you'll find your keystore files on your local computer in a folder called `docker-geth`, and the `masterseed.json` file in `docker-clef`.
+
+On testnet one can create keystore files with shorter passwords using `geth --goerli account new`.
+
+### Importing existing accounts
+For hardware wallets, you can either add the [`--privileged`](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) flag when starting Docker or run Truebit OS outside the Docker container using a [native install](#Running-Truebit-OS-natively).  In either case, you will need to remove the `--nousb` flag from both the `clef` and `geth` startup incantations.
+
+If you wish to use an existing keystore file with Truebit, simply paste it into your local folder `docker-geth/goerli/keystore` (for testnet) or `docker-geth/keystore` (for mainnet).  Alternatively use [`docker cp`](#Share-files) to paste into the Docker container at `~/.ethereum/goerli/keystore` (testnet) or `~/.ethereum/keystore` (mainnet).
+
+### Funding your accounts with ETH
+
+Finally, get some ETH!  You can obtain Görli ETH from one of the free faucets below, or send ETH to your accounts from your favorite wallet (e.g. [Metamask](https://metamask.io/) or [MyCrypto](https://mycrypto.com/)).
 
 https://goerli-faucet.slock.it/
 
 https://faucet.goerli.mudit.blog/
 
-#### Connecting with Geth
+As Ethereum mainnet lacks a faucet, you'll have to source ETH from an existing account (or mining).
 
-In your Truebit Docker container, connect your account(s) to the Görli network using an incantation of the following form:
+
+## Connect to the network
+
+One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, initialize the Truebit toolchain compiler, start IPFS, and start Geth as with the following pair of commands (in this order).
 ```bash
-geth --goerli --http --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
+source /emsdk/emsdk_env.sh
+bash /goerli.sh
 ```
-Here `0,1,2,3` denotes the indices of the accounts you wish to use with Truebit OS.  If we wanted to connect to mainnet instead of Görli, we would simply delete the term `--goerli` in the incantation above.  Your Geth client should now begin syncing with the network and be up to date within a minute.  If you are have trouble connecting to a light client peer, try the following.
+You may skip the `source /emsdk/emsdk_env.sh` line if you are not planning to build new tasks in your current session, and if you wish to connect to Ethereum mainnet rather than Görli, use `bash /mainnet.sh` instead.  After running the startup script(s), the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
 
-1. Exit `geth` (`Ctrl-C` or `exit`) and re-run the `geth` incantation above.
+Once your Geth node is fully synchronized, you may enhance IPFS connectivity by running the last four lines in `/goerli.sh` (sans comment symbol `#`) or by running the [equivalent](#Faster-IPFS-uploads-and-downloads) commands in Truebit OS.  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, cut and paste to your command line, and `cat /ipfs-connect.log` for connection results.  Alternatively, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS node rather than running one in Docker.
 
-2. Try running Truebit OS [natively](#Running-Truebit-OS-natively) instead of using Docker.
+Note that one can terminate an IPFS connection at any time by typing `ipfs shutdown`.  If you get an error message like `Error: execution aborted (timeout = 5s)` when running the commands described in the previous paragraph, check your connection in the Geth window and rerun the offending command.  Messages like `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available` indicate that IPFS failed to obtain the list of registered Truebit nodes due to lack of Geth connection or synchronization.
 
-3. Test your connection with a vanilla command, e.g. `geth --goerli --syncmode "light"`, especially if you get the message `Fatal: Failed to read password file: open /root/.ethereum/supersecret.txt: no such file or directory`.  On Ethereum mainnet, try `geth --syncmode "fast"`.
+Note that Truebit OS automatically detects the blockchain network to which Geth is connected (either Görli testnet or Ethereum mainnet).  If you are have trouble connecting to a light client peer, try the following.
+
+1. Terminate the Clef/Geth split screen (`Ctrl-C`, `Ctrl-D` and/or `exit`) and re-run `sh /goerli.sh`.
+
+2. Test your connection with a vanilla command at the main Docker prompt, e.g. `geth --goerli --syncmode "light"`, or for mainnet `geth --syncmode "fast"`.  Try `geth --help` for more options.
+
+3. Test Truebit OS with a plug-and-play API, e.g. [Infura](https://infura.io/) or [others](https://ethereumnodes.com/).  See [below](#Client-configuration) for configuration instructions.
 
 4. Change your IP address.
 
-5. Connect to the blockchain via a non-Geth interface, e.g. [Infura](https://infura.io/).
+5. Try running Truebit OS [natively](#Running-Truebit-OS-natively) instead of using Docker.
 
-6. Consider running a full Ethereum node via Geth or dedicated [hardware](https://ava.do/).
+6. Consider running a full Ethereum node on dedicated [hardware](https://ava.do/).
 
 7. Reconnect later.
 
@@ -130,9 +162,9 @@ To view a list of your connected addresses inside the `geth console`, type `pers
 
 # Solve and verify tasks
 
-We are now ready to run Truebit Solver and Verifier nodes.  If you haven't already, ["start container"](#Start-container) and ["connect to the network"](#Connect-to-the-network).  Now use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
+We are now ready to run Truebit Solver and Verifier nodes.  This walk-through assumes you've already [set up your accounts](#Initializing-accounts) and [connected to the network](#Connect-to-the-network).  Use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
 ```bash
-cd truebit-eth
+cd /truebit-eth
 ./truebit-os
 ```
 You should now see a new shell prompt.
@@ -150,18 +182,17 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
  | || (_| \__ \   <  \__ \ (_) | |\ V /  __/  \ V /  __/ |  | |  _| |_| |
   \__\__,_|___/_|\_\ |___/\___/|_| \_/ \___|   \_/ \___|_|  |_|_|  \__, |
                                                                    |___/
-
-[10-17 22:40:48] info: Truebit OS 1.0.6 has been initialized on goerli network at block 3594922.
+[01-21 14:42:00] info: Truebit OS 1.2.6 has been initialized on goerli network at block 4145800 with throttle 3 and gas price 20.1 gwei.
 ```
-Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` and restart.
+Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` Truebit OS and restart.
 
 For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
 help [command...]        Provides help for a given command.
 exit                     Exits application.
-accounts                 List available network accounts.
-balance [options]        Show account balances.
-bonus                    Display current per task bonus payout.
+accounts [options]       List web3 account indices (-r to refresh).
+balance [options]        Show account balances (-a account index).
+bonus                    Display current per task subsidy.
 gas [options] <cmd>      Check or set gas price.
 ipfs [options] <cmd>     Manage IPFS nodes.
 license [options] <cmd>  Obtain a Solver license.
@@ -173,17 +204,21 @@ token [options] <cmd>    Swap ETH for TRU.  Deposit to or withdraw from incentiv
 version                  Display Truebit OS version.
 ```
 
-## Staking tokens
+## Purchasing, staking, and retiring TRU tokens
 
-In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  Check the price using `token price`, then
+In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the indices for available accounts using `accounts` and the price in ETH using `token price -v 1000`.  If you add or remove node accounts while Truebit OS is open, you can refresh and synchronize the account list in Truebit OS with
+```sh
+accounts -r
+```
+Truebit OS will retain the current list of account indices until one runs this command.  After checking balances for account 0 using `balance`, we are ready to purchase some TRU.  
 ```sh
 token purchase -v 1000 -a 0
 ```
-Now we can stake some of our TRU.
+We should now have 1000 freshly minted TRU in account 0.  We can now stake some of our TRU which will enable us to solve or verify a task.
 ```sh
 token deposit -v 500 -a 0
 ```
-We can repeat this process for account 1, if desired.  We are ready to start a Verifier, but if we wish to run a Solver, there is one additional step.  We must purchase a Solver license with ETH.  Check the price using `license price`, then
+We can repeat this process for account 1, if desired.  We are ready to start a Verifier, however if we wish to run a Solver, there is one additional step.  We must purchase a Solver license with ETH.  Check the price using `license price`, then
 ```sh
 license purchase -a 0
 ```
@@ -191,11 +226,19 @@ Finally, we can confirm account balances for ETH and TRU and the amount of TRU w
 ```sh
 balance -a 0
 ```
-It is recommended, but not required, to run each Solver or Verifier node in a separate terminal window from a distinct account.
+Eventually, when we are ready to discard TRU and recover ETH, we can retire the tokens as follows.  First check the buyback price using `token price -v 100`.  Then
+```sh
+token retire -v 100 -a 1
+```
+This transaction will destroy 100 TRU and send ETH from the reserve to account 1.  We can conveniently transfer TRU and ETH among accounts in Truebit OS using `token transfer-eth` and `token transfer-tru`.  For example,
+```sh
+token transfer-tru -a 0 -t 1 -v 20
+```
+will transfer 20 TRU from account 0 to account 1.
 
 ## Running Solvers and Verifiers
 
-We can now start our Solver and Verifier as follows.
+We can now start our Solver and Verifier as follows.  For clarity it is recommended, but not required, to run each Task Submitter, Solver, or Verifier in a [separate terminal window](#Open-terminal-window) with a distinct account.
 ```sh
 start solve -a 0
 start verify -a 1
@@ -204,19 +247,42 @@ If the Solver and Verifier do not immediately find a task on the network, try is
 ```sh
 task -f factorial.json submit -a 0
 ```
-The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here:
+The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here: ***NEED TO UPDATE ADDRESSES***
 
 <https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E>
 
-Your Solver and Verifier will continue to solve and verify new tasks until a `stop` command is issued (e.g. `stop 1`) or you `exit` Truebit OS.  Use `ps` to identify the appropriate process index.  If you lose Internet connectivity while your deposit is bonded to a task, try restarting in recovery mode.  For example,
+Solvers and Verifiers will continue to solve and verify new tasks until instructed to stop.  To limit task participation based on TRU rewards, Solvers and Verifiers can use the `-l` flag to set a minimum, (constant) non-zero reward threshold per task, or use `-p` to fix a minimum TRU reward per block of computation.  For example,
+```sh
+start verify -l 10 -p 0.5
+```
+will initialize a Solver who participates when the the total reward for Verifiers is at least 10 TRU and pays at least 0.5 TRU per block of computation.  Neither the `-l` nor the `-p` flag takes subsidy payments into consideration, so choose parameters accordingly.
+
+You can terminate all Solvers and Verifiers in your terminal by `exit`ing Truebit OS, however it is safer to end them using `ps` and `stop`, illustrated below, as this will allow them to complete active tasks(s), active verification game(s) and unbond deposits before terminating.
+```sh
+truebit-os:> ps
+SOLVERS
+1. Account 4: 0xa1b4CbC091E9B15e334d95D92CA7677152F52ac4  
+VERIFIERS
+2. Account 5: 0x755908B829B8189a8B6D757da2A8ed4747506a84
+ Task 1: 0x100a6f1a7fe990a2839ff3096b950bc5ff81ffaa9d5f87f328e77c5c624d23a9
+truebit-os:> stop 1
+[01-21 12:54:51] info: Preparing to exit Solver process 1.
+SOLVERS
+1. Account 4: 0xa1b4CbC091E9B15e334d95D92CA7677152F52ac4  Preparing to exit
+VERIFIERS
+2. Account 5: 0x755908B829B8189a8B6D757da2A8ed4747506a84
+ Task 1: 0x100a6f1a7fe990a2839ff3096b950bc5ff81ffaa9d5f87f328e77c5c624d23a9
+truebit-os:> [01-21 12:54:53] info: SOLVER: Exited.
+```
+If you make a mistake or lose Internet connectivity while your deposit is bonded to a task, try restarting in recovery mode.  For example,
 ```sh
 start solve -r 20
 ```
-will initialize a new Solver 20 blocks behind the current block and recover the intermediate events.
+will initialize a new Solver 20 blocks behind the current block and recover the intermediate events.  You can also try a command of the form `task unbond -a 1` to recover a stuck deposit.
 
-## Platform fees
+## Subsidies and platform fees
 
-Task Submitter and Solvers will each pay a platform fee of 0.005 ETH per task.  There is no platform fee for Verifiers, however they must pay the usual gas costs for sending transactions.
+In addition to TRU fees paid from Task Submitters to Solvers and Verifiers, Task Owners, Solvers, and Verifiers each receive freshly minted TRU subsidies for participating in each task.  Use the `bonus` command to check current subsidy amounts.  Task Submitter and Solvers will each pay a small, per-task platform fee.  Check `task fees` for the amount.  There is no platform fee for Verifiers, however Verifiers must pay the usual gas costs for sending transactions.  
 
 ## Faster IPFS uploads and downloads
 
@@ -228,7 +294,7 @@ You can then discover other nodes on Truebit's network by running:
 ```sh
 ipfs connect
 ```
-If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.
+If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.  You can use `ipfs id` to display your IPFS ID and `ipfs list` to display a list of all registered nodes.  If you are running Truebit OS [natively](Running-Truebit-OS-natively), updating IPFS to the latest version may improve performance.
 
 ## Logging sessions and command line execution
 
@@ -250,19 +316,19 @@ ps a
 ```
 Use `cat mylog.txt` to review these logs with proper formatting.
 
-## Client configuration
+
+# Client configuration
 
 In the `/truebit-eth/wasm-client/` directory, you will find a file called `config.json` which looks something like this.
 ```json
 {
   "geth": {
-    "RPCport": "http://localhost:8545",
-    "providerType": "http"
+    "providerURL": "http://localhost:8545"
   },
   "ipfs": {
+    "protocol": "http",
     "host": "localhost",
-    "port": "5001",
-    "protocol": "http"
+    "port": "5001"
   },
   "gasPrice": 20.1,
   "throttle": 3,
@@ -290,20 +356,31 @@ The `throttle` parameter [above](#Client-configuration) is the maximum number of
 ```sh
 task throttle -v 3
 ```
-The `geth` and `ipfs` subkeys must match your network settings for Geth and IPFS.  You can override the default `RPCport` setting at startup using the `-p` flag and override the default [providerType](https://geth.ethereum.org/docs/rpc/server) (either `http` or `ws`) using the `-t` flag.  For example
+The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  Valid prefixes for `geth.providerURL` are `http`, `https`, `ws`, and `wss` and determine the provider type for the connection.  If `geth.providerURL` does not have a valid prefix, it must have a `.ipc` suffix, e.g. `/root/.ethereum/goerli/geth.ipc`.  You can override the default `geth.providerURL` setting at Truebit OS startup using the `-p`.  For example
 ```bash
-./truebit-os -p 1234 -t ws
+./truebit-os -p ws://localhost:8546
 ```
-will set the RPC server listening port to http://localhost:1234 and connect via WebSocket.
+will set the RPC server listening port to 8546 and connect via WebSocket.  You can also try to use an external hosting provider, like
+`
+/truebit-os -p https://goerli.infura.io/v3/<YOUR API KEY>
+`.
+As such APIs are not trusted, however, you will not be able to unlock your accounts for use in Truebit OS. Finally, **never unlock you accounts on a mainnet node using http or ws connections**, as anyone with access to the node can issue transactions on behalf of your account(s).
 
-You must restart Truebit OS for configuration changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to add a volume to your Docker run incantation, e.g.
+The `-i` flag adjusts the IPFS connection settings analogously, e.g.
 ```bash
-docker run --network host `-v $YYY/wasm-client:/truebit-eth/wasm-client` -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+./truebit-os -i http://localhost:5001
 ```
-Do not change the `incentiveLayer` key in `config.json` as Truebit currently only supports a single incentive layer.
+will connect to IPFS via http on local port 5001.
+
+You must restart Truebit OS for `config.json` changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to [add](Share-files) a volume to your Docker run incantation.
+Do not change the `incentiveLayer` key in `config.json` as Truebit on Ethereum only supports a single incentive layer.
 
 
 # Getting data into and out of Truebit
+
+Tasks can be issued directly from Truebit OS or from smart contracts.  We'll focus on task issuance from Truebit OS in this section and then issue tasks from smart contracts in the next [section](#Sample-tasks-via-smart-contracts).
+
+## Filetypes
 
 Truebit can read and write data to three file types.
 
@@ -342,7 +419,10 @@ Let's inspect a sample task meta-file called `reverse.json` which can be found i
     "blockLimit": "1"
 }
 ```
-The filepaths above, e.g. `/data/reverse_alphabet.wasm`, are give relative to the working `truebit-os` director.  The leading `/` does not refer to the top level directory, but instead is concatenated to the end of the working directory (e.g. `/truebit-eth/data/reverse_alphabet.wasm`).  You can experiment with the meta-file's configuration by adjusting parameters below.
+
+### Task parameters
+
+The filepaths above, e.g. `/data/reverse_alphabet.wasm`, are given relative to the working `truebit-os` directory.  The leading `/` does not refer to the top level system directory; instead Truebit OS reads from the concatenation of the working directory and this input string (e.g. `/truebit-eth/data/reverse_alphabet.wasm`).  You can experiment with the meta-file's configuration by adjusting parameters below.
 
 1. `codeFile`.  This keyword specifies the compiled code that the Task Giver wishes to execute.  Truebit OS automatically detects code type based on the code file extension (.wasm or .wast), however the Task Giver must specify a file type for the code (BYTES, CONTRACT, or IPFS) telling Solvers and Verifiers where to find it.  Each task has exactly one `codeFile`.
 
@@ -354,16 +434,51 @@ The filepaths above, e.g. `/data/reverse_alphabet.wasm`, are give relative to th
 
 In a typical Ethereum deployment, the *Task Owner* is the Dapp smart contract that sends a task to Truebit which in turns calls back with a solution.  The *Task Submitter* is always a regular (i.e. human-controlled) blockchain address that initiates the task and pays for it.
 
-5. `stackSize`, `memorySize`, `globalsSize`, `tableSize`, and `callSize`.  These are virtual machine parameters.  You may need to tweak `memorySize` when you create your own task.
+5. `stackSize`, `memorySize`, `globalsSize`, `tableSize`, and `callSize`.  These are virtual machine parameters.  **You may need to tweak `memorySize` when you create your own task.**
 
 6. `blockLimit`.  This is the length of time (in blocks) for which Solvers and Verifiers will attempt to run the task before reporting a timeout.
 
-To run this example, enter the following commands in Truebit OS.
+### Executing tasks
+
+To run this example on-chain, enter the following commands in Truebit OS.
 ```sh
 start solve
 task -f reverse.json submit
 ```
-You can find names of other sample .json meta-files using `ls` and then view file contents with the `cat` command.
+You can find names of other sample .json meta-files using `ls` and view file contents with the `cat` command.  In the event that the Solver disappears in the middle of a task (or never shows up), you can try a command of the form to recover both your and the Solver's deposits.
+```sh
+task cancel -t 0x361b1a715e94f56368f78e1c478a659cab4b9b4dec1edf13d5280a26d2f72442
+```
+
+If you wish to experiment with tasks locally without involving the blockchain, use `task initial` to get the initial state, `task final` to get the final state, or `task jit` to run with a faster, just-in-time compiler in place of the interpreter.  Truebit OS will then tell you the local directory where it is writing the output file(s) as well as the interpreter command it used to generate them.
+```sh
+truebit-os:> task -f scrypt.json final
+[01-21 12:19:54] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_jbgd3ns0f1o0
+Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -output -memory-size 20 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file input.data -wasm task.wasm
+{
+  vm: {
+    code: '0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d',
+    stack: '0xc4a0d0f17ed3cf6c3f5d1395b1a746bad76e435b4441f7560dd7d9a7ed421ea7',
+    memory: '0xf855a8d6d2661d3ca64ce0c57e053485c4161ea2a20645951c258fb733b5c55c',
+    input_size: '0x0e4622ec59dd318509b8d475728ec11bab6c05132b908f19bba96ab64ed8dd29',
+    input_name: '0xd3e24e0303f49b3dd3032fa2523603b320c2b2b0eea3693532c6401d315e8a32',
+    input_data: '0xccdcd022b89bec0246d141477e6631fc108e56e9b36287a0b3daee64898e1fd2',
+    call_stack: '0xee2dc7fd44076d9a56034fd850a40094a11fb8b36ee79aa67d55331c70a2f4f6',
+    globals: '0x92d1402fb000c5be1173aed60f2f554cabb4c1da645fbe3e093965c2f1b073d6',
+    calltable: '0x94d2f893a098ac1ada9f9c934a8a01c23357f0f7389bc2431606417d09604173',
+    calltypes: '0x32b4a5f01bf39b515516d7d98afc96803a1550319f3268d13c7055b6975ae994',
+    pc: 1099511627775,
+    stack_ptr: 1,
+    call_ptr: 0,
+    memsize: 128
+  },
+  hash: '0xb0e5847d04511d3bd7a05041afdd19c13ea9dec77dae7bb380219ca72468a487',
+  steps: 10423776,
+  files: [ 'output.data.out', 'input.data.out' ]
+}
+```
+Note that the Task Submitter, Solver, and Verifier always rename the task's code file to `task.wasm` when writing local `tmp.giver`, `tmp.solver`, and `tmp.verifier` files.  The JIT, on the other hand, *requires* that the task file submitted by the Task Giver be named `task.wasm`.
+
 
 ## Sample tasks via smart contracts
 
@@ -444,7 +559,7 @@ sh compile.sh
 ```
 Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
-When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters, including:
+When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters (within range 5 to 30), including:
 
 `memory-size`: depth of the Merkle tree for memory
 
@@ -456,12 +571,12 @@ When building and executing your own tasks, you may have to adjust some of the i
 
 `call-stack-size`: depth of Merkle tree for the call stack
 
- See this [file](https://github.com/TruebitProtocol/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
+Try adjusting `memory-size` first.  Greater parameters make the task more likely to execute.  See this [file](https://github.com/TruebitProtocol/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
 
 # Native installation
-For file editing convenience, you may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  Native installation may enhance network communication performance and facilitate hardware wallet connections in Geth.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
+You may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  To set up natively, first install [git](https://github.com/git-guides/install-git) and clone the Truebit repo.
 ```bash
 git clone https://github.com/TruebitProtocol/truebit-eth
 ```
@@ -471,18 +586,22 @@ A Node.js [installation](https://nodejs.org/en/download/package-manager/) is a p
 cd truebit-eth
 npm i
 ```
-Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile).
+Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile)
 
 ## Running Truebit OS natively
 
-If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source.  You must also run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The instructions below assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from here:
+You will need Clef, Geth, IPFS, and Truebit OS.
+
+### Installation
+To get started, install both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  Be sure to install a version of Geth that includes Clef.  Then download a pre-built Truebit OS executable here:
 
 <https://truebit.io/downloads/>
 
-Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.
+Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.  This downloads page contains the latest Truebit OS version, and you should keep your local copy updated to avoid client errors.  Truebit OS displays your local version at startup, and you can compare this against the latest one listed in the badge at the top of this README file.
 
-### macOS interpreter install
+You must also build the Truebit WASM interpreter from source as described below.
 
+#### macOS interpreter install
 In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the `truebit-eth` directory:
 ```bash
 brew install libffi ocaml ocamlbuild opam pkg-config
@@ -492,8 +611,9 @@ opam install cryptokit ctypes ctypes-foreign yojson -y
 cd ocaml-offchain/interpreter
 make
 ```
+If you previously installed an older version of OCaml, you may need to run `ocaml update`, `ocaml upgrade`, and/or `brew upgrade`.  You can also get a fresh install by removing `~/.opam`.
 
-### Linux interpreter install
+#### Linux interpreter install
 From the `truebit-eth` directory, use the following Ubuntu install (or modify it to suit your Linux flavor).
 ```bash
 apt-get update
@@ -506,10 +626,55 @@ cd ocaml-offchain/interpreter
 make
 ```
 
-### Windows interpreter install
-
+#### Windows interpreter install
 Follow the patterns above for Linux and macOS.
 
+### Starting up
+We now walk through the steps to start IPFS, Clef, Geth, and then Truebit-OS.
+
+By default, MacOS stores Clef files in `~/Library/Signer/` and Geth files in `~/Library/Ethereum/`. These locations differ from the location in the linux-based Docker container, which are `~/.clef` and `~/.geth`, so mind these differences when you follow the `/goerli.sh` or `/mainnet.sh` startup templates.  This means that in MacOS you'll probably find Clef's IPC socket at:
+```
+~/Library/Signer/clef.ipc
+```
+Geth's IPC socket at one of these:
+```
+~/Library/Ethereum/geth.ipc
+~/Library/Ethereum/goerli/geth.ipc
+```
+and the keystore files at one of these:
+```
+~/Library/Ethereum/keystore
+~/Library/Ethereum/goerli/keystore
+```
+The `--chainid` for Görli is still 5, and the `--chainid` for mainnet is still 1.
+
+In MacOS, a startup cheatsheet for Görli testnet might look something like this.
+```bash
+ipfs daemon &
+clef --advanced  --rules ~/Library/Signer/ruleset.js --keystore ~/Library/Signer/goerli/keystore --chainid 5
+geth console --syncmode light --signer ~/Library/Signer/clef.ipc --goerli
+./truebit-os -p ~/Library/Ethereum/goerli/geth.ipc
+```
+For Ethereum mainnet, it might look like this:
+```bash
+ipfs daemon &
+clef --advanced --rules ~/Library/Signer/ruleset.js --chainid 1
+geth console --syncmode light --signer ~/Library/Signer/clef.ipc
+./truebit-os -p ~/Library/Ethereum/geth.ipc
+```
+For linux, try one of the following.
+```bash
+ipfs daemon &
+clef --advanced  --rules ~/.clef/ruleset.js --keystore ~/.clef/goerli/keystore --chainid 5
+geth console --syncmode light --signer ~/.clef/clef.ipc --goerli
+./truebit-os -p ~/.ethereum/goerli/geth.ipc
+
+ipfs daemon &
+clef --advanced --rules ~/.clef/ruleset.js --chainid 1
+geth console --syncmode light --signer ~/.clef/clef.ipc
+./truebit-os -p ~/.ethereum/geth.ipc
+```
+For Windows, follow the templates above.
 
 # Contract API reference
 

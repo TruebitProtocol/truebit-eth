@@ -1,6 +1,6 @@
 {
   "name": "truebit",
-  "version": "1.1.9",
+  "version": "1.2.8",
   "description": "Client software for interacting with the Truebit system",
   "bin": {
     "truebit-os": "cli/index.js"
@@ -23,12 +23,10 @@
     "coverage": "nyc mocha"
   },
   "keywords": [
-    "to",
-    "the",
-    "moon"
+    "verifiable",
+    "computation"
   ],
-  "author": "hswick",
-  "license": "none",
+  "license": "UNLICENSED",
   "dependencies": {
     "chalk": "^2.4.1",
     "ethereumjs-util": "^5.2.0",

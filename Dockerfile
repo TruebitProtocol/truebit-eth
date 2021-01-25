@@ -3,8 +3,8 @@ MAINTAINER Jason Teutsch
 
 SHELL ["/bin/bash", "-c"]
 
-# Get packages list and tmux
-RUN apt-get update && apt-get install -y tmux
+# Get packages list and user utilities
+RUN apt-get update && apt-get install -y jq nano tmux vim
 
 # Set up Emscripten
 RUN apt-get install -y cmake g++ git python \
@@ -60,12 +60,13 @@ RUN cd bin \
  && chmod 744 solc
 
 # Install Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-linux-amd64-1.9.23-8c2f2715.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.9.25-e7872729.tar.gz \
  && tar xf geth*tar.gz \
  && rm geth*tar.gz \
  && cd geth* \
  && cp geth /bin \
- && rm -rf /geth-linux-amd64-1.9.23-8c2f2715
+ && cp clef /bin \
+ && rm -rf /geth*
 
 # Install IPFS
 RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
@@ -148,24 +149,19 @@ RUN ipfs init \
  && mv /wasm /truebit-eth/wasm-ports/samples \
  && rm -r /root/.ipfs
 
-# Optional: set up Ganache, Mocha, and Browserify example
-# RUN npm install -g ganache-cli mocha@7.2.0 browserify \
-#  && cd /truebit-eth/wasm-ports/samples/pairing \
-#  && browserify public/app.js -o public/bundle.js \
-#  && cd ../scrypt \
-#  && browserify public/app.js -o public/bundle.js
-
-# Move initialization script for IPFS and Emscripten.  Re-configure for C/C++ samples.  Clean up root directory.
-RUN mv /truebit-eth/startup.sh /startup.sh \
+# Move initialization scripts for compiling, network, and authentication.  Re-configure for C/C++ samples.  Clean up root directory.
+RUN mv /truebit-eth/goerli.sh / \
+ && mv /truebit-eth/mainnet.sh / \
+ && mkdir ~/.clef \
+ && mv /truebit-eth/ruleset.js ~/.clef \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
  && cd / \
- && rm -r boot home media mnt opt srv
- # && rm -rf /var/lib/apt/lists/*
+ && rm -r boot home media mnt opt srv tmp/*
 
-# Set up IPFS and blockchain ports
-EXPOSE 4001 30303 80 8545
+# Open IPFS and blockchain ports
+EXPOSE 4001 8080 8545 8546 30303
 
 # Container incantations
 # BUILD: docker build . -t truebit:latest
