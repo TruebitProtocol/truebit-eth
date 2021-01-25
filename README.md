@@ -55,9 +55,9 @@ We first open a new container with two parts:
 
 2. **Truebit Toolchain**. Task Givers can build and issue tasks.
 
-Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `\Users\Shared`, we would write
+Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `~/truebit-docker`, we would write
 ```bash
-YYY='/Users/Shared'
+YYY=$HOME'/truebit-docker'
 docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
 Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
@@ -576,7 +576,7 @@ Try adjusting `memory-size` first.  Greater parameters make the task more likely
 
 
 # Native installation
-You may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  To set up natively, first download [git](https://www.atlassian.com/git/tutorials/install-git) and clone the Truebit repo.
+You may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  To set up natively, first install [git](https://github.com/git-guides/install-git) and clone the Truebit repo.
 ```bash
 git clone https://github.com/TruebitProtocol/truebit-eth
 ```
@@ -586,33 +586,22 @@ A Node.js [installation](https://nodejs.org/en/download/package-manager/) is a p
 cd truebit-eth
 npm i
 ```
-Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile).
+Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile)
 
 ## Running Truebit OS natively
-If you wish to run Truebit OS on your native machine, you will need to build the Truebit WASM interpreter from source as described below.  You must also install and run both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  The following instructions assume that you are starting in the top level of the `truebit-eth` directory.  You will also want to download the Truebit OS executable from here:
+
+You will need Clef, Geth, IPFS, and Truebit OS.
+
+### Installation
+To get started, install both [Geth](https://geth.ethereum.org/docs/install-and-build/installing-geth) & [IPFS](https://docs.ipfs.io/install/command-line/) natively (not in the Docker container).  Be sure to install a version of Geth that includes Clef.  Then download a pre-built Truebit OS executable here:
 
 <https://truebit.io/downloads/>
 
 Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.  This downloads page contains the latest Truebit OS version, and you should keep your local copy updated to avoid client errors.  Truebit OS displays your local version at startup, and you can compare this against the latest one listed in the badge at the top of this README file.
 
-Note that, by default, MacOS stores Geth files in `~/Library/Ethereum/` and Clef files in `~/Library/Signer/` These locations differ from the location in the Ubuntu-based Docker container, so mind the changes when you follow the `/goerli.sh` or `/mainnet.sh` startup templates.  This means that you'll probably find Clef's IPC socket at:
-```
-/Users/<YOUR USERNAME>/Library/Signer/clef.ipc
-```
-Geth's IPC socket at one of these:
-```
-/Users/<YOUR USERNAME>/Library/Ethereum/geth.ipc
-/Users/<YOUR USERNAME>/Library/Ethereum/goerli/geth.ipc
-```
-and the keystore files at one of these:
-```
-/Users/<YOUR USERNAME>/Library/Ethereum/keystore
-/Users/<YOUR USERNAME>/Library/Ethereum/goerli/keystore
-```
-The `--chainid` for Görli is still 5, and the `--chainid` for mainnet is still 1.
+You must also build the Truebit WASM interpreter from source as described below.
 
-### macOS interpreter install
-
+#### macOS interpreter install
 In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the `truebit-eth` directory:
 ```bash
 brew install libffi ocaml ocamlbuild opam pkg-config
@@ -622,8 +611,9 @@ opam install cryptokit ctypes ctypes-foreign yojson -y
 cd wasm-client/ocaml-offchain/interpreter
 make
 ```
+If you previously installed an older version of OCaml, you may need to run `ocaml update`, `ocaml upgrade`, and/or `brew upgrade`.  You can also get a fresh install by removing `~/.opam`.
 
-### Linux interpreter install
+#### Linux interpreter install
 From the `truebit-eth` directory, use the following Ubuntu install (or modify it to suit your Linux flavor).
 ```bash
 apt-get update
@@ -636,10 +626,55 @@ cd /ocaml-offchain/interpreter
 make
 ```
 
-### Windows interpreter install
-
+#### Windows interpreter install
 Follow the patterns above for Linux and macOS.
 
+### Starting up
+We now walk through the steps to start IPFS, Clef, Geth, and then Truebit-OS.
+
+By default, MacOS stores Clef files in `~/Library/Signer/` and Geth files in `~/Library/Ethereum/`. These locations differ from the location in the linux-based Docker container, which are `~/.clef` and `~/.geth`, so mind these differences when you follow the `/goerli.sh` or `/mainnet.sh` startup templates.  This means that in MacOS you'll probably find Clef's IPC socket at:
+```
+~/Library/Signer/clef.ipc
+```
+Geth's IPC socket at one of these:
+```
+~/Library/Ethereum/geth.ipc
+~/Library/Ethereum/goerli/geth.ipc
+```
+and the keystore files at one of these:
+```
+~/Library/Ethereum/keystore
+~/Library/Ethereum/goerli/keystore
+```
+The `--chainid` for Görli is still 5, and the `--chainid` for mainnet is still 1.
+
+In MacOS, a startup cheatsheet for Görli testnet might look something like this.
+```bash
+ipfs daemon &
+clef --advanced  --rules ~/Library/Signer/ruleset.js --keystore ~/Library/Signer/goerli/keystore --chainid 5
+geth console --syncmode light --signer ~/Library/Signer/clef.ipc --goerli
+./truebit-os -p ~/Library/Ethereum/goerli/geth.ipc
+```
+For Ethereum mainnet, it might look like this:
+```bash
+ipfs daemon &
+clef --advanced --rules ~/Library/Signer/ruleset.js --chainid 1
+geth console --syncmode light --signer ~/Library/Signer/clef.ipc
+./truebit-os -p ~/Library/Ethereum/geth.ipc
+```
+For linux, try one of the following.
+```bash
+ipfs daemon &
+clef --advanced  --rules ~/.clef/ruleset.js --keystore ~/.clef/goerli/keystore --chainid 5
+geth console --syncmode light --signer ~/.clef/clef.ipc --goerli
+./truebit-os -p ~/.ethereum/goerli/geth.ipc
+
+ipfs daemon &
+clef --advanced --rules ~/.clef/ruleset.js --chainid 1
+geth console --syncmode light --signer ~/.clef/clef.ipc
+./truebit-os -p ~/.ethereum/geth.ipc
+```
+For Windows, follow the templates above.
 
 # Contract API reference
 
