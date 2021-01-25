@@ -651,7 +651,7 @@ The `--chainid` for Görli is still 5, and the `--chainid` for mainnet is still 
 In MacOS, a startup cheatsheet for Görli testnet might look something like this.
 ```bash
 ipfs daemon &
-clef --advanced  --rules ~/Library/Signer/ruleset.js --keystore ~/Library/Signer/goerli/keystore --chainid 5
+clef --advanced  --rules ~/Library/Signer/ruleset.js --keystore ~/Library/Ethereum/goerli/keystore --chainid 5
 geth console --syncmode light --signer ~/Library/Signer/clef.ipc --goerli
 ./truebit-os -p ~/Library/Ethereum/goerli/geth.ipc
 ```
@@ -662,10 +662,10 @@ clef --advanced --rules ~/Library/Signer/ruleset.js --chainid 1
 geth console --syncmode light --signer ~/Library/Signer/clef.ipc
 ./truebit-os -p ~/Library/Ethereum/geth.ipc
 ```
-For linux, try one of the following.
+For Linux, try one of the following.
 ```bash
 ipfs daemon &
-clef --advanced  --rules ~/.clef/ruleset.js --keystore ~/.clef/goerli/keystore --chainid 5
+clef --advanced  --rules ~/.clef/ruleset.js --keystore ~/.ethereum/goerli/keystore --chainid 5
 geth console --syncmode light --signer ~/.clef/clef.ipc --goerli
 ./truebit-os -p ~/.ethereum/goerli/geth.ipc
 
