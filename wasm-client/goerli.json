@@ -1,7 +1,7 @@
 {
   "WAIT_TIME": 15000,
   "fileSystem": {
-    "address": "0x687F9E7eDd7f2735D6E5bfd7fd7fA697CFc2b75d",
+    "address": "0xfCEF528b1c2E0595A9560dd6f5A3127037aE4944",
     "abi": [
       {
         "anonymous": false,
@@ -826,7 +826,7 @@
     ]
   },
   "judge": {
-    "address": "0x1A08c054639247E55426B94446e8236427436c3F",
+    "address": "0xF100e3990babc2831C1b105Db6DE14B08037244A",
     "abi": [
       {
         "constant": true,
@@ -1156,7 +1156,7 @@
     ]
   },
   "interactive": {
-    "address": "0x69Ca130A69CD5BA2Fc53429F561bf5D3227e3517",
+    "address": "0x2327276c2d3D4403DFceA9ED2f6707738A3b3eAC",
     "abi": [
       {
         "anonymous": false,
@@ -2302,7 +2302,7 @@
     ]
   },
   "incentiveLayer": {
-    "address": "0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E",
+    "address": "0x63156Dd37Ca19545a3fC7d7c99A542b967100aF2",
     "abi": [
       {
         "anonymous": false,
@@ -2733,6 +2733,36 @@
         "constant": true,
         "inputs": [],
         "name": "PLATFORM_FEE_TASK_GIVER",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "SLASH_RATE",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
+        "name": "TASKS_PER_LICENSE",
         "outputs": [
           {
             "internalType": "uint256",
@@ -3343,6 +3373,21 @@
       {
         "constant": true,
         "inputs": [],
+        "name": "numLicenses",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [],
         "name": "numTasks",
         "outputs": [
           {
@@ -3558,6 +3603,15 @@
       },
       {
         "constant": false,
+        "inputs": [],
+        "name": "setParameters",
+        "outputs": [],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
         "inputs": [
           {
             "internalType": "bytes32",
@@ -3575,6 +3629,27 @@
         ],
         "payable": false,
         "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "x",
+            "type": "uint256"
+          }
+        ],
+        "name": "sqrt",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "y",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "pure",
         "type": "function"
       },
       {
@@ -3740,6 +3815,21 @@
         "type": "function"
       },
       {
+        "constant": true,
+        "inputs": [],
+        "name": "subsidyPool",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "constant": false,
         "inputs": [
           {
@@ -3777,41 +3867,6 @@
             "type": "uint256"
           }
         ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "newPlatformFeeTaskGiver",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "newPlatformFeeSolver",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "newLicenseFee",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "newBurnRate",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "newBasicTimeout",
-            "type": "uint256"
-          }
-        ],
-        "name": "updateConstants",
-        "outputs": [],
         "payable": false,
         "stateMutability": "nonpayable",
         "type": "function"
@@ -3901,7 +3956,7 @@
     ]
   },
   "IPFSnodeManager": {
-    "address": "0xA16F8dbaF457c0D2b27B26a96f0EE9EEE3945072",
+    "address": "0x8a12441F74316F1A15c99B04d4994d2eF76b38bD",
     "abi": [
       {
         "anonymous": false,
@@ -3994,7 +4049,7 @@
     ]
   },
   "tru": {
-    "address": "0x5137F7462B96e4Fb90e227570057Ab4b8e59D1cD",
+    "address": "0x74F2F7155e5F198850d0cf02fFc3e5d9C784FcB2",
     "abi": [
       {
         "anonymous": false,
@@ -4631,21 +4686,8 @@
     ]
   },
   "purchase": {
-    "address": "0xd52819f492A9BC1a55Bd4C213028C9331daAfaF4",
+    "address": "0xdb9008F3994fd4641330729D034C33C41a6bb3C5",
     "abi": [
-      {
-        "anonymous": false,
-        "inputs": [
-          {
-            "indexed": false,
-            "internalType": "uint256",
-            "name": "price",
-            "type": "uint256"
-          }
-        ],
-        "name": "NewPrice",
-        "type": "event"
-      },
       {
         "anonymous": false,
         "inputs": [
@@ -4724,6 +4766,19 @@
       },
       {
         "inputs": [],
+        "name": "OPEX_COST",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "inputs": [],
         "name": "SOLVER",
         "outputs": [
           {
@@ -4749,6 +4804,19 @@
         "type": "function"
       },
       {
+        "inputs": [],
+        "name": "THETA",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [
           {
             "internalType": "address",
@@ -4768,7 +4836,13 @@
         "type": "function"
       },
       {
-        "inputs": [],
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "numTRU",
+            "type": "uint256"
+          }
+        ],
         "name": "buyTRU",
         "outputs": [
           {
@@ -4782,7 +4856,20 @@
       },
       {
         "inputs": [],
-        "name": "getBalance",
+        "name": "donateToReserve",
+        "outputs": [],
+        "stateMutability": "payable",
+        "type": "function"
+      },
+      {
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "numTRU",
+            "type": "uint256"
+          }
+        ],
+        "name": "getPurchasePrice",
         "outputs": [
           {
             "internalType": "uint256",
@@ -4794,8 +4881,14 @@
         "type": "function"
       },
       {
-        "inputs": [],
-        "name": "getPrice",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "numTRU",
+            "type": "uint256"
+          }
+        ],
+        "name": "getRetirePrice",
         "outputs": [
           {
             "internalType": "uint256",
@@ -4918,11 +5011,6 @@
             "type": "address"
           },
           {
-            "internalType": "uint256",
-            "name": "_price",
-            "type": "uint256"
-          },
-          {
             "internalType": "address",
             "name": "_admin",
             "type": "address"
@@ -4935,7 +5023,7 @@
       },
       {
         "inputs": [],
-        "name": "price",
+        "name": "opex",
         "outputs": [
           {
             "internalType": "uint256",
@@ -4965,6 +5053,19 @@
         "type": "function"
       },
       {
+        "inputs": [],
+        "name": "reserve",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
         "inputs": [
           {
             "internalType": "bytes32",
@@ -4986,11 +5087,11 @@
         "inputs": [
           {
             "internalType": "uint256",
-            "name": "newprice",
+            "name": "numTRU",
             "type": "uint256"
           }
         ],
-        "name": "setPrice",
+        "name": "sellTRU",
         "outputs": [
           {
             "internalType": "uint256",
@@ -5002,20 +5103,27 @@
         "type": "function"
       },
       {
-        "inputs": [],
-        "name": "withdraw",
+        "inputs": [
+          {
+            "internalType": "uint256",
+            "name": "newCost",
+            "type": "uint256"
+          }
+        ],
+        "name": "setOpexCost",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
       },
       {
-        "inputs": [
-          {
-            "internalType": "address payable",
-            "name": "piggybank",
-            "type": "address"
-          }
-        ],
+        "inputs": [],
+        "name": "setParameters",
+        "outputs": [],
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "inputs": [],
         "name": "withdraw",
         "outputs": [],
         "stateMutability": "nonpayable",
