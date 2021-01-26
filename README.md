@@ -247,9 +247,9 @@ If the Solver and Verifier do not immediately find a task on the network, try is
 ```sh
 task -f factorial.json submit -a 0
 ```
-The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here: ***NEED TO UPDATE ADDRESSES***
+The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here:
 
-<https://goerli.etherscan.io/address/0x0E1Cb897F1Fca830228a03dcEd0F85e7bF6cD77E>
+<https://goerli.etherscan.io/address/0x63156dd37ca19545a3fc7d7c99a542b967100af2>
 
 Solvers and Verifiers will continue to solve and verify new tasks until instructed to stop.  To limit task participation based on TRU rewards, Solvers and Verifiers can use the `-l` flag to set a minimum, (constant) non-zero reward threshold per task, or use `-p` to fix a minimum TRU reward per block of computation.  For example,
 ```sh
