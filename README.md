@@ -60,7 +60,7 @@ Select a directory where you wish to store network cache and private keys.  For 
 YYY=$HOME'/truebit-docker'
 docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The incantation above avoids having to synchronize the blockchain and your accounts from genesis and also stores your IPFS "ID" for better connectivity when you later restart the container.
+Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The `-v` flags in the incantation above avoids having to synchronize the blockchain and reconstruct your accounts, IPFS ID's, masterseed, and rule attestation from genesis when you later restart the container.
 
 ### "Open terminal window"
 
@@ -96,12 +96,13 @@ Clef will ask you to create a master seed password which you'll use to unlock al
 ```bash
 clef attest 6441d5def6ec7ebe4ade8a9cf5d74f81088efaef314d8c4bda91221d02a9d976
 ```
-This will allow Clef to sign all transactions automatically.  Task Submitters, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`, compute its `sha256sum` hash, and then call `clef attest` again with your new hash.  By default, clef will log its activities in a file called `audit.log`.
+This will allow Clef to sign all transactions automatically.  Task Submitters, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`, compute its `sha256sum` hash, and then call `clef attest` again with your new hash.  By default, clef will log its activities in a file called `audit.log`.  If you used the `docker run ...` command [above](#Start-container), you'll find your master seed file on your local computer in a folder called `~/truebit-docker/docker-clef`.
 
 You may check your existing accounts in Geth's console using `personal.listWallets`, in Truebit OS using [`accounts -r`](#Purchasing-staking-and-retiring-TRU-tokens), or at the main Docker command prompt using `geth --goerli account list` (sans `--goerli` for mainnet).
 
 ### New accounts
-First, create a new account for Görli testnet.
+
+Repeat the following steps for each new account you wish to create.  First, make a new private key for Görli testnet.
 ```bash
 clef newaccount --keystore ~/.ethereum/goerli/keystore
 ```
@@ -109,7 +110,7 @@ Clef returns a "generated account" which is `<YOUR PUBLIC ADDRESS>`.  To add an 
 ```bash
 clef setpw <YOUR PUBLIC ADDRESS>
 ```
-Clef can now autofill the keystore password for <YOUR PUBLIC ADDRESS> whenever you log in with your master seed password.  Repeat these steps to create additional accounts.  If you used the `docker run ...` command [above](#Start-container), you'll find your keystore files on your local computer in a folder called `docker-geth`, and the `masterseed.json` file in `docker-clef`.
+Clef can now autofill the keystore password for <YOUR PUBLIC ADDRESS> whenever you log in with your master seed password.  If you used the `docker run ...` command [above](#Start-container), you'll find your keystore files on your local computer in a folder called `~/truebit-docker/docker-geth`.
 
 On testnet one can create keystore files with shorter passwords using `geth --goerli account new`.
 
