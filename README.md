@@ -60,7 +60,7 @@ Select a directory where you wish to store network cache and private keys.  For 
 YYY=$HOME'/truebit-docker'
 docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
-Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The `-v` flags in the incantation above avoids having to synchronize the blockchain and reconstruct your accounts, IPFS ID's, masterseed, and rule attestation from genesis when you later restart the container.
+Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The `-v` flags in the incantation above avoids having to synchronize the blockchain and reconstruct your accounts, IPFS ID's, master seed, and rule attestation from genesis when you later restart the container.
 
 ### "Open terminal window"
 
