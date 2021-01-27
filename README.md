@@ -92,11 +92,11 @@ In order to interact with the Truebit network, you'll need account(s) to handle 
 ```bash
 clef init
 ```
-Clef will ask you to create a master seed password which you'll use to unlock all your accounts.  Next run
+Clef will ask you to create a master seed password which you'll use to unlock all your accounts.  Next run the following line exactly as it appears.
 ```bash
 clef attest 6441d5def6ec7ebe4ade8a9cf5d74f81088efaef314d8c4bda91221d02a9d976
 ```
-which will allow Clef to sign all transactions automatically.  Task Givers, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`.  By default, clef will log its activity in a file called `audit.log`.
+This will allow Clef to sign all transactions automatically.  Task Submitters, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`, compute its `sha256sum` hash, and then call `clef attest` again with your new hash.  By default, clef will log its activities in a file called `audit.log`.
 
 You may check your existing accounts in Geth's console using `personal.listWallets`, in Truebit OS using [`accounts -r`](#Purchasing-staking-and-retiring-TRU-tokens), or at the main Docker command prompt using `geth --goerli account list` (sans `--goerli` for mainnet).
 
