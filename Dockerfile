@@ -154,6 +154,8 @@ RUN mv /truebit-eth/goerli.sh / \
  && mv /truebit-eth/mainnet.sh / \
  && mkdir ~/.clef \
  && mv /truebit-eth/ruleset.js ~/.clef \
+ && mkdir -p ~/.ethereum/keystore \
+ && mkdir -p ~/.ethereum/goerli/keystore \
  && cd emsdk \
  && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
