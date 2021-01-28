@@ -64,7 +64,11 @@ Docker will then store your Clef, Geth, and IPFS configuration files in the dire
 
 ### "Open terminal window"
 
-When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` by using `docker ps`, open a new local terminal window and enter the following at the command line.
+When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` using
+```bash
+docker ps
+```
+Then open a new local terminal window and enter the following at the command line.
 ```bash
 docker exec -it <YOUR CONTAINER NAME> /bin/bash
 ```
@@ -73,18 +77,15 @@ docker exec -it <YOUR CONTAINER NAME> /bin/bash
 To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
 ### "Share files"
-You can share files between your native machine and the Docker container by copying them into your `docker-clef`, `docker-geth`, or `docker-ipfs` folders.  If you wish to synchronize a specific local file with a container file, say [`config.json`](#Client-configuration), first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume.
-`
--v $YYY/config.json:/truebit-eth/wasm-client/config.json
-`
+You can share files between your native machine and the Docker container by copying them into the local `docker-clef`, `docker-geth`, or `docker-ipfs` folders you created [above](#Start-container) or the respective folders in the Docker container, namely `~/.clef`, `~/.geth`, or `~/.ipfs`.  If you wish to synchronize a specific local file with a container file which does not belong to one of these directories on the container, say [`config.json`](#Client-configuration), first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume, e.g. `-v $YYY/config.json:/truebit-eth/wasm-client/config.json`.
 
 Alternatively, you may copy into (or out of) the container with commands of the following [form](https://docs.docker.com/engine/reference/commandline/cp/).
 ```bash
 docker cp truebit-eth/mydata.txt f7b994c94911:/root/.ethereum/mydata.txt
 ```
-Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.  This command copies into the container.  If you wish to copy from container to local, reverse the order of the files.
+Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.  This command copies into the container.  If you wish to copy from container to local, reverse the order of the files in the incantation.
 
-Finally, when sharing a text file from your local machine, you can simply copy the text into a buffer and then paste into a file on the Docker container via the `vim` or `nano` text editors.
+Finally, for quick text file sharing from your local machine, you can simply copy text into a buffer and then paste into a file on the Docker container via the `vim` or `nano` text editors.
 
 ## Initializing accounts
 
