@@ -68,7 +68,7 @@ When you [connect to the network](#Connect-to-the-network), you will need to ope
 ```bash
 docker exec -it <YOUR CONTAINER NAME> /bin/bash
 ```
-`<YOUR CONTAINER NAME>` might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate `tmux` and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
+`<YOUR CONTAINER NAME>` might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate [`tmux`](https://tmuxcheatsheet.com/) and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
 
 To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
