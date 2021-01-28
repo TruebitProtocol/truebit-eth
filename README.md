@@ -350,7 +350,7 @@ gas set -v geth
 ```
 By default, Geth's price oracle returns the 60th percentile gas price among transactions in the 20 most recent blocks.  You can tweak these parameters by starting Geth with `--gpopercentile` and `--gpoblocks` flags, e.g.
 ```bash
-geth --gpopercentile 60 --gpoblocks 20 --http --unlock "0,1,2,3" --password /root/.ethereum/supersecret.txt --syncmode "light" --allow-insecure-unlock console
+geth console --gpo.percentile 60 --gpo.blocks 20 --goerli --syncmode "light" --signer ~/.clef/clef.ipc
 ```
 
 The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  You can update `throttle` in the `config.json` file via a command of the following form.
