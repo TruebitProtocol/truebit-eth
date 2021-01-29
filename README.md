@@ -245,7 +245,7 @@ We can now start our Solver and Verifier as follows.  For clarity it is recommen
 start solve -a 0
 start verify -a 1
 ```
-If the Solver and Verifier do not immediately find a task on the network, try issuing a sample task yourself.
+Note that account 0 is assumed for the `start` command when the `-a` flag is not specified.  If the Solver and Verifier do not immediately find a task on the network, try issuing a sample task yourself.
 ```sh
 task -f factorial.json submit -a 0
 ```
@@ -349,7 +349,10 @@ In the `/truebit-eth/wasm-client/` directory, you will find a file called `confi
   "incentiveLayer": "incentiveLayer"
 }
 ```
-When running on Ethereum mainnet, you may wish to modify the `gasPrice` parameter to increase the chances that Ethereum miners will process your Truebit OS transactions or to economize on ETH.  Every Ethereum transaction invokes some ETH gas cost, and price per unit gas is given in [gwei](https://ethdocs.org/en/latest/ether.html).  The `gasPrice` can be set within Truebit OS.  For example,
+
+## Setting gas price
+
+When running on Ethereum mainnet, you may wish to modify the `gasPrice` parameter to increase the chances that Ethereum miners will process your Truebit OS transactions or to economize on ETH costs.  Every Ethereum transaction invokes some ETH gas cost, and price per unit gas is given in [gwei](https://ethdocs.org/en/latest/ether.html).  The `gasPrice` can be set within Truebit OS.  For example,
 ```sh
 gas set -v 47.3 --default
 ```
@@ -366,11 +369,17 @@ By default, Geth's price oracle returns the 60th percentile gas price among tran
 geth console --gpo.percentile 60 --gpo.blocks 20 --goerli --syncmode "light" --signer ~/.clef/clef.ipc
 ```
 
+## Bounding the number of simultaneous tasks
+
 The `throttle` parameter [above](#Client-configuration) is the maximum number of simultaneous tasks that your Solver or Verifier will process.  You can update `throttle` in the `config.json` file via a command of the following form.
 ```sh
 task throttle -v 3
 ```
-The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  Valid prefixes for `geth.providerURL` are `http`, `https`, `ws`, and `wss` and determine the provider type for the connection.  If `geth.providerURL` does not have a valid prefix, it must have a `.ipc` suffix, e.g. `/root/.ethereum/goerli/geth.ipc`.  You can override the default `geth.providerURL` setting at Truebit OS startup using the `-p`.  For example
+Changes to `throttle` take effect upon restart of Truebit OS.  Like `gas set -d`, the `throttle` command saves the current providerURL to `config.json`.  Thus `throttle` can be used to save a providerURL specified at startup via the `-p` flag (see next paragraph for details).
+
+## Blockchain and IPFS connection settings
+
+The `geth` and `ipfs` subkeys in [`config.json`](#Client-configuration) must match your Geth and IPFS network settings.  Valid prefixes for `geth.providerURL` include `http`, `https`, `ws`, and `wss` and determine the provider type for the connection.  If `geth.providerURL` does not have a valid prefix, it must have a `.ipc` suffix, e.g. `/root/.ethereum/goerli/geth.ipc`.  You can override the default `geth.providerURL` setting at Truebit OS startup using the `-p`.  For example
 ```bash
 ./truebit-os -p ws://localhost:8546
 ```
@@ -450,12 +459,12 @@ In a typical Ethereum deployment, the *Task Owner* is the Dapp smart contract th
 
 ### Executing tasks
 
-To run this example on-chain, enter the following commands in Truebit OS.
+To run this example on-chain, enter the following commands in Truebit OS, preferably in [separate windows](#Open-terminal-window).
 ```sh
 start solve
 task -f reverse.json submit
 ```
-You can find names of other sample .json meta-files using `ls` and view file contents with the `cat` command.  In the event that the Solver disappears in the middle of a task (or never shows up), you can try a command of the form to recover both your and the Solver's deposits.
+Unless you specify otherwise with the `-a` flag, Truebit will issue the task from your account with index 0.  You can find names of other sample .json meta-files by typing `task -f` followed by a space and then press `tab` twice to request an autofill.  In the event that the Solver disappears in the middle of a task (or never shows up), you can try a command of the form to recover both your and the Solver's deposits.
 ```sh
 task cancel -t 0x361b1a715e94f56368f78e1c478a659cab4b9b4dec1edf13d5280a26d2f72442
 ```
