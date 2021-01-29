@@ -298,7 +298,7 @@ ipfs connect
 ```
 If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.  You can use `ipfs id` to display your IPFS ID and `ipfs list` to display a list of all registered nodes.  If you are running Truebit OS [natively](Running-Truebit-OS-natively), updating IPFS to the latest version may improve performance.
 
-## Logging sessions and command line execution
+## Logging sessions
 
 The vanilla `./truebit-os` command generates a file `combined.log.json` containing a .json log spanning across all Truebit OS terminals but does not include everything displayed on the terminal screens.  You can inspect this log as follows:
 ```bash
@@ -308,6 +308,18 @@ It is safe to delete this file.  If one wishes a more detailed log for a Truebit
 ```bash
 ./truebit-os 2>&1 | tee mylog.txt
 ```
+Alternatively, one can use the built-in `script` command to record a terminal session.
+```bash
+script
+./truebit-os
+```
+After exiting Truebit OS, type `exit` to leave the `script` shell.  You can then find your session transcript in a file called `typescript`.  To display with proper formatting, use the following command.
+```bash
+cat typescript
+```
+
+## Command line execution
+
 One can also execute Truebit OS commands directly from the native (Docker) command line using a `-c` flag.  For example, try:
 ```bash
 ./truebit-os -c "start solve -a 1" --batch > mylog.txt &
@@ -362,11 +374,7 @@ The `geth` and `ipfs` subkeys must match your Geth and IPFS network settings.  V
 ```bash
 ./truebit-os -p ws://localhost:8546
 ```
-will set the RPC server listening port to 8546 and connect via WebSocket.  You can also try to use an external hosting provider, like
-`
-/truebit-os -p https://goerli.infura.io/v3/<YOUR API KEY>
-`.
-As such APIs are not trusted, however, you will not be able to unlock your accounts for use in Truebit OS. Finally, **never unlock you accounts on a mainnet node using http or ws connections**, as anyone with access to the node can issue transactions on behalf of your account(s).
+will set the RPC server listening port to 8546 and connect via WebSocket.  You can also try to use an external hosting provider, like `/truebit-os -p https://goerli.infura.io/v3/<YOUR API KEY>`.  As such APIs are not trusted, however, you will not be able to unlock your accounts for use in Truebit OS. Finally, **never unlock you accounts on a mainnet node using http or ws connections**, as anyone with access to the node can sign and broadcast transactions on behalf of your account(s).
 
 The `-i` flag adjusts the IPFS connection settings analogously, e.g.
 ```bash
