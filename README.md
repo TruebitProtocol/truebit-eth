@@ -389,7 +389,10 @@ The `-i` flag adjusts the IPFS connection settings analogously, e.g.
 ```bash
 ./truebit-os -i http://localhost:5001
 ```
-will connect to IPFS via http on local port 5001.
+will connect to IPFS via http on local port 5001.  Test your IPFS connection with `ipfs connect`, and confirm your blockchain connection with this command:
+```sh
+version
+```
 
 You must restart Truebit OS for `config.json` changes to take effect.  For editing convenience and to save your changes to the next ["start container"](#Start-container), you may wish to [add](Share-files) a volume to your Docker run incantation.
 Do not change the `incentiveLayer` key in `config.json` as Truebit on Ethereum only supports a single incentive layer.
