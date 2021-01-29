@@ -499,14 +499,14 @@ sh deploy.sh
 ```
 To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your desired Geth account.  
 
-### Scrypt
+### Scrypt (C++)
 ```bash
 cd /wasm-ports/samples/scrypt
 node send.js <text>
 ```
 Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
-### Bilinear pairing
+### Bilinear pairing (C++)
 ```bash
 cd /wasm-ports/samples/pairing
 node send.js <text>
@@ -514,7 +514,7 @@ node send.js <text>
 For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
 See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/pairing/pairing.cpp).
 
-### Chess
+### Chess (C++)
 ```bash
 cd /wasm-ports/samples/chess
 node send.js <text>
@@ -522,14 +522,14 @@ node send.js <text>
 This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/chess/chess.cpp).
 The source code doesn't implement all the rules of chess, and is not much tested.
 
-### Validate WASM file
+### Validate WASM file (Rust)
 ```bash
 cd /wasm-ports/samples/wasm
 node send.js <wasm file>
 ```
 Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/wasm/src/main.rs).
 
-### Size of video packets in a file
+### Size of video packets in a file (C)
 ```bash
 cd /wasm-ports/samples/ffmpeg
 node send.js input.ts
