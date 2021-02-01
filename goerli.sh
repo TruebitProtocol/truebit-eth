@@ -18,7 +18,7 @@ CLEF='/root/.clef/clef.ipc'
 GETH=$(echo 'geth console --nousb --goerli --syncmode light --signer' $CLEF)
 cat <<< $(jq '.geth.providerURL="/root/.ethereum/goerli/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
 tmux \
-new-session 'clef --advanced --nousb --chainid 5 --keystore ~/.ethereum/goerli/keystore --rules /root/.clef/ruleset.js' \; \
+new-session 'clef --advanced --nousb --chainid 5 --keystore ~/.ethereum/goerli/keystore --rules /truebit-eth/wasm-client/ruleset.js' \; \
 split-window "echo 'Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $GETH" \; \
 selectp -U \; swap-pane -U
 
