@@ -2,13 +2,9 @@
 pragma solidity ^0.5.0;
 
 interface Filesystem {
-
    function createFileFromBytes(string calldata name, uint nonce, bytes calldata arr) external returns (bytes32);
    function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
-   function getSize(bytes32 id) external view returns (uint);
-   function getRoot(bytes32 id) external view returns (bytes32);
    function getData(bytes32 id) external view returns (bytes32[] memory);
-   function forwardData(bytes32 id, address a) external;
 
    function makeBundle(uint num) external view returns (bytes32);
    function addToBundle(bytes32 id, bytes32 file_id) external;
@@ -16,8 +12,6 @@ interface Filesystem {
    function getInitHash(bytes32 bid) external view returns (bytes32);
    function addIPFSFile(string calldata name, uint size, string calldata hash, bytes32 root, uint nonce) external returns (bytes32);
    function hashName(string calldata name) external returns (bytes32);
-
-   function debugFinalizeBundle(bytes32 bundleID, bytes32 codeFileID) external returns (bytes32, bytes32, bytes32, bytes32, bytes32);
 }
 
 interface TrueBit {
@@ -25,7 +19,7 @@ interface TrueBit {
     function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint8 st) external;
     function commitRequiredFiles(bytes32 id) external payable;
     function makeDeposit(uint _deposit) external returns (uint);
-    function getPlatformFeeTaskGiver() external view returns (uint);
+    function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 }
 
 interface TRU {
@@ -63,10 +57,6 @@ contract SampleContract {
        blocklimit = _blocklimit;
    }
 
-   function getPlatformFee() public view returns (uint) {
-      return truebit.getPlatformFeeTaskGiver();
-   }
-
    // this is an axiliary function for makeTaskID
    function submitFileData(bytes memory data) private returns (bytes32) {
       uint num = nonce;
@@ -102,28 +92,8 @@ contract SampleContract {
 
     // call this after makeTaskID
     function emitTask (bytes32 taskID) external payable {
-       truebit.commitRequiredFiles.value(getPlatformFee())(taskID);
+       truebit.commitRequiredFiles.value(truebit.PLATFORM_FEE_TASK_GIVER())(taskID);
     }
-
-
-   function debugData(bytes calldata data) external returns (bytes32, bytes32, bytes32, bytes32, bytes32) {
-      uint num = nonce;
-      nonce++;
-
-      bytes32 bundleID = filesystem.makeBundle(num);
-
-      bytes32 inputFileID = filesystem.createFileFromBytes("input.data", num, data);
-      string_to_file[data] = inputFileID;
-      filesystem.addToBundle(bundleID, inputFileID);
-
-      filesystem.addToBundle(bundleID, randomFile);
-
-      bytes32[] memory empty = new bytes32[](0);
-      filesystem.addToBundle(bundleID, filesystem.createFileWithContents("output.data", num+1000000000, empty, 0));
-
-      return filesystem.debugFinalizeBundle(bundleID, codeFileID);
-
-   }
 
    // this is the callback name
    function solved(bytes32 id, bytes32[] calldata files) external {

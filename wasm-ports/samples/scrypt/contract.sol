@@ -2,13 +2,9 @@
 pragma solidity ^0.5.0;
 
 interface Filesystem {
-
    function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
    function createFileFromBytes(string calldata name, uint nonce, bytes calldata arr) external returns (bytes32);
-   function getSize(bytes32 id) external view returns (uint);
-   function getRoot(bytes32 id) external view returns (bytes32);
    function getData(bytes32 id) external view returns (bytes32[] memory);
-   function forwardData(bytes32 id, address a) external;
 
    function makeBundle(uint num) external view returns (bytes32);
    function addToBundle(bytes32 id, bytes32 file_id) external;
@@ -16,7 +12,6 @@ interface Filesystem {
    function getInitHash(bytes32 bid) external view returns (bytes32);
    function addIPFSFile(string calldata name, uint size, string calldata hash, bytes32 root, uint nonce) external returns (bytes32);
    function hashName(string calldata name) external returns (bytes32);
-
 }
 
 interface TrueBit {
@@ -24,7 +19,7 @@ interface TrueBit {
    function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint8 st) external;
    function commitRequiredFiles(bytes32 id) external payable;
    function makeDeposit(uint) external returns (uint);
-   function getPlatformFeeTaskGiver() external view returns (uint);
+   function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 }
 
 interface TRU {
@@ -57,10 +52,6 @@ contract SampleContract {
        codeFileID = _codeFileID;
        memsize = _memsize;
        blocklimit = _blocklimit;
-   }
-
-   function getPlatformFee() public view returns (uint) {
-      return truebit.getPlatformFeeTaskGiver();
    }
 
    // this is an axiliary function for makeTaskID
@@ -96,7 +87,7 @@ contract SampleContract {
 
     // call this after makeTaskID
     function emitTask (bytes32 taskID) external payable {
-       truebit.commitRequiredFiles.value(getPlatformFee())(taskID);
+       truebit.commitRequiredFiles.value(truebit.PLATFORM_FEE_TASK_GIVER())(taskID);
     }
 
    // this is the callback name
