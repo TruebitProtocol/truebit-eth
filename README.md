@@ -55,26 +55,28 @@ We first open a new container with two parts:
 
 2. **Truebit Toolchain**. Task Givers can build and issue tasks.
 
-Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in UNIX, type `pwd`.  For example, if we wish to place the files at `~/truebit-docker`, we would write
+Select a directory where you wish to store network cache and private keys.  For convenience, we let `$YYY` denote the *full path* to this directory.  To get the full path for your current working directory in MacOS or Linux, type `pwd`.  For example, if we wish to place the files at `~/truebit-docker`, we would write
 ```bash
 YYY=$HOME'/truebit-docker'
-docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+docker run --network host -v $YYY/docker-clef:/root/.clef -v $YYY/docker-geth:/root/.ethereum -v $YYY/docker-ipfs:/root/.ipfs --name truebit --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
 Docker will then store your Clef, Geth, and IPFS configuration files in the directories `docker-clef`, `docker-geth` and `docker-ipfs` respectively.  The `-v` flags in the incantation above avoid having to synchronize the blockchain and reconstruct your accounts, IPFS ID's, master seed, and rule attestation from genesis when you later restart the container.
 
+If you are using Windows,  try the following incantation.
+```bash
+YYY=%userprofile%/truebit-docker
+docker run --network host -v %YYY%/docker-clef:/root/.clef -v %YYY%/docker-geth:/root/.ethereum -v %YYY%/docker-ipfs:/root/.ipfs --name truebit --rm -it truebitprotocol/truebit-eth:latest /bin/bash
+```
+
 ### "Open terminal window"
 
-When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, find the name of your container running `truebitprotocol/truebit-eth:latest` using
+When you [connect to the network](#Connect-to-the-network), you will need to open multiple windows *in the same Docker container*.  Running Geth or IPFS locally or in a different container from Truebit OS will not work.  When it is time to open a new terminal window for your existing container, open a new local terminal window and enter the following at the command line.
 ```bash
-docker ps
+docker exec -it truebit /bin/bash
 ```
-Then open a new local terminal window and enter the following at the command line.
-```bash
-docker exec -it <YOUR CONTAINER NAME> /bin/bash
-```
-`<YOUR CONTAINER NAME>` might look something like `xenodochial_fermat`.  If you instead wish to run all processes in a single terminal window, initiate [`tmux`](https://tmuxcheatsheet.com/) and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.
+If you omitted the `--name truebit` flag when starting your container (i.e., you did not cut and paste the command [above](#Start-container)), you will need to find the name of the container running `truebitprotocol/truebit-eth:latest` by using `docker ps`.  Then, in place of "`truebit`" in the `docker exec` incantation above, substitute either your container's name, which might look something like `xenodochial_fermat`, or the container's ID, which looks something like `859841f65999`.
 
-To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
+If you instead wish to run all processes in a single terminal window, initiate [`tmux`](https://tmuxcheatsheet.com/) and create sub-windows by typing `ctrl-b "` or `ctrl-b %` and using `ctrl-b (arrow)` to switch between sub-windows.  To exit a container, type `exit`.  Your container process will remain alive in other windows unless you exited the original window which initiated with the `--rm` flag.
 
 ### "Share files"
 You can share files between your native machine and the Docker container by copying them into the local `docker-clef`, `docker-geth`, or `docker-ipfs` folders you created [above](#Start-container) or the respective folders in the Docker container, namely `~/.clef`, `~/.geth`, or `~/.ipfs`.  If you wish to synchronize a specific local file with a container file which does not belong to one of these directories on the container, say [`config.json`](#Client-configuration), first copy `config.json` to your local directory [`$YYY`/config.json](#Start-container), and then restart the docker run [command](#Start-container) with an additional volume, e.g. `-v $YYY/config.json:/truebit-eth/wasm-client/config.json`.
@@ -83,7 +85,7 @@ Alternatively, you may copy into (or out of) the container with commands of the 
 ```bash
 docker cp truebit-eth/mydata.txt f7b994c94911:/root/.ethereum/mydata.txt
 ```
-Here `f7b994c94911` is either [`<YOUR CONTAINER NAME>`](#Open-terminal-window) or the container's ID.  This command copies into the container.  If you wish to copy from container to local, reverse the order of the files in the incantation.
+Here `f7b994c94911` is either the container's [name](#Open-terminal-window), namely `truebit` if you followed the convention [above](#Start-container), or the container's ID.  This example command copies a local file into the container.  If you wish to copy from container to local, reverse the order of the files in the incantation.
 
 Finally, for quick text file sharing from your local machine, you can simply copy text into a buffer and then paste into a file on the Docker container via the `vim` or `nano` text editors.
 
@@ -97,7 +99,7 @@ Clef will ask you to create a master seed password which you'll use to unlock al
 ```bash
 clef attest 6441d5def6ec7ebe4ade8a9cf5d74f81088efaef314d8c4bda91221d02a9d976
 ```
-This will allow Clef to sign all transactions automatically.  Task Submitters, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/root/.clef/ruleset.js`, compute its `sha256sum` hash, and then call `clef attest` again with your new hash.  By default, clef will log its activities in a file called `audit.log`.  If you used the `docker run ...` command [above](#Start-container), you'll find your master seed file on your local computer in a folder called `~/truebit-docker/docker-clef`.
+This will allow Clef to sign all transactions automatically.  Task Submitters, Solvers, and Verifiers must sign multiple transactions for each task, and you may find it inconvenient to sign each one manually.  For security, all connections to Truebit OS are by default IPC, hence only your local machine can sign your transactions.  If you wish to [modify](https://geth.ethereum.org/docs/clef/rules) the automatic signing script, go to `/truebit-eth/wasm-client/ruleset.js`, compute its `sha256sum` hash, and then call `clef attest` again with your new hash.  By default, clef will log its activities in a file called `audit.log`.  If you used the `docker run ...` command [above](#Start-container), you'll find your master seed file on your local computer in a folder called `~/truebit-docker/docker-clef`.
 
 You may check your existing accounts in Geth's console using `personal.listWallets`, in Truebit OS using [`accounts -r`](#Purchasing-staking-and-retiring-TRU-tokens), or at the main Docker command prompt using `geth --goerli account list` (sans `--goerli` for mainnet).
 
@@ -296,7 +298,13 @@ You can then discover other nodes on Truebit's network by running:
 ```sh
 ipfs connect
 ```
-If your node didn't successfully connect to peers, try again in a few minutes.  It takes some time for new addresses to propagate.  Note that some registered nodes may be offline.  You can use `ipfs id` to display your IPFS ID and `ipfs list` to display a list of all registered nodes.  If you are running Truebit OS [natively](Running-Truebit-OS-natively), updating IPFS to the latest version may improve performance.
+You can use `ipfs id` to display your node's various addresses and `ipfs list` to display a list of all registered addresses.  If you wish to register a specific address returned by `ipfs id`, you can specify it with the `-i` flag.  Note that the first address has index 0, so that
+```sh
+ipfs register -i 3
+```
+will register the 4th address in the `ipfs id` array.  Specifying an index can ensure that you register an address with a publicly visible IP rather than a strictly local one like `127.0.0.1`.
+
+If you are running Truebit OS [natively](Running-Truebit-OS-natively), updating IPFS to the latest version may improve performance.  If your node didn't successfully connect to peers, try again in a few minutes as it can take some time for new addresses to propagate.  Note that some registered nodes may be offline.
 
 ## Logging sessions
 
@@ -721,7 +729,7 @@ When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](ht
 const fs = require('fs')
 const merkleRoot = require('truebit-util').merkleRoot.web3
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+const web3 = new Web3('http://localhost:8545')
 
 function getRoot(filePath) {
   let fileBuf = fs.readFileSync(filePath)
@@ -751,7 +759,7 @@ CONTRACT files should be created with [web3.js](https://web3js.readthedocs.io/en
 ```js
 const fs = require('fs')
 const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider('http://localhost:8545'))
+const web3 = new Web3('http://localhost:8545')
 
 async function uploadOnchain(filePath) {
 
@@ -808,7 +816,7 @@ In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b
 We enumerate methods for creating Truebit files.
 
 ```solidity
-function createFileFromBytes(string memory name, uint nonce, bytes calldata arr) external returns (bytes32);
+function createFileFromBytes(string memory name, uint nonce, bytes calldata data) external returns (bytes32);
 ```
 `createFileFromBytes` returns a fileID for a BYTES file called `name` with content `data`.  Here `nonce` is a random, non-negative integer that uniquely identifies the newly created file.
 
@@ -868,9 +876,26 @@ function finalizeBundle(bytes32 bid, bytes32 codeFileID) external;
 `finalizeBundle` adds the initial machine state to the bundleID `bid`.  The caller must designate a program file `codeFileID`.  This method must be called after all fileID's have been added to `bid`.
 
 
+Once a bundle has been created, one can access its contents via the following calls.
+
+```solidity
+function getCodeFileID(bytes32 bid) external view returns (bytes32);
+```
+`getCodeFileID` returns the fileID for bundle `bid`'s WASM code file.
+
+```solidity
+function getFileList(bytes32 bid) external view returns (bytes32[] memory);
+```
+`getFileList` returns an array of fileID's contained in the bundle `bid`.  If `bid` was created via a standard task procedure, this array will contain fileID's from the Task Giver but not the Solver.
+
+```solidity
+function getInitHash(bytes32 bid) external view returns (bytes32);
+```
+`getInitHash` returns the initial machine state generated by the files in bundle `bid`.
+
 ### reading file data
 
-The following methods retrieve data from fileID's
+The following methods retrieve data from fileID's.
 
 <!-- ```solidity
 function getByteData(bytes32 id) external view returns (bytes memory);
@@ -925,7 +950,7 @@ function getName(bytes32 id) external view returns (string memory);
 ```solidity
 function getRoot(bytes32 id) external view returns (bytes32);
 ```
-`getRoot` returns the Merkle root associated with fileID `id`.
+`getRoot` returns the Merkle root associated with fileID `id`.  This Solidity function should not be confused with the example web3.js function [above](#getRoot) sharing the same name which computes a Merkle root from raw data input.
 
 ## incentiveLayer
 
@@ -979,9 +1004,14 @@ function getBondedDeposit(bytes32 id, address account) external view returns (ui
 `getBondedDeposit` returns the amount of TRU (in wei) that `account` has bonded to task `id`.
 
 ```solidity
-function getPlatformFeeTaskGiver() external view returns (uint);
+function deposits(address account) external view returns (uint);
 ```
-`getPlatformFeeTaskGiver` returns the ETH platform fee (in wei) for Task Submitters.
+`deposits` returns the number of TRU (in wei) that `account` has stored in Truebit's incentive layer which are not bonded to any task.
+
+```solidity
+function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
+```
+`PLATFORM_FEE_TASK_GIVER` returns the ETH platform fee (in wei) for Task Submitters.
 
 ### security
 
