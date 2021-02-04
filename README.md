@@ -135,12 +135,15 @@ As Ethereum mainnet lacks a faucet, you'll have to source ETH from an existing a
 
 ## Connect to the network
 
-One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, initialize the Truebit toolchain compiler, start IPFS, and start Geth as with the following pair of commands (in this order).
+One must simultaneously run [Geth](https://geth.ethereum.org/) and [IPFS](https://ipfs.io/) in order to communicate with the blockchain and data infrastructures.  When you start up a new Truebit container, initialize the Truebit toolchain compiler, start IPFS, and start Geth as with the following command.
 ```bash
-source /emsdk/emsdk_env.sh
 bash /goerli.sh
 ```
-You may skip the `source /emsdk/emsdk_env.sh` line if you are not planning to build new tasks in your current session, and if you wish to connect to Ethereum mainnet rather than Görli, use `bash /mainnet.sh` instead.  After running the startup script(s), the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
+If you wish to connect to Ethereum mainnet rather than Görli, use instead
+```bash
+bash /mainnet.sh
+```
+After running the startup script, the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
 
 Once your Geth node is fully synchronized, you may enhance IPFS connectivity by running the last four lines in `/goerli.sh` (sans comment symbol `#`) or by running the [equivalent](#Faster-IPFS-uploads-and-downloads) commands in Truebit OS.  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, cut and paste to your command line, and `cat /ipfs-connect.log` for connection results.  Alternatively, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS node rather than running one in Docker.
 
@@ -556,13 +559,19 @@ node send.js input.ts
 ```
 See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
 
+
 # Building your own tasks
-We now explore the Truebit Toolchain.  If you haven't already, from your Truebit container, run the following commands (in order):
+We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks.
+
+## Compiling from C/C++
+From your Truebit container, run the following commands (in this order) to configure the compiler for C/C++ (if you are starting a fresh container, then the last line `bash /goerli.sh` will suffice).
 ```bash
+/emsdk/emsdk activate sdk-fastcomp-1.37.36-64bit
+/emsdk/emsdk activate binaryen-tag-1.37.36-64bit
 source /emsdk/emsdk_env.sh
-bash /startup.sh
+bash /goerli.sh
 ```
-You should now be able to compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
+Exit the `tmux` shell using Ctrl-C, Ctrl-D.  You should now be able to re-compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
 ```bash
 cd /truebit-eth/wasm-ports/samples/chess
 sh compile.sh
@@ -573,20 +582,32 @@ sh compile.sh
 cd ../ffmpeg
 sh compile.sh
 ```
+Note that `sh compile.sh` will rebuild both the `build` and `dist` directories.
+
+## Compiling from Rust
 For Rust tasks, take a look @georgeroman's [walk-through](
-https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool).  You can use his guide to build the `../wasm` task via the steps below.
+https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool).  You can use this guide to re-compile the `/truebit-eth/wasm-ports/samples/wasm` task via the steps below.  First, set up the Rust compiler.
 ```bash
-( ipfs daemon & )
-mv /truebit-eth/wasm-ports/samples/wasm
 cd /
 git clone https://github.com/georgeroman/emscripten-module-wrapper.git
 cd /emscripten-module-wrapper && npm install
 /emsdk/emsdk activate 1.39.8
-source /emsdk/emsdk_env.sh && source $HOME/.cargo/env
+source /emsdk/emsdk_env.sh
+ipfs init
+( ipfs daemon & )
+```
+
+Then you can recompile the Rust sample task as follows.
+```bash
+mv /truebit-eth/wasm-ports/samples/wasm /
+cp /truebit-eth/rust-tool/build.sh /wasm
+sed -i "s|rust_project_name=REPLACE_ME|rust_project_name=wasm_sample|" /wasm/build.sh
 cd /wasm
-npm i
+rm -r build dist target task.wasm
 sh compile.sh
 ```
+
+## Runtime
 Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters (within range 5 to 30), including:
@@ -604,7 +625,6 @@ When building and executing your own tasks, you may have to adjust some of the i
 Try adjusting `memory-size` first.  Greater parameters make the task more likely to execute.  See this [file](https://github.com/TruebitProtocol/truebit-eth/blob/master/ocaml-offchain/interpreter/main/main.ml#L138) for a complete list of interpreter options.
 
 
-
 # Native installation
 You may wish to experiment with this tutorial on your native command line rather than running it inside the Docker container.  To set up natively, first install [git](https://github.com/git-guides/install-git) and clone the Truebit repo.
 ```bash
@@ -616,7 +636,7 @@ A Node.js [installation](https://nodejs.org/en/download/package-manager/) is a p
 cd truebit-eth
 npm i
 ```
-Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile)
+You can then deploy the sample task according to the instructions [above](#Sample-tasks-via-smart-contracts).  Truebit toolchain task compilations should be done inside the Docker container as native setup is relatively [complex](https://github.com/TruebitProtocol/truebit-eth/blob/master/Dockerfile).
 
 ## Running Truebit OS natively
 
