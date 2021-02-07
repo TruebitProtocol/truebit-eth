@@ -157,7 +157,7 @@ RUN mv /truebit-eth/goerli.sh / \
  && ./emsdk activate binaryen-tag-1.37.36-64bit \
  && cd / \
  && rm -r boot home media mnt opt srv tmp/* \
- && echo -e '\n# Set up Emscripten\nsource /emsdk/emsdk_env.sh &>/dev/null\n\n# Create Geth keystore directories\nmkdir -p ~/.ethereum/keystore\nmkdir -p ~/.ethereum/goerli/keystore\n' >> ~/.bashrc
+ && echo -e '\n# Set up Emscripten\nsource /emsdk/emsdk_env.sh &>/dev/null\n\n# Create Geth keystore directories\nmkdir -p ~/.ethereum/keystore\nmkdir -p ~/.ethereum/goerli/keystore\n# Refresh Clef, Geth, and IPFS\nrm ~/.clef/clef.ipc\nrm ~/.ethereum/goerli/geth.ipc\nrm ~/.ethereum/geth.ipc\nrm ~/.ipfs/api' >> ~/.bashrc
 
 # Open IPFS and blockchain ports
 EXPOSE 4001 8080 8545 8546 30303

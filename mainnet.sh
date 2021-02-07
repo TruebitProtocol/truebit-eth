@@ -9,7 +9,7 @@ emcc -v
 # Start IPFS
 if [ ! -f ~/.ipfs/api ]; then
   ipfs init
-  ( ipfs daemon & );
+  ( ipfs daemon & )
 fi
 until [ -f ~/.ipfs/api ]; do sleep 0.1; done
 
