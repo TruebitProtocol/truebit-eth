@@ -213,11 +213,15 @@ version                  Display Truebit OS version.
 
 ## Purchasing, staking, and retiring TRU tokens
 
-In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the indices for available accounts using `accounts` and the price in ETH using `token price -v 1000`.  If you add or remove node accounts while Truebit OS is open, you can refresh and synchronize the account list in Truebit OS with
+In order to start a Solver or Verifier, one must first stake TRU into Truebit's incentive layer.  Let's purchase 1000 TRU tokens for account 0.  First check the available account indices using `accounts` and the price in ETH using
+```sh
+token price -v 1000
+```
+If you add or remove node accounts while Truebit OS is open, you can refresh and synchronize Truebit OS's account list with
 ```sh
 accounts -r
 ```
-Truebit OS will retain the current list of account indices until one runs this command.  After checking balances for account 0 using `balance`, we are ready to purchase some TRU.  
+Truebit OS will retain the current list of account indices until one runs this command.  After checking balances for account 0 using `balance`, we are ready to purchase some TRU.  **WARNING: The `purchase` command will spend ETH from your account.  Please practice the commands in this section on Görli testnet before trying them on Ethereum mainnet.**
 ```sh
 token purchase -v 1000 -a 0
 ```
