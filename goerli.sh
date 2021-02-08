@@ -6,14 +6,15 @@ sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_6
 sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten
 #emcc -v
 
-# Start IPFS
-if [ ! -f ~/.ipfs/api ]; then
-  ipfs init
-  ( ipfs daemon & )
-fi
-until [ -f ~/.ipfs/api ]; do sleep 0.1; done
+# Refresh Clef and Geth IPC sockets
+rm ~/.clef/clef.ipc &>/dev/null
+rm ~/.ethereum/goerli/geth.ipc &>/dev/null
 
-# Start clef and geth
+# Start IPFS
+tmux new -d 'ipfs init'
+tmux new -d 'ipfs daemon'
+
+# Start Clef and Geth
 CLEF='/root/.clef/clef.ipc'
 GETH=$(echo 'geth console --nousb --goerli --syncmode light --signer' $CLEF)
 cat <<< $(jq '.geth.providerURL="/root/.ethereum/goerli/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
