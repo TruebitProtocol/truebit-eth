@@ -11,7 +11,7 @@ rm ~/.clef/clef.ipc &>/dev/null
 rm ~/.ethereum/geth.ipc &>/dev/null
 
 # Start IPFS
-ipfs init &>\dev\null
+ipfs init &>/dev/null
 tmux new -d 'ipfs daemon'
 
 # Start Clef and Geth
