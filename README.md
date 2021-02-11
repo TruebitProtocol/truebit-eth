@@ -229,7 +229,7 @@ We should now have 1000 freshly minted TRU in account 0.  We can now stake some 
 ```sh
 token deposit -v 500 -a 0
 ```
-We can repeat this process for account 1, if desired.  We are ready to start a Verifier, however if we wish to run a Solver, there is one additional step.  We must purchase a Solver license with ETH.  Check the price using `license price`, then
+We can repeat this process for account 1, if desired.  We are ready to start a Verifier, however if we wish to run a Solver, there is one additional step.  We must purchase a Solver license with ETH.  Check the price using `license price`, determine whether the account already has a license using `license check -a 0`, and then
 ```sh
 license purchase -a 0
 ```
