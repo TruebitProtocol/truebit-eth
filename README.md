@@ -521,21 +521,21 @@ Note that the Task Submitter, Solver, and Verifier always rename the task's code
 
 In general, Dapps will issue tasks from smart contracts rather than the Truebit OS command line.  This allows Truebit to call back to the smart contract with a Truebit-verified solution.  Typically the Task Owner smart contract fixes the task function code during deployment while the Task Submitter puts forth the function inputs at runtime.  To demonstrate this method, we deploy and issue some tasks that are preinstalled in your container.  One can deploy each of the samples onto the blockchain as follows.
 ```bash
-cd wasm-ports/samples
+cd /truebit-eth/wasm-ports/samples
 sh deploy.sh
 ```
 To run a sample task, `cd` into that directory and run `node send.js` as explained below.  You may wish to edit `../deploy.js` or `send.js` by replacing the '`0`' in `accounts[0]` with the index of your desired Geth account.  
 
 ### Scrypt (C++)
 ```bash
-cd /wasm-ports/samples/scrypt
+cd /truebit-eth/wasm-ports/samples/scrypt
 node send.js <text>
 ```
 Computes scrypt.  The string is extended to 80 bytes. See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/scrypt/scrypthash.cpp).  Originally by @chriseth.
 
 ### Bilinear pairing (C++)
 ```bash
-cd /wasm-ports/samples/pairing
+cd /truebit-eth/wasm-ports/samples/pairing
 node send.js <text>
 ```
 For `<text>`, enter a string with more than 32 characters.  This example uses the `libff` library to compute bilinear pairings for a bn128 curve. It reads two 32 byte data pieces `a` and `b` which are used like private keys to get `a*O` and `b*O`. Then a bilinear pairing is computed. The result has several components, and one of them is posted as output. (To be clear, the code just shows that `libff` can be used to implement bilinear pairings with Truebit).
@@ -543,7 +543,7 @@ See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/m
 
 ### Chess (C++)
 ```bash
-cd /wasm-ports/samples/chess
+cd /truebit-eth/wasm-ports/samples/chess
 node send.js <text>
 ```
 This example checks moves in a game of chess. Players could use a state channel to play a chess match, and if there is a disagreement, then the game sequence can be posted to Truebit. This method will always work for state channels because both parties have the data available. See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/chess/chess.cpp).
@@ -551,14 +551,14 @@ The source code doesn't implement all the rules of chess, and is not much tested
 
 ### Validate WASM file (Rust)
 ```bash
-cd /wasm-ports/samples/wasm
+cd /truebit-eth/wasm-ports/samples/wasm
 node send.js <wasm file>
 ```
 Uses `parity-wasm` to read and write a WASM file.  See the source code [here](https://github.com/TruebitProtocol/truebit-eth/blob/master/wasm-ports/samples/wasm/src/main.rs).
 
 ### Size of video packets in a file (C)
 ```bash
-cd /wasm-ports/samples/ffmpeg
+cd /truebit-eth/wasm-ports/samples/ffmpeg
 node send.js input.ts
 ```
 See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/fftools/ffcheck.c).
@@ -568,7 +568,7 @@ See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/f
 We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks.
 
 ## Compiling from C/C++
-From your Truebit container, run the following commands (in this order) to configure the compiler for C/C++ (if you are starting a fresh container, then the last line `bash /goerli.sh` will suffice).
+From your Truebit container, run the following commands (in this order) to configure the compiler for C/C++ (if you are starting a fresh container, then the last line, `bash /goerli.sh`, will suffice).
 ```bash
 /emsdk/emsdk activate sdk-fastcomp-1.37.36-64bit
 /emsdk/emsdk activate binaryen-tag-1.37.36-64bit
@@ -579,11 +579,11 @@ Exit the `tmux` shell using Ctrl-C, Ctrl-D.  You should now be able to re-compil
 ```bash
 cd /truebit-eth/wasm-ports/samples/chess
 sh compile.sh
-cd ../scrypt
+cd /truebit-eth/wasm-ports/samples/scrypt
 sh compile.sh
-cd ../pairing
+cd /truebit-eth/wasm-ports/samples/pairing
 sh compile.sh
-cd ../ffmpeg
+cd /truebit-eth/wasm-ports/samples/ffmpeg
 sh compile.sh
 ```
 Note that `sh compile.sh` will rebuild both the `build` and `dist` directories.
