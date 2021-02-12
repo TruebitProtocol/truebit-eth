@@ -732,7 +732,7 @@ For Windows, follow the templates above.
 
 # Contract API reference
 
-The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).  You can find addresses for Truebit's `fileSystem`, and `incentiveLayer` contracts under `fileSystem.address` and `incentiveLayer.address` in `/truebit-eth/wasm-client/goerli.json` or `/truebit-eth/wasm-client/main.json` respective of the network.
+The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).  You can find addresses for Truebit's `fileSystem`, and `incentiveLayer` contracts under `fileSystem.address` and `incentiveLayer.address` in `/truebit-eth/wasm-client/goerli.json` or `/truebit-eth/wasm-client/main.json` respective of the network.  Contracts artifacts are in the same files at `fileSystem.abi` and `incentiveLayer.abi`.
 
 ## fileSystem
 
