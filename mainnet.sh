@@ -4,16 +4,17 @@
 #source /emsdk/emsdk_env.sh #(run this first)
 sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten
 sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten
-emcc -v
+#emcc -v
+
+# Refresh Clef and Geth IPC sockets
+rm ~/.clef/clef.ipc &>/dev/null
+rm ~/.ethereum/geth.ipc &>/dev/null
 
 # Start IPFS
-if [ ! -f ~/.ipfs/api ]; then
-  ipfs init
-  ( ipfs daemon & );
-fi
-until [ -f ~/.ipfs/api ]; do sleep 0.1; done
+ipfs init &>/dev/null
+tmux new -d 'ipfs daemon'
 
-# Start clef and geth
+# Start Clef and Geth
 CLEF='/root/.clef/clef.ipc'
 GETH=$(echo 'geth console --nousb --syncmode light --signer' $CLEF)
 cat <<< $(jq '.geth.providerURL="/root/.ethereum/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
