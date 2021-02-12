@@ -404,7 +404,7 @@ The `-i` flag adjusts the IPFS connection settings analogously, e.g.
 ```bash
 ./truebit-os -i http://localhost:5001
 ```
-will connect to IPFS via http on local port 5001.  Test your IPFS connection with `ipfs connect`, and confirm your blockchain connection with this command:
+will connect to IPFS via http on local port 5001.  Test your IPFS connection inside Truebit OS with `ipfs connect`, and confirm your blockchain connection in Truebit OS with this command:
 ```sh
 version
 ```
