@@ -41,14 +41,14 @@ async function main() {
     console.log("TaskID:", taskID);
     await scryptSubmitter.methods.makeTaskID(dta).send({ gas: 2000000, from: account, gasPrice: web3.gp })
 
+    let IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
     // Debug (optional)
-    IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
     info = await IncentiveLayer.methods.getTaskInfo(taskID).call({from:account})
     console.log('DEBUG:', info)
     console.log('Task submitted.  Waiting for solution...')
 
     // Broadcast task
-    let platformFee = await scryptSubmitter.methods.getPlatformFee().call({from:account})
+    let platformFee = await IncentiveLayer.methods.PLATFORM_FEE_TASK_GIVER().call({from:account})
     await scryptSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: platformFee, gasPrice: web3.gp })
 
     // Wait for solution

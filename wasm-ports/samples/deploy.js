@@ -1,76 +1,71 @@
 const fs = require('fs')
-
 const ipfs = require('ipfs-api')("localhost", '5001', { protocol: 'http' })
+const merkleRoot = require('truebit-util').merkleRoot.web3
+const getNetwork = require('truebit-util').getNetwork
 
+// Network configuration
+const net = require('net');
+const web3 = new Web3('/root/.clef/geth.ipc', net)
+
+// Alternate configuration for testing
+// const host = "http://localhost:8545"
+// const Web3 = require('web3')
+// const web3 = new Web3(new Web3.providers.HttpProvider(host))
+
+// Load interface for sample contract
 let abi = JSON.parse(fs.readFileSync('./build/SampleContract.abi'))
 let bin = fs.readFileSync('./build/SampleContract.bin')
 
-let info = JSON.parse(fs.readFileSync('./info.json'))
-
-const host = "http://localhost:8545"
-
-const Web3 = require('web3')
-const web3 = new Web3(new Web3.providers.HttpProvider(host))
-
-const merkleRoot = require('truebit-util').merkleRoot.web3
-
-const getNetwork = require('truebit-util').getNetwork
-
+// This function is used to add a "random file" in some samples
 async function addIPFSFile(tbFileSystem, account, name, buf) {
     let ipfsFile = (await ipfs.files.add([{ content: buf, path: name }]))[0]
-
     let ipfsHash = ipfsFile.hash
     let size = buf.length
-    // let name = ipfsFile.path
 
     //setup file
     let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, buf)
-
     let fileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
-
     await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
-
     console.log("Uploaded file", name, "with root", mr)
-
     return fileID
 }
 
+// Main function
 async function deploy() {
 
-    //Upload file to IPFS
+    // Upload .wasm codefile to IPFS
     let codeBuf = fs.readFileSync("./task.wasm")
-
     let ipfsFile = (await ipfs.files.add([{ content: codeBuf, path: "task.wasm" }]))[0]
-
     console.log(ipfsFile)
-
     let ipfsHash = ipfsFile.hash
     let size = codeBuf.byteLength
     let name = ipfsFile.path
 
-    //Deploy contract with appropriate artifacts
-
+    // Get artifacts for Truebit fileSystem and token contract
     let networkName = await getNetwork(web3)
-
     let artifacts = JSON.parse(fs.readFileSync('../../../wasm-client/' + networkName + '.json'))
+    let tbFileSystem = new web3.eth.Contract(artifacts.fileSystem.abi, artifacts.fileSystem.address)
+    let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
 
-    let accounts = await web3.eth.getAccounts()
-    let account = accounts[1]
-
-    let options = { from: account.toLowerCase(), gas: 4000000 }
-
-    let bundleID, codeFileID
+    // Get precomputed initial machine state for sample task
+    let info = JSON.parse(fs.readFileSync('./info.json'))
     let initHash = info.codehash
 
-    let tbFileSystem = new web3.eth.Contract(artifacts.fileSystem.abi, artifacts.fileSystem.address)
+    // Set account options for contract deploy
+    let accounts = await web3.eth.getAccounts()
+    let account = accounts[1]
+    let options = { from: account.toLowerCase(), gas: 4000000 }
 
-    //setup bundle
-    let bundleNonce = Math.floor(Math.random() * Math.pow(2, 30))
-    bundleID = await tbFileSystem.methods.calcId(bundleNonce).call({ from: account })
+    // Add codefile to Truebit filesystem
+    let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
+    let mr = merkleRoot(web3, codeBuf)
+    let codeFileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
+    console.log("debug", name, size, ipfsHash, mr, initHash, fileNonce)
+    await tbFileSystem.methods.addIPFSCodeFile(name, size, ipfsHash, mr, initHash, fileNonce).send({ from: account, gas: 300000 })
+    console.log("Registered IPFS file with Truebit filesystem")
 
-    // await tbFileSystem.methods.makeBundle(bundleNonce).send({from: account, gas: 300000})
-
+    // check whether a random file was uploaded
     let randomFile
     try {
         randomFile = await addIPFSFile(tbFileSystem, account, "_dev_urandom", fs.readFileSync("_dev_urandom"))
@@ -79,18 +74,7 @@ async function deploy() {
         console.log("Random file does't exist")
     }
 
-    //setup file
-    let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
-    let mr = merkleRoot(web3, codeBuf)
-
-    codeFileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
-
-    console.log("debug", name, size, ipfsHash, mr, initHash, fileNonce)
-
-    await tbFileSystem.methods.addIPFSCodeFile(name, size, ipfsHash, mr, initHash, fileNonce).send({ from: account, gas: 300000 })
-
-    console.log("Registered IPFS file with Truebit filesystem")
-
+    // List constructor parameters for sample contract
     let args = [
         artifacts.incentiveLayer.address,
         artifacts.tru.address,
@@ -99,17 +83,12 @@ async function deploy() {
         info.memsize,
         info.blocklimit || 3
     ]
-
     if (randomFile) args.push(randomFile)
 
+    // Deploy sample contract
     let contract = new web3.eth.Contract(abi)
-
     let c = await contract.deploy({ data: "0x" + bin, arguments: args }).send(options)
-
-    let tru = new web3.eth.Contract(artifacts.tru.abi, artifacts.tru.address)
-
     artifacts["sample"] = { address: c.options.address, abi: abi }
-
     fs.writeFileSync("public/" + networkName + ".json", JSON.stringify(artifacts))
 
     // UNCOMMENT TO PRELOAD CONTRACT WITH FEES
