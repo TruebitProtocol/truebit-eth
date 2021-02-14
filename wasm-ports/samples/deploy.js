@@ -1,16 +1,13 @@
 const fs = require('fs')
 const ipfs = require('ipfs-api')("localhost", '5001', { protocol: 'http' })
-const merkleRoot = require('truebit-util').merkleRoot.web3
 const getNetwork = require('truebit-util').getNetwork
+const merkleRoot = require('truebit-util').merkleRoot.web3
+const Web3 = require('web3')
+const net = require('net');
 
 // Network configuration
-const net = require('net');
-const web3 = new Web3('/root/.clef/geth.ipc', net)
-
-// Alternate configuration for testing
-// const host = "http://localhost:8545"
-// const Web3 = require('web3')
-// const web3 = new Web3(new Web3.providers.HttpProvider(host))
+const web3 = new Web3('/root/.ethereum/goerli/geth.ipc', net)
+//const web3 = new Web3('http://localhost:8545')
 
 // Load interface for sample contract
 let abi = JSON.parse(fs.readFileSync('./build/SampleContract.abi'))
@@ -41,6 +38,7 @@ async function deploy() {
     let ipfsHash = ipfsFile.hash
     let size = codeBuf.byteLength
     let name = ipfsFile.path
+    console.log("Uploaded codefile to IPFS")
 
     // Get artifacts for Truebit fileSystem and token contract
     let networkName = await getNetwork(web3)
@@ -60,10 +58,8 @@ async function deploy() {
     // Add codefile to Truebit filesystem
     let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, codeBuf)
-    let codeFileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
-    console.log("debug", name, size, ipfsHash, mr, initHash, fileNonce)
     await tbFileSystem.methods.addIPFSCodeFile(name, size, ipfsHash, mr, initHash, fileNonce).send({ from: account, gas: 300000 })
-    console.log("Registered IPFS file with Truebit filesystem")
+    console.log("Registered codefile with Truebit filesystem")
 
     // check whether a random file was uploaded
     let randomFile
@@ -75,6 +71,7 @@ async function deploy() {
     }
 
     // List constructor parameters for sample contract
+    let codeFileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
     let args = [
         artifacts.incentiveLayer.address,
         artifacts.tru.address,
