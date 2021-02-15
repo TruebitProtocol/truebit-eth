@@ -3,7 +3,6 @@ pragma solidity ^0.5.0;
 
 interface Filesystem {
    function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
-   function getData(bytes32 id) external view returns (bytes32[] memory);
 
    function makeBundle(uint num) external view returns (bytes32);
    function addToBundle(bytes32 id, bytes32 file_id) external;

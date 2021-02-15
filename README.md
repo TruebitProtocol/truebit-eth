@@ -734,11 +734,7 @@ For Windows, follow the templates above.
 
 The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
 
-## fileSystem
-
-Recall that Truebit reads and writes three [file types](#Getting-data-into-and-out-of-Truebit), 0: BYTES, 1: CONTRACT, and 2: IPFS.  Truebit stores BYTES file contents as bytes32 arrays.
-
-### Auxiliary functions
+## Auxiliary functions
 
 We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).  To execute the functions, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
 ```bash
@@ -746,7 +742,7 @@ npm i fs truebit-util web3
 ```
 Each function below can then be pasted into a `.js` file and run using Node.js, e.g. `node getroot.js`.  Your working directory must include a data file called `example.txt` containing the input you wish to process.
 
-#### getRoot
+### getRoot
 When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
 
 ```js
@@ -764,7 +760,7 @@ let root = getRoot("./example.txt")
 console.log(root)
 ```
 
-#### getSize
+### getSize
 Truebit also needs to know the size of the file being created.  Size can be computed as follows in [web3.js](https://github.com/ethereum/web3.js):
 ```js
 const fs = require('fs')
@@ -778,7 +774,7 @@ let size = getSize("./example.txt")
 console.log(size)
 ```
 
-#### uploadOnchain
+### uploadOnchain
 CONTRACT files should be created with [web3.js](https://web3js.readthedocs.io/en/v1.2.0/web3-eth-contract.html#new-contract) using the template function `uploadOnchain` below.  This function returns the contract address for the new CONTRACT file prefixed with a string needed for retrieval.  You must be connected to an Ethereum-compatible backend, (e.g. geth) in order to run this function.
 ```js
 const fs = require('fs')
@@ -806,9 +802,9 @@ let contractAddress = uploadOnchain("./example.txt")
 contractAddress.then(address => console.log(address))
 ```
 
-#### obtaining codeRoot and hash
+### Obtaining codeRoot
 
-The `codeRoot` and `hash` for a task program file can be obtained inside Truebit OS using the `task initial` command, read off as `vm.code` and `hash` respectively:
+Truebit requires a `codeRoot` input when registering a .wasm or .wast program file to Truebit's file system.  The `codeRoot` for a task program file can be obtained inside Truebit OS using the `task initial` command and read off from the `vm.code` entry.  Here is a template.
 ```sh
 $ task -f scrypt.json initial
 [10-12 12:25:20] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_fukrnufpj9g0
@@ -833,9 +829,13 @@ Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -i
   hash: '0x156eca8fb73785621b1bf3a28354ee8e022275a1ac1ffedcc049b029480de4c5'
 }
 ```
-In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d` and its `hash` is `0x156eca8fb73785621b1bf3a28354ee8e022275a1ac1ffedcc049b029480de4c5`.
+In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d`.
 
-### creating files
+## fileSystem API
+
+Recall that Truebit reads and writes three [file types](#Getting-data-into-and-out-of-Truebit), 0: BYTES, 1: CONTRACT, and 2: IPFS.  Truebit stores BYTES file contents as bytes32 arrays.
+
+### Creating files
 
 We enumerate methods for creating Truebit files.
 
@@ -847,7 +847,6 @@ function createFileFromBytes(string memory name, uint nonce, bytes calldata data
 *EXAMPLE:*
 
 `bytes32 fileID = createFileFromBytes("input.data", 12345, "hello world!");`
-
 
 ```solidity
 function createFileWithContents(string memory name, uint nonce, bytes32[] calldata arr, uint fileSize) external returns (bytes32);
@@ -873,31 +872,36 @@ function addIPFSFile(string memory name, uint size, string calldata IPFShash, by
 ```solidity
 function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint nonce) external returns (bytes32);
 ```
-`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot-and-hash).
+`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot) and is distinct from `root`.
 
 ```solidity
 function setCodeRoot(uint nonce, bytes32 codeRoot) external;
 ```
-`setCodeRoot` sets the [`codeRoot`](#obtaining-codeRoot-and-hash) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
+`setCodeRoot` sets the [`codeRoot`](#obtaining-codeRoot) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
 
-### managing bundles
+```solidity
+function calcId(uint nonce) external view returns (bytes32);
+```
+`calcID` returns the fileID corresponding to the `nonce` which was used to generate it.  Distinct addresses yield distinct fileID's for the same `nonce`.  `calcId` is a synonym for `makeBundle` below.
+
+### Managing bundles
 
 Bundles are the glue that hold together the files for tasks.  Each task has a single bundle which in turn references a program file, input files, and output files.
 
 ```solidity
-function makeBundle(uint num) external view returns (bytes32);
+function makeBundle(uint nonce) external view returns (bytes32);
 ```
-`makeBundle` returns a bundleID corresponding to the nonce `num`.  Distinct addresses will yield distinct bundleID's for the same `num`.
+`makeBundle` returns the bundleID corresponding to `nonce`.  Distinct addresses yield distinct bundleID's for the same `nonce`.  `makeBundle` is a synonym for `calcId`, as Truebit's filesystem derives fileID's and bundleID's identically from nonces.
 
 ```solidity
-function addToBundle(bytes32 bid, bytes32 fid) external;
+function addToBundle(uint nonce, bytes32 fid) external;
 ```
-`addtoBundle` adds a fileID `fid` to bundleID `bid`.
+`addtoBundle` adds a fileID `fid` to bundleID `makeBundle(nonce)`.  All files must be added to the bundle from the same account.  If the bundleID is unused, this method creates a new bundle.
 
 ```solidity
-function finalizeBundle(bytes32 bid, bytes32 codeFileID) external;
+function finalizeBundle(uint nonce, bytes32 codeFileID) external returns (bytes32);
 ```
-`finalizeBundle` adds the initial machine state to the bundleID `bid`.  The caller must designate a program file `codeFileID`.  This method must be called after all fileID's have been added to `bid`.
+`finalizeBundle` returns the initial machine state for bundleID `makeBundle(nonce)` and readies the corresponding bundle for task deployment.  The caller designates a fileID `codeFileID` containing the .wasm (or .wast) program file.  This method must be called after all files have been added to the bundle by the same account that added the files.
 
 
 Once a bundle has been created, one can access its contents via the following calls.
@@ -910,14 +914,14 @@ function getCodeFileID(bytes32 bid) external view returns (bytes32);
 ```solidity
 function getFileList(bytes32 bid) external view returns (bytes32[] memory);
 ```
-`getFileList` returns an array of fileID's contained in the bundle `bid`.  If `bid` was created via a standard task procedure, this array will contain fileID's from the Task Giver but not the Solver.
+`getFileList` returns an array of fileID's contained in the bundle `bid`.  If `bid` was created via standard task procedure, this array contains fileID's from the Task Giver but not the Solver.
 
-```solidity
+<!-- ```solidity
 function getInitHash(bytes32 bid) external view returns (bytes32);
 ```
-`getInitHash` returns the initial machine state generated by the files in bundle `bid`.
+`getInitHash` returns the initial machine state generated by the code and data files in bundle `bid`. -->
 
-### reading file data
+### Reading file data
 
 The following methods retrieve data from fileID's.
 
@@ -927,15 +931,15 @@ function getByteData(bytes32 id) external view returns (bytes memory);
 `getByteData` returns the data for fileID `id` as a string of bytes.  `id` must have file type BYTES. -->
 
 ```solidity
-function getData(bytes32 id) external view returns (bytes32[] memory);
+function getBytesData(bytes32 id) external view returns (bytes32[] memory);
 ```
-`getData` returns the data for fileID `id` as an bytes32 array, as it is stored in the EVM.  `id` must have file type BYTES.
+`getBytesData` returns the data for fileID `id` as an bytes32 array, as it is stored in the EVM.  `id` must have file type BYTES.
 
 
 ```solidity
-function getCode(bytes32 id) external view returns (bytes memory);
+function getContractCode(bytes32 id) external view returns (bytes memory);
 ```
-`getCode` returns the data for fileID `id` as a string of bytes.  `id` must have file type CONTRACT.
+`getContractCode` returns the data for fileID `id` as a string of bytes.  `id` must have file type CONTRACT.
 
 ```solidity
 function getContractAddress(bytes32 id) external view returns (address);
@@ -943,23 +947,18 @@ function getContractAddress(bytes32 id) external view returns (address);
 `getContractAddress` returns the contract address associated with fileID `id` where `id` must have file type CONTRACT.
 
 ```solidity
-function getHash(bytes32 id) external view returns (string memory);
+function getIpfsHash(bytes32 id) external view returns (string memory);
 ```
-`getHash` returns the IPFS content address associated with fileID `id` where `id` must have file type IPFS.
+`getIpfsHash` returns the IPFS content address associated with fileID `id` where `id` must have file type IPFS.
 
 ```solidity
 function forwardData(bytes32 id, address a) external;
 ```
 `forwardData` sends the data associated with fileID `id` to the contract at address `a`.  `id` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 id, bytes32[] calldata dta) external;` that determines how to process the incoming data.
 
-### reading metadata
+### Reading metadata
 
 The following methods retrieve metadata from files of any type.
-
-```solidity
-function getByteSize(bytes32 id) external view returns (uint);
-```
-`getByteSize` returns the size of the data associated with fileID `id`, in bytes, as indicated by the file's creator.
 
 ```solidity
 function getFileType(bytes32 id) external view returns (uint);
@@ -967,20 +966,36 @@ function getFileType(bytes32 id) external view returns (uint);
 `getFileType` returns an integer corresponding to the file type for fileID `id`.  0 = BYTES, 1 = CONTRACT, and 2 = IPFS.
 
 ```solidity
+function getRoot(bytes32 id) external view returns (bytes32);
+```
+`getRoot` returns the authorative Merkle root associated with fileID `id`'s content.  This Solidity function should not be confused with the example web3.js function [above](#getRoot) sharing the same name which computes a Merkle root from raw data.
+
+```solidity
 function getName(bytes32 id) external view returns (string memory);
 ```
 `getName` returns the file name associated with fileID `id`.
 
-```solidity
-function getRoot(bytes32 id) external view returns (bytes32);
+<!-- ```solidity
+function getNameHash(bytes32 id) external view returns (bytes32).
 ```
-`getRoot` returns the Merkle root associated with fileID `id`.  This Solidity function should not be confused with the example web3.js function [above](#getRoot) sharing the same name which computes a Merkle root from raw data input.
+`getNameHash` returns the authoritative Merkle root associated with fileID's filename. -->
 
-## incentiveLayer
+
+```solidity
+function hashName(string memory filename) external returns (bytes32);
+```
+`hashName` returns the authoritative Merkle hash for `filename`.
+
+```solidity
+function getSize(bytes32 id) external view returns (uint);
+```
+`getSize` returns the size of the data associated with fileID `id` in bytes.  If `id` is a BYTES or CONTRACT file, it will return the actual file size.  For IPFS files, it will return the size indicated by the file's creator.  Rhis Solidity function should not be confused with the example web3.js function [above](#getSize) sharing the same name which computes file size from raw data.
+
+## incentiveLayer API
 
 We describe some methods used to issue tasks, manage payments, and enhance security.
 
-### creating tasks
+### Creating tasks
 
 Task Givers must specify task parameters, including filesystem, economic, virtual machine (VM), and output files when requesting a computation from the network.  The network uniquely identifies each task by its taskID.
 
@@ -988,17 +1003,17 @@ Task Givers must specify task parameters, including filesystem, economic, virtua
 function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint blockLimit) external returns (bytes32);
 ```
 `submitTask` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
-* `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash).
-* `codeType`: The program file is either WAST or WASM as determined by the file extension.
+<!-- * `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash) or by calling `getInitHash` from the `fileSystem` contract. -->
+* `codeType`: The program file is either WAST or WASM as determined by the file extension. ****IS THIS 0 or 1?****
 * `bundleID`: The bundleID containing all fileID's for the task.
 * `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
 * `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](#Writing-task-outputs-via-Truebit-OS).
 * `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).
 
 ```solidity
-function requireFile(bytes32 tid, bytes32 fid, uint8 fileType) external;
+function requireFile(bytes32 tid, bytes32 namehash, uint8 fileType) external;
 ```
-`requireFile` tells the Solver to upload fileID `fid` with file type `fileType` upon completion of task `tid`. `tid`'s filesystem bundle must include the file `fid`.  This method must be called once for each output file after calling `submitTask` but before calling `commitRequiredFiles`.
+`requireFile` tells the Solver to upload a file with `fileType` (0:BYTES, 1:CONTRACT, 2:IPFS) upon obtaining a solution to task `tid`. `tid`'s filesystem bundle must include an (empty) file whose file name hashes to `namehash`.  `namehash` can be computed using `hashName` from the fileSystem API.  This method must be called once for each output file after calling `submitTask` but before calling `commitRequiredFiles`.
 
 ```solidity
 function commitRequiredFiles(bytes32 id) external payable;
@@ -1006,11 +1021,11 @@ function commitRequiredFiles(bytes32 id) external payable;
 `commitRequiredFiles` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
 
 ```solidity
-function submitEmitTask(bytes32 initTaskHash, CodeType codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
+function submitEmitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
 ```
 `submitEmitTask` combines `submitTask` with `commitRequiredFiles` into a single transaction.  It can be used when there are no output files.  This method may overload the EVM when called from a smart contract.
 
-### token payments
+### Token payments
 
 ```solidity
 function makeDeposit(uint amount) external returns (uint);
@@ -1037,7 +1052,18 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 ```
 `PLATFORM_FEE_TASK_GIVER` returns the ETH platform fee (in wei) for Task Submitters.
 
-### security
+### Browsing the task ledger
+
+getTaskInfo
+
+vmParams
+
+Solutions
+
+Uploads
+
+
+### Security
 
 If a Solver reveals his private random bits before the designated time, anyone can call the method below to claim his deposit.  See the [Truebit whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf), Section A.1.
 ```solidity
@@ -1047,9 +1073,10 @@ function prematureReveal(bytes32 taskID, uint originalRandomBits) external;
 * a Solver has been selected but not yet instructed to reveal his solution in the clear, and
 * the Solver's private `originalRandombits` match those of the `taskID`.
 
-## callbacks
 
-Upon completion of a task, Truebit will call back to the Task Owner's (contract) address with a result.  In order to make use of the result, the Task Owner's contract must include one or more of the following methods.
+## Contract callbacks
+
+Upon completion or cancellation of a task, Truebit will call back to the Task Owner's (contract) address with a result.  In order to process the result, the Task Owner's contract must include one or more of the following methods.
 
 ```solidity
 function solved(bytes32 taskID, bytes32[] calldata files) external;

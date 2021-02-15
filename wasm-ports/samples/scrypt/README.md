@@ -106,7 +106,7 @@ As params, there are the task id and the uploaded file IDs.
 
 Read the file from the filesystem contract, and store the result in the mapping
 ```
-bytes32[] memory arr = filesystem.getData(files[0]);
+bytes32[] memory arr = filesystem.getBytesData(files[0]);
 result[task_to_string[id]] = arr[0];
 ```
 

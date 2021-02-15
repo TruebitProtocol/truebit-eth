@@ -4,7 +4,7 @@ pragma solidity ^0.5.0;
 interface Filesystem {
    function createFileFromBytes(string calldata name, uint nonce, bytes calldata arr) external returns (bytes32);
    function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
-   function getData(bytes32 id) external view returns (bytes32[] memory);
+   function getBytesData(bytes32 id) external view returns (bytes32[] memory);
 
    function makeBundle(uint num) external view returns (bytes32);
    function addToBundle(bytes32 id, bytes32 file_id) external;
@@ -99,7 +99,7 @@ contract SampleContract {
    function solved(bytes32 id, bytes32[] calldata files) external {
       // could check the task id
       require(TrueBit(msg.sender) == truebit);
-      bytes32[] memory arr = filesystem.getData(files[0]);
+      bytes32[] memory arr = filesystem.getBytesData(files[0]);
       result[task_to_string[id]] = arr;
       emit FinishedTask(task_to_string[id], arr);
    }
