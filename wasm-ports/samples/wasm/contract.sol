@@ -2,9 +2,9 @@
 pragma solidity ^0.5.0;
 
 interface Filesystem {
-   function createFileWithContents(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
+   function createFileFromArray(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
 
-   function makeBundle(uint num) external view returns (bytes32);
+   function calcId(uint num) external view returns (bytes32);
    function addToBundle(bytes32 id, bytes32 file_id) external;
    function finalizeBundle(bytes32 bundleID, bytes32 codeFileID) external;
    function getInitHash(bytes32 bid) external view returns (bytes32);
@@ -60,15 +60,14 @@ contract SampleContract {
 
       emit InputData(dataFile);
 
-      bytes32 bundleID = filesystem.makeBundle(num);
-
-      filesystem.addToBundle(bundleID, dataFile);
+      filesystem.addToBundle(num, dataFile);
 
       bytes32[] memory empty = new bytes32[](0);
-      filesystem.addToBundle(bundleID, filesystem.createFileWithContents("output.data", num+1000000000, empty, 0));
-      filesystem.addToBundle(bundleID, filesystem.createFileWithContents("output.wasm", num+2000000000, empty, 0));
+      filesystem.addToBundle(num, filesystem.createFileFromArray("output.data", num+1000000000, empty, 0));
+      filesystem.addToBundle(num, filesystem.createFileFromArray("output.wasm", num+2000000000, empty, 0));
 
-      filesystem.finalizeBundle(bundleID, codeFileID);
+      filesystem.finalizeBundle(num, codeFileID);
+      bytes32 bundleID = filesystem.calcId(num);
       return bundleID;
   }
 
