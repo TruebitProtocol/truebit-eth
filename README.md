@@ -842,7 +842,7 @@ We enumerate methods for creating Truebit files.
 ```solidity
 function createFileFromBytes(string memory name, uint nonce, bytes calldata data) external returns (bytes32);
 ```
-`createFileFromBytes` returns a fileID for a BYTES file called `name` with content `data`.  Here `nonce` is a random, non-negative integer that uniquely identifies the newly created file.
+`createFileFromBytes` returns a fileID for a BYTES file called `name` with content `data`.  Here `nonce` is a random, non-negative integer that uniquely identifies the newly created file.  This method converts `data`and stores it as a bytes32 array.
 
 *EXAMPLE:*
 
@@ -851,7 +851,7 @@ function createFileFromBytes(string memory name, uint nonce, bytes calldata data
 ```solidity
 function createFileFromArray(string memory name, uint nonce, bytes32[] calldata arr, uint fileSize) external returns (bytes32);
 ```
-`createFileFromArray` returns a fileID for a BYTES file called `name` whose contents consist of a concatenation of array `arr`.  `nonce` can be any random, non-negative integer that uniquely identifies the new file, and `fileSize` should be the total number of bytes in the concatenation of elements in `arr`, excluding any "empty" bytes in the final element.
+`createFileFromArray` returns a fileID for a BYTES file called `name` whose contents consist of a concatenation of array `arr`.  `nonce` can be any random, non-negative integer that uniquely identifies the new file. `fileSize` should be the total number of bytes in the concatenation of elements in `arr`, excluding any "empty" bytes in the final element.  This operation adds `arr` to contract storage.
 
 *EXAMPLE:*
 
@@ -1022,7 +1022,7 @@ function submitEmitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, 
 ```
 `submitEmitTask` combines `submitTask` with `commitRequiredFiles` into a single transaction.  It can be used when there are no output files.  This method may overload the EVM when called from a smart contract.
 
-### Token payments
+### Managing tokens
 
 ```solidity
 function makeDeposit(uint amount) external returns (uint);
