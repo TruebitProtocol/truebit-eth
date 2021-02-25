@@ -687,16 +687,16 @@ Follow the patterns above for Linux and macOS.
 We now walk through the steps to start IPFS, Clef, Geth, and then Truebit-OS.
 
 By default, MacOS stores Clef files in `~/Library/Signer/` and Geth files in `~/Library/Ethereum/`. These locations differ from the location in the linux-based Docker container, which are `~/.clef` and `~/.geth`, so mind these differences when you follow the `/goerli.sh` or `/mainnet.sh` startup templates.  This means that in MacOS you'll probably find Clef's IPC socket at:
-```
+```bash
 ~/Library/Signer/clef.ipc
 ```
 Geth's IPC socket at one of these:
-```
+```bash
 ~/Library/Ethereum/geth.ipc
 ~/Library/Ethereum/goerli/geth.ipc
 ```
 and the keystore files at one of these:
-```
+```bash
 ~/Library/Ethereum/keystore
 ~/Library/Ethereum/goerli/keystore
 ```
@@ -732,7 +732,11 @@ For Windows, follow the templates above.
 
 # Contract API reference
 
-The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  The files `truebit-eth/wasm-client/goerli.json`, `truebit-eth/wasm-ports/samples/deploy.js` reference the contracts named in the headers below.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
+The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  Note that the file `truebit-eth/wasm-client/goerli.json` contains addresses and the ABI interface for Truebit's `fileSystem` and `incentiveLayer` contracts on Görli testnet.  An analogous file for Ethereum mainnet appears in the same directory.  The following example provides a template for interacting with Truebit's smart contract API.
+```bash
+truebit-eth/wasm-ports/samples/deploy.js
+```
+The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
 
 ## Auxiliary functions
 
@@ -1017,10 +1021,10 @@ function commitRequiredFiles(bytes32 id) external payable;
 ```
 `commitRequiredFiles` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
 
-```solidity
+<!-- ```solidity
 function submitEmitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
 ```
-`submitEmitTask` combines `submitTask` with `commitRequiredFiles` into a single transaction.  It can be used when there are no output files.  This method may overload the EVM when called from a smart contract.
+`submitEmitTask` combines `submitTask` with `commitRequiredFiles` into a single transaction.  It can be used when there are no output files.  This method may overload the EVM when called from a smart contract. -->
 
 ### Managing tokens
 
@@ -1051,13 +1055,15 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 
 ### Browsing the task ledger
 
-getTaskInfo
+getTaskInfo: minDeposit, reward, tax, ownerFee, owner, submitter, selectedSolver
 
-vmParams
+vmParams (remove getter)
 
-Solutions
+Solutions (skip for now)
 
-Uploads
+verifierList (move to mapping?)
+
+solverUploads (fileID - move to mapping?)
 
 
 ### Security
