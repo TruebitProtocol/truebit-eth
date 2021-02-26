@@ -58,7 +58,7 @@ async function deploy() {
     // Add codefile to Truebit filesystem
     let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, codeBuf)
-    await tbFileSystem.methods.addIPFSCodeFile(name, size, ipfsHash, mr, initHash, fileNonce).send({ from: account, gas: 300000 })
+    await tbFileSystem.methods.addIPFSCodeFile(name, size, ipfsHash, mr, initHash, 1, fileNonce).send({ from: account, gas: 300000 })
     console.log("Registered codefile with Truebit filesystem")
 
     // check whether a random file was uploaded

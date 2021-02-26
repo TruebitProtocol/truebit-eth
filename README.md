@@ -808,7 +808,7 @@ contractAddress.then(address => console.log(address))
 
 ### Obtaining codeRoot
 
-Truebit requires a `codeRoot` input when registering a .wasm or .wast program file to Truebit's file system.  The `codeRoot` for a task program file can be obtained inside Truebit OS using the `task initial` command and read off from the `vm.code` entry.  Here is a template.
+Truebit requires a `codeRoot` input when registering a .wasm or .wast program file to Truebit's file system.  The `codeRoot` for a task program file can be obtained inside Truebit OS using the `task initial` command and read off from the `vm.code` entry. In order to use the template command below, first create a task .json file following the [example](#Writing-task-outputs-via-Truebit-OS) above.  Only the `codeFile` and `dataFiles` fields in the .json matter as the `codeRoot` hash is independent of virtual machine and economic parameters.
 ```sh
 $ task -f scrypt.json initial
 [10-12 12:25:20] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_fukrnufpj9g0
@@ -874,14 +874,14 @@ function addIPFSFile(string memory name, uint size, string calldata IPFShash, by
 `addIPFSFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](#getRoot), and the `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
-function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint nonce) external returns (bytes32);
+function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint8 codeType, uint nonce) external returns (bytes32);
 ```
-`addIPFSCodeFile` is similar to `addIPFSFile` except the file designated by `name` and `IPFShash` is designated as a code file (with .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot) and is distinct from `root`.
+`addIPFSCodeFile` is similar to `addIPFSFile` except the file associated with `name` and `IPFShash` is designated as a code file (with `name` having .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot) and is distinct from `root`.  The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM).
 
 ```solidity
-function setCodeRoot(uint nonce, bytes32 codeRoot) external;
+function setCodeRoot(uint nonce, bytes32 codeRoot, uint8 codeType) external;
 ```
-`setCodeRoot` sets the [`codeRoot`](#obtaining-codeRoot) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.
+`setCodeRoot` sets the [`codeRoot`](#obtaining-codeRoot) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.  The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM).
 
 ### Naming files and bundles
 
@@ -1001,12 +1001,11 @@ We describe some methods used to issue tasks, manage payments, and enhance secur
 Task Givers must specify task parameters, including filesystem, economic, virtual machine (VM), and output files when requesting a computation from the network.  The network uniquely identifies each task by its taskID.
 
 ```solidity
-function submitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint blockLimit) external returns (bytes32);
+function submitTask(bytes32 bundleId, uint8 codeType, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint blockLimit) external returns (bytes32);
 ```
 `submitTask` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
 <!-- * `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash) or by calling `getInitHash` from the `fileSystem` contract. -->
-* `codeType`: The program file is either WAST or WASM as determined by the file extension. ****IS THIS 0 or 1?****
-* `bundleID`: The bundleID containing all fileID's for the task.
+* `bundleID`: The bundleID containing all files for the task.
 * `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
 * `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](#Writing-task-outputs-via-Truebit-OS).
 * `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).
@@ -1055,7 +1054,7 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 
 ### Browsing the task ledger
 
-getTaskInfo: minDeposit, reward, tax, ownerFee, owner, submitter, selectedSolver
+getTaskInfo: bundleID, minDeposit, reward, tax, ownerFee, owner, submitter, selectedSolver
 
 vmParams (remove getter)
 
