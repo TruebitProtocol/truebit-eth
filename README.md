@@ -808,7 +808,7 @@ contractAddress.then(address => console.log(address))
 
 ### Obtaining codeRoot
 
-Truebit requires a `codeRoot` input when registering a .wasm or .wast program file to Truebit's file system.  The `codeRoot` for a task program file can be obtained inside Truebit OS using the `task initial` command and read off from the `vm.code` entry. In order to use the template command below, first create a task .json file following the [example](#Writing-task-outputs-via-Truebit-OS) above.  Only the `codeFile` and `dataFiles` fields in the .json matter as the `codeRoot` hash is independent of virtual machine and economic parameters.
+Truebit requires a `codeRoot` input when registering a .wasm or .wast program file to Truebit's file system.  The `codeRoot` for a task program file can be obtained inside Truebit OS using the `task initial` command and read off from the `vm.code` entry. In order to use the template command below, first create a task .json file following the [example](#Writing-task-outputs-via-Truebit-OS) above.  Be sure to run `task initial` with the same virtual machine parameters that you plan to use when you later issue the task.
 ```sh
 $ task -f scrypt.json initial
 [10-12 12:25:20] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_fukrnufpj9g0
@@ -1054,15 +1054,28 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 
 ### Browsing the task ledger
 
+One may wish to browse inputs, outputs, and parameters for previously issued tasks.
+
 getTaskInfo: bundleID, minDeposit, reward, tax, ownerFee, owner, submitter, selectedSolver
+-> taskParams
+One can retrieve inputs files from the [bundleID](#Managing-bundles)
 
-vmParams (remove getter)
-
-Solutions (skip for now)
+getVMparameters -> vmParams
+```solidity
+function vmParams(bytes32 taskID) external view returns (uint8, uint8, uint8, uint8, uint8, uint);
+```
+`vmParams` returns the virtual machine parameters associated with `taskID`, namely:
+```
+(stackSize, memorySize, globalsSize, tableSize, callSize, blockLimit)
+```
+When calling `vmParams` from web3.js, the created dictionary will automatically have the above parameter names as attributes.
 
 verifierList (move to mapping?)
 
 solverUploads (fileID - move to mapping?)
+indicates whether solved - correctly?
+
+Solutions (skip for now)
 
 
 ### Security
