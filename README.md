@@ -614,7 +614,7 @@ sh compile.sh
 ## Runtime
 Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
-When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters (within range 5 to 30), including:
+When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters (within range 5 to 30 exclusive), including:
 
 `memory-size`: depth of the Merkle tree for memory
 
@@ -873,15 +873,24 @@ function addIPFSFile(string memory name, uint size, string calldata IPFShash, by
 ```
 `addIPFSFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](#getRoot), and the `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
-```solidity
+<!-- ```solidity
 function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint8 codeType, uint nonce) external returns (bytes32);
 ```
-`addIPFSCodeFile` is similar to `addIPFSFile` except the file associated with `name` and `IPFShash` is designated as a code file (with `name` having .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot) and is distinct from `root`.  The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM).
+`addIPFSCodeFile` is similar to `addIPFSFile` except the file associated with `name` and `IPFShash` is designated as a code file (with `name` having .wasm or .wast extension).  The `codeRoot` can be obtained using the template [above](#obtaining-codeRoot) and is distinct from `root`.  The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM). -->
+
+<!-- A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.   -->
 
 ```solidity
-function setCodeRoot(uint nonce, bytes32 codeRoot, uint8 codeType) external;
+function setCodeRoot(uint nonce, bytes32 codeRoot, uint8 codeType, uint8 stack, uint8 memory, uint8 globals, uint8 table, uint8 call) external;
 ```
-`setCodeRoot` sets the [`codeRoot`](#obtaining-codeRoot) for the fileID corresponding to `nonce`.  `setCodeRoot` must be called from the same address that originally generated the fileID.  A `codeRoot` is required for all WebAssembly program files, regardless of file type, but IPFS programs that deploy using `addIPFSCodeFile` need not use the `setCodeRoot` method.  The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM).
+`setCodeRoot` designates the fileID associated with `nonce` as an executable WebAssembly program file.  It also sets the virtual machine parameters to be used when executing the program file as part of a Truebit task.  `setCodeRoot` must be called from the same address that originally generated the fileID.
+
+* See the directions [above](#obtaining-codeRoot) for calculating the appropriate `codeRoot`.  
+
+* The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM).  The code type selected should match the program file extension (.wasm or .wast).
+
+* `stack`, `mem`, `globals`, `table`, `call`: These are the same VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).  You may need to tweak these value to get your task to run, and try changing `memory-size` first.  The task is more likely to succeed with larger parameters.  You may wish to experiment with these parameters by issuing the task [locally](#Writing-task-outputs-via-Truebit-OS) within Truebit OS using `task initial` (to get the `codeRoot`) and `task final` (to verify that the task executes correctly with the given parameters).
+
 
 ### Naming files and bundles
 
@@ -957,6 +966,15 @@ function forwardData(bytes32 fid, address a) external;
 ```
 `forwardData` sends the data associated with fileID `fid` to the contract at address `a`.  `fid` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 fid, bytes32[] calldata dta) external;` that determines how to process the incoming data.
 
+```solidity
+function vmParams(bytes32 codeFileID) external view returns (bytes32, uint8, uint8, uint8, uint8, uint8, uint8, uint);
+```
+`vmParams` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileID`, namely:
+```
+(codeRoot, codeType, stackSize, memorySize, globalsSize, tableSize, callSize, blockLimit)
+```
+When calling `vmParams` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
+
 ### Reading file metadata
 
 The following methods retrieve metadata from files of any type.
@@ -1001,24 +1019,27 @@ We describe some methods used to issue tasks, manage payments, and enhance secur
 Task Givers must specify task parameters, including filesystem, economic, virtual machine (VM), and output files when requesting a computation from the network.  The network uniquely identifies each task by its taskID.
 
 ```solidity
-function submitTask(bytes32 bundleId, uint8 codeType, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint blockLimit) external returns (bytes32);
+function createTaskID(bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint blockLimit) external returns (bytes32);
 ```
-`submitTask` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
+`createTaskID` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
 <!-- * `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash) or by calling `getInitHash` from the `fileSystem` contract. -->
-* `bundleID`: The bundleID containing all files for the task.
-* `ownerFee`: The fee paid by the Task Submitter to the smart contract issuing the task.
-* `mindeposit`, `solverReward`, `verifierTax`, `blockLimit`: See sample task [above](#Writing-task-outputs-via-Truebit-OS).
-* `stack`, `mem`, `globals`, `table`, `call`: These are the VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).
+* `bundleID`: the bundleID containing all files for the task
+* `ownerFee`: the fee paid by the Task Submitter to the smart contract issuing the task
+* `mindeposit`: the minimum TRU deposit required for a Solver or Verifier to participate
+* `solverReward`: the reward paid to the Solver for correctly solving the task
+* `verifierTax`: the payment to be split among all Verifiers
+* `blockLimit`: the maximum number of blocks a Solver or Verifier should spend solving the task
+See also sample task [above](#Writing-task-outputs-via-Truebit-OS).
 
 ```solidity
 function requireFile(bytes32 tid, bytes32 namehash, uint8 fileType) external;
 ```
-`requireFile` tells the Solver to upload a file with `fileType` (0:BYTES, 1:CONTRACT, 2:IPFS) upon obtaining a solution to task `tid`. `tid`'s filesystem bundle must include an (empty) file whose file name hashes to `namehash`.  `namehash` can be computed using `hashName` from the fileSystem API.  This method must be called once for each output file after calling `submitTask` but before calling `commitRequiredFiles`.
+`requireFile` tells the Solver to upload a file with `fileType` (0:BYTES, 1:CONTRACT, 2:IPFS) upon obtaining a solution to task `tid`. `tid`'s filesystem bundle must include an (empty) file whose file name hashes to `namehash`.  `namehash` can be computed using `hashName` from the fileSystem API.  This method must be called once for each output file after calling `createTaskID` but before calling `submitTask`.
 
 ```solidity
-function commitRequiredFiles(bytes32 id) external payable;
+function submitTask(bytes32 id) external payable;
 ```
-`commitRequiredFiles` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
+`submitTask` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
 
 <!-- ```solidity
 function submitEmitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
@@ -1056,19 +1077,11 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 
 One may wish to browse inputs, outputs, and parameters for previously issued tasks.
 
-getTaskInfo: bundleID, minDeposit, reward, tax, ownerFee, owner, submitter, selectedSolver
+getTaskInfo: bundleID, minDeposit, reward, tax, ownerFee, owner, submitter, blockLimit, selectedSolver
 -> taskParams
 One can retrieve inputs files from the [bundleID](#Managing-bundles)
 
 getVMparameters -> vmParams
-```solidity
-function vmParams(bytes32 taskID) external view returns (uint8, uint8, uint8, uint8, uint8, uint);
-```
-`vmParams` returns the virtual machine parameters associated with `taskID`, namely:
-```
-(stackSize, memorySize, globalsSize, tableSize, callSize, blockLimit)
-```
-When calling `vmParams` from web3.js, the created dictionary will automatically have the above parameter names as attributes.
 
 verifierList (move to mapping?)
 

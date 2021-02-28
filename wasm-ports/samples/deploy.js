@@ -14,7 +14,7 @@ let abi = JSON.parse(fs.readFileSync('./build/SampleContract.abi'))
 let bin = fs.readFileSync('./build/SampleContract.bin')
 
 // This function is used to add a "random file" in some samples
-async function addIPFSFile(tbFileSystem, account, name, buf) {
+async function addRandomIPFSFile(tbFileSystem, account, name, buf) {
     let ipfsFile = (await ipfs.files.add([{ content: buf, path: name }]))[0]
     let ipfsHash = ipfsFile.hash
     let size = buf.length
@@ -48,23 +48,17 @@ async function deploy() {
 
     // Get precomputed initial machine state for sample task
     let info = JSON.parse(fs.readFileSync('./info.json'))
-    let initHash = info.codehash
+    let codeRoot = info.codehash
 
     // Set account options for contract deploy
     let accounts = await web3.eth.getAccounts()
     let account = accounts[1]
     let options = { from: account.toLowerCase(), gas: 4000000 }
 
-    // Add codefile to Truebit filesystem
-    let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
-    let mr = merkleRoot(web3, codeBuf)
-    await tbFileSystem.methods.addIPFSCodeFile(name, size, ipfsHash, mr, initHash, 1, fileNonce).send({ from: account, gas: 300000 })
-    console.log("Registered codefile with Truebit filesystem")
-
-    // check whether a random file was uploaded
+    // upload random file, if applicable
     let randomFile
     try {
-        randomFile = await addIPFSFile(tbFileSystem, account, "_dev_urandom", fs.readFileSync("_dev_urandom"))
+        randomFile = await addRandomIPFSFile(tbFileSystem, account, "_dev_urandom", fs.readFileSync("_dev_urandom"))
     }
     catch (e) {
         console.log("Random file does't exist")
@@ -77,10 +71,16 @@ async function deploy() {
         artifacts.tru.address,
         artifacts.fileSystem.address,
         codeFileID,
-        info.memsize,
         info.blocklimit || 3
     ]
     if (randomFile) args.push(randomFile)
+
+    // Add codefile to Truebit filesystem
+    let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
+    let mr = merkleRoot(web3, codeBuf)
+    await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
+    await tbFileSystem.methods.setCodeRoot(fileNonce, codeRoot, 1, 20, info.memsize, 8, 20, 10)
+    console.log("Registered codefile with Truebit filesystem")
 
     // Deploy sample contract
     let contract = new web3.eth.Contract(abi)

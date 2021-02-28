@@ -14,9 +14,9 @@ interface Filesystem {
 }
 
 interface TrueBit {
-    function submitTask(bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external returns (bytes32);
+    function createTaskID(bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint limit) external returns (bytes32);
     function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint8 st) external;
-    function commitRequiredFiles(bytes32 id) external payable;
+    function submitTask(bytes32 id) external payable;
     function makeDeposit(uint _deposit) external returns (uint);
     function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 }
@@ -46,13 +46,12 @@ contract SampleContract {
    uint blocklimit;
    /* bytes32 taskID; */
 
-   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint8 _memsize, uint _blocklimit, bytes32 _randomFileId) public {
+   constructor(address tb, address tru_, address fs, bytes32 _codeFileID, uint _blocklimit, bytes32 _randomFileId) public {
        truebit = TrueBit(tb);
        tru = TRU(tru_);
        filesystem = Filesystem(fs);
        codeFileID = _codeFileID;
        randomFile = _randomFileId;
-       memsize = _memsize;
        blocklimit = _blocklimit;
    }
 
@@ -82,7 +81,7 @@ contract SampleContract {
      bytes32 bundleID = submitFileData(data);
      tru.approve(address(truebit), 9 ether);
      truebit.makeDeposit(9 ether);
-     bytes32 taskID = truebit.submitTask(bundleID, 10 ether, 2 ether, 6 ether, 1 ether, 20, memsize, 8, 20, 10, blocklimit);
+     bytes32 taskID = truebit.createTaskID(bundleID, 10 ether, 2 ether, 6 ether, 1 ether, blocklimit);
      truebit.requireFile(taskID, filesystem.hashName("output.data"), 0);  // 0: eth_bytes, 1: contract, 2: ipfs */
      task_to_string[taskID] = data;
      return taskID;
@@ -90,7 +89,7 @@ contract SampleContract {
 
     // call this after makeTaskID
     function emitTask (bytes32 taskID) external payable {
-       truebit.commitRequiredFiles.value(truebit.PLATFORM_FEE_TASK_GIVER())(taskID);
+       truebit.submitTask.value(truebit.PLATFORM_FEE_TASK_GIVER())(taskID);
     }
 
    // this is the callback name
