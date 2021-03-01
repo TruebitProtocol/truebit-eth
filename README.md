@@ -1077,18 +1077,21 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 
 One may wish to browse inputs, outputs, and parameters for previously issued tasks.
 
+
 getTaskInfo: bundleID, minDeposit, reward, tax, ownerFee, owner, submitter, blockLimit, selectedSolver
 -> taskParams
 One can retrieve inputs files from the [bundleID](#Managing-bundles)
+`getFileList`
 
-getVMparameters -> vmParams
+```solidity
+function getSolverUploads(bytes32 tid) external view returns (bytes32[] memory);
+```
+Return the verified outputs uploaded by the Solver for task `tid` as a list of file ID's.
 
-verifierList (move to mapping?)
-
-solverUploads (fileID - move to mapping?)
-indicates whether solved - correctly?
-
-Solutions (skip for now)
+```solidity
+function getVerifierList(bytes32 tid) external view returns (address[] memory);
+```
+Return a list of Verifiers who checked task `tid`.
 
 
 ### Security
