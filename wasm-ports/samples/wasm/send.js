@@ -22,7 +22,7 @@ async function addIPFSFile(tbFileSystem, account, name, buf) {
     let fileNonce = Math.floor(Math.random()*Math.pow(2, 30))
     let mr = merkleRoot(web3, buf)
     let fileID = await tbFileSystem.methods.calcId(fileNonce).call({from: account})
-    await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({from: account, gas: 300000, gasPrice: web3.gp})
+    await tbFileSystem.methods.addIpfsFile(name, size, ipfsHash, mr, fileNonce).send({from: account, gas: 300000, gasPrice: web3.gp})
     console.log("Uploaded and registered file", name, "with root", mr)
     return fileID
 }

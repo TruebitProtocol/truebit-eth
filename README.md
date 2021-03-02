@@ -869,9 +869,9 @@ function addContractFile(string memory name, uint size, address contractAddress,
 `addContractFile` returns a fileID for a CONTRACT file called `name` using existing data stored at address `contractAddress`.  The data stored at `contractAddress` must conform to the [`uploadOnchain`](#uploadOnchain) format above, and `root` must conform to [`getRoot`](#getRoot).  The `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
-function addIPFSFile(string memory name, uint size, string calldata IPFShash, bytes32 root, uint nonce) external returns (bytes32);
+function addIpfsFile(string memory name, uint size, string calldata IPFShash, bytes32 root, uint nonce) external returns (bytes32);
 ```
-`addIPFSFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](#getRoot), and the `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
+`addIpfsFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](#getRoot), and the `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 <!-- ```solidity
 function addIPFSCodeFile(string memory name, uint size, string memory IPFShash, bytes32 root, bytes32 codeRoot, uint8 codeType, uint nonce) external returns (bytes32);
@@ -897,7 +897,7 @@ function setCodeRoot(uint nonce, bytes32 codeRoot, uint8 codeType, uint8 stack, 
 ```solidity
 function calcId(uint nonce) external view returns (bytes32);
 ```
-`calcID` returns the public fileID/bundleID for the corresponding `nonce` used when generating file/bundle content.  Truebit's filesystem derives fileID's and bundleID's identically from nonces.  Distinct addresses yield distinct fileID/bundleID's for the same `nonce`.
+`calcId` returns the public fileID/bundleID for the corresponding `nonce` used when generating file/bundle content.  Truebit's filesystem derives fileID's and bundleID's identically from nonces.  Distinct addresses yield distinct fileID/bundleID's for the same `nonce`.
 
 ### Managing bundles
 
@@ -917,9 +917,9 @@ function finalizeBundle(uint nonce, bytes32 codeFileID) external returns (bytes3
 Once a bundle has been created, one can access its contents via the following calls.
 
 ```solidity
-function getCodeFileID(bytes32 bid) external view returns (bytes32);
+function getCodeFileId(bytes32 bid) external view returns (bytes32);
 ```
-`getCodeFileID` returns the fileID for bundle `bid`'s WASM code file.
+`getCodeFileId` returns the fileID for bundle `bid`'s WASM code file.
 
 ```solidity
 function getFileList(bytes32 bid) external view returns (bytes32[] memory);
@@ -967,13 +967,18 @@ function forwardData(bytes32 fid, address a) external;
 `forwardData` sends the data associated with fileID `fid` to the contract at address `a`.  `fid` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 fid, bytes32[] calldata dta) external;` that determines how to process the incoming data.
 
 ```solidity
-function vmParams(bytes32 codeFileID) external view returns (bytes32, uint8, uint8, uint8, uint8, uint8, uint8, uint);
+function vmParameters(bytes32 codeFileId) external view returns (bytes32, uint8, uint8, uint8, uint8, uint8, uint8);
 ```
-`vmParams` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileID`, namely:
-```
-(codeRoot, codeType, stackSize, memorySize, globalsSize, tableSize, callSize, blockLimit)
-```
-When calling `vmParams` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
+`vmParameters` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileId` in the following order, namely:
+* 0: bytes32 [`codeRoot`](#Obtaining-codeRoot): initial machine state restricted to the program code
+* 1: uint8 `codeType`: the progrma code format (0=WAST, 1=WASM)
+* 2: uint8 `stackSize`: depth of Merkle tree for the stack
+* 3: uint8 `memorySize`: depth of the Merkle tree for memory
+* 4: uint8 `globalsSize`: depth of Merkle tree for the globals table
+* 5: uint8 `tableSize`: depth of Merkle tree for the call table
+* 6: uint8 `callSize`: depth of Merkle tree for the call stack
+
+When calling `vmParameters` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
 
 ### Reading file metadata
 
@@ -1023,12 +1028,13 @@ function createTaskID(bytes32 bundleId, uint minDeposit, uint solverReward, uint
 ```
 `createTaskID` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
 <!-- * `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash) or by calling `getInitHash` from the `fileSystem` contract. -->
-* `bundleID`: the bundleID containing all files for the task
-* `ownerFee`: the fee paid by the Task Submitter to the smart contract issuing the task
+* `bundleID`: the bundleID containing all files and VM parameters for the task
 * `mindeposit`: the minimum TRU deposit required for a Solver or Verifier to participate
 * `solverReward`: the reward paid to the Solver for correctly solving the task
 * `verifierTax`: the payment to be split among all Verifiers
-* `blockLimit`: the maximum number of blocks a Solver or Verifier should spend solving the task
+* `ownerFee`: the fee paid by the Task Submitter to the smart contract issuing the task (if any)
+* `blockLimit`: the maximum number of blocks a Solver or Verifier should spend solving the task.
+
 See also sample task [above](#Writing-task-outputs-via-Truebit-OS).
 
 ```solidity
@@ -1077,16 +1083,30 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 
 One may wish to browse inputs, outputs, and parameters for previously issued tasks.
 
+```solidity
+function taskParameters(tid) external view returns (bytes32, uint, uint, uint, uint, uint, address, address, address);
+```
+`taskParameters()` returns a list of information about data inputs, participants, and economics for task `tid`.  The first 6 return outputs mirror those of the [`createTaskID`](#Creating-tasks) method, namely
 
-getTaskInfo: bundleID, minDeposit, reward, tax, ownerFee, owner, submitter, blockLimit, selectedSolver
--> taskParams
-One can retrieve inputs files from the [bundleID](#Managing-bundles)
-`getFileList`
+* 0: bytes32 `bundleID`
+* 1: uint `mindeposit`
+* 2: uint `solverReward`
+* 3: uint `verifierTax`
+* 4: uint `ownerFee`
+* 5: uint`blockLimit`
+
+One can retrieve the list of input files by plugging `bundleID` into the [`getFileList`](#Managing-bundles) method.  The final 3 return outputs are as follows.
+
+* 6: address `owner`: the address of the Task Owner smart contract (if any)
+* 7: address `submitter`: the address of the "human" Task Submitter's address (may be the same as Task Owner)
+* 8: address `selectedSolver`: the address of the Solver that performed the tax
+
+When calling `taskParameters` from web3.js, the created dictionary will außtomatically contain the above parameter names as attributes.
 
 ```solidity
 function getSolverUploads(bytes32 tid) external view returns (bytes32[] memory);
 ```
-Return the verified outputs uploaded by the Solver for task `tid` as a list of file ID's.
+Return the verified outputs uploaded by the Solver for task `tid` as a list of fileID's.
 
 ```solidity
 function getVerifierList(bytes32 tid) external view returns (address[] memory);

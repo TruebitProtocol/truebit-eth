@@ -23,7 +23,7 @@ async function addRandomIPFSFile(tbFileSystem, account, name, buf) {
     let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, buf)
     let fileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
-    await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
+    await tbFileSystem.methods.addIpfsFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
     console.log("Uploaded file", name, "with root", mr)
     return fileID
 }
@@ -78,7 +78,7 @@ async function deploy() {
     // Add codefile to Truebit filesystem
     let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, codeBuf)
-    await tbFileSystem.methods.addIPFSFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
+    await tbFileSystem.methods.addIpfsFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
     await tbFileSystem.methods.setCodeRoot(fileNonce, codeRoot, 1, 20, info.memsize, 8, 20, 10)
     console.log("Registered codefile with Truebit filesystem")
 
