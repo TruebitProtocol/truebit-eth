@@ -65,6 +65,7 @@ async function deploy() {
     }
 
     // List constructor parameters for sample contract
+    let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let codeFileID = await tbFileSystem.methods.calculateId(fileNonce).call({ from: account })
     let args = [
         artifacts.incentiveLayer.address,
@@ -76,11 +77,11 @@ async function deploy() {
     if (randomFile) args.push(randomFile)
 
     // Add codefile to Truebit filesystem
-    let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, codeBuf)
     await tbFileSystem.methods.addIpfsFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
-    await tbFileSystem.methods.setCodeRoot(fileNonce, codeRoot, 1, 20, info.memsize, 8, 20, 10)
+    await tbFileSystem.methods.setCodeRoot(fileNonce, codeRoot, 1, 20, info.memsize, 8, 20, 10).send({ from: account, gas: 300000 } )
     console.log("Registered codefile with Truebit filesystem")
+    console.log(await tbFileSystem.methods.vmParameters(codeFileID).call({from:account}))
 
     // Deploy sample contract
     let contract = new web3.eth.Contract(abi)

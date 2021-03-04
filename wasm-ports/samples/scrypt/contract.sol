@@ -6,9 +6,9 @@ interface Filesystem {
    function createFileFromBytes(string calldata name, uint nonce, bytes calldata arr) external returns (bytes32);
    function getBytesData(bytes32 id) external view returns (bytes32[] memory);
 
-   function calculateId(uint num) external view returns (bytes32);
-   function addToBundle(bytes32 id, bytes32 file_id) external;
-   function finalizeBundle(bytes32 bundleID, bytes32 codeFileID) external;
+   function calculateId(uint nonce) external view returns (bytes32);
+   function addToBundle(uint nonce, bytes32 file_id) external;
+   function finalizeBundle(uint nonce, bytes32 codeFileID) external;
    function hashName(string calldata name) external returns (bytes32);
 }
 
