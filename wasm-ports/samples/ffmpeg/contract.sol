@@ -5,14 +5,14 @@ interface Filesystem {
    function createFileFromArray(string calldata name, uint nonce, bytes32[] calldata arr, uint sz) external returns (bytes32);
    function getBytesData(bytes32 id) external view returns (bytes32[] memory);
 
-   function calcId(uint num) external view returns (bytes32);
+   function calculateId(uint num) external view returns (bytes32);
    function addToBundle(bytes32 id, bytes32 file_id) external;
    function finalizeBundle(bytes32 bundleID, bytes32 codeFileID) external;
    function hashName(string calldata name) external returns (bytes32);
 }
 
 interface TrueBit {
-   function createTaskID(bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint limit) external returns (bytes32);
+   function createTaskId(bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint limit) external returns (bytes32);
    function requireFile(bytes32 id, bytes32 hash, /* Storage */ uint8 st) external;
    function submitTask(bytes32 id) external payable;
    function makeDeposit(uint _deposit) external returns (uint);
@@ -62,7 +62,7 @@ contract SampleContract {
       filesystem.addToBundle(num, filesystem.createFileFromArray("output.data", num+1000000000, empty, 0));
 
       filesystem.finalizeBundle(num, codeFileID);
-      bytes32 bundleID = filesystem.calcId(num);
+      bytes32 bundleID = filesystem.calculateId(num);
 
       return bundleID;
     }
@@ -72,7 +72,7 @@ contract SampleContract {
       bytes32 bundleID = submitFileData(dataFile);
       tru.approve(address(truebit), 9 ether);
       truebit.makeDeposit(9 ether);
-      bytes32 taskID = truebit.submitTask(bundleID, 10 ether, 2 ether, 6 ether, 1 ether, blocklimit);
+      bytes32 taskID = truebit.createTaskId(bundleID, 10 ether, 2 ether, 6 ether, 1 ether, blocklimit);
       truebit.requireFile(taskID, filesystem.hashName("output.data"), 0); // 0: eth_bytes, 1: contract, 2: ipfs
       task_to_file[taskID] = dataFile;
       return taskID;

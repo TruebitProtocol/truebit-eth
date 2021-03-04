@@ -80,7 +80,7 @@ truebit.makeDeposit(6 ether);
 
 The task is created using the hash of the bundle:
 ```
-bytes32 task = truebit.createTaskWithParams(filesystem.getInitHash(bundleID), 1, bundleID, 1,
+bytes32 task = truebit.createTaskWithParams(filesystem.getInitialHash(bundleID), 1, bundleID, 1,
       1 ether, // reward
       20,      // stack size 2^20
       20,      // memory size 2^20 64-bit words

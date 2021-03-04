@@ -490,31 +490,33 @@ task cancel -t 0x361b1a715e94f56368f78e1c478a659cab4b9b4dec1edf13d5280a26d2f7244
 If you wish to experiment with tasks locally without involving the blockchain, use `task initial` to get the initial state, `task final` to get the final state, or `task jit` to run with a faster, just-in-time compiler in place of the interpreter.  Truebit OS will then tell you the local directory where it is writing the output file(s) as well as the interpreter command it used to generate them.
 ```sh
 truebit-os:> task -f scrypt.json final
-[01-21 12:19:54] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_jbgd3ns0f1o0
+[03-04 18:54:58] info: TASK GIVER: Created local directory: /truebit-eth/tmp.giver_1c5ek5jnhug0
 Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -output -memory-size 20 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file input.data -wasm task.wasm
 {
   vm: {
-    code: '0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d',
-    stack: '0xc4a0d0f17ed3cf6c3f5d1395b1a746bad76e435b4441f7560dd7d9a7ed421ea7',
-    memory: '0xf855a8d6d2661d3ca64ce0c57e053485c4161ea2a20645951c258fb733b5c55c',
+    code: '0xef34a351f42869ed0a1c4f5ba39f4be2377415082083f18592d858bc4361629b',
+    stack: '0xf40d787a5a1d95e83bf62e3650806b112627076873a7fa3cdd832250c3c82eea',
+    memory: '0x9d71426bf458c911872b7ca15c8959dadfbf73d99e998df7553d5ab59f816836',
     input_size: '0x0e4622ec59dd318509b8d475728ec11bab6c05132b908f19bba96ab64ed8dd29',
     input_name: '0xd3e24e0303f49b3dd3032fa2523603b320c2b2b0eea3693532c6401d315e8a32',
     input_data: '0xccdcd022b89bec0246d141477e6631fc108e56e9b36287a0b3daee64898e1fd2',
-    call_stack: '0xee2dc7fd44076d9a56034fd850a40094a11fb8b36ee79aa67d55331c70a2f4f6',
+    call_stack: '0x8e0167cb6a51b48d61c31c97ff5d8bb3e632a3de1939bb201c4507f908f8d0a7',
     globals: '0x92d1402fb000c5be1173aed60f2f554cabb4c1da645fbe3e093965c2f1b073d6',
-    calltable: '0x94d2f893a098ac1ada9f9c934a8a01c23357f0f7389bc2431606417d09604173',
+    calltable: '0xfad9818866c5279d5125023e4085c3c9facea9cc0083afa0b42f487a0625f18e',
     calltypes: '0x32b4a5f01bf39b515516d7d98afc96803a1550319f3268d13c7055b6975ae994',
     pc: 1099511627775,
     stack_ptr: 1,
     call_ptr: 0,
     memsize: 128
   },
-  hash: '0xb0e5847d04511d3bd7a05041afdd19c13ea9dec77dae7bb380219ca72468a487',
-  steps: 10423776,
+  hash: '0x5d459cf8bbcee56239d3d5f7e9a7df7132accdf09363d53e7ba02be67c5a1a5a',
+  steps: 10423523,
   files: [ 'output.data.out', 'input.data.out' ]
 }
 ```
-Note that the Task Submitter, Solver, and Verifier always rename the task's code file to `task.wasm` when writing local `tmp.giver`, `tmp.solver`, and `tmp.verifier` files.  The JIT, on the other hand, *requires* that the task file submitted by the Task Giver be named `task.wasm`.
+Note that the Task Submitter, Solver, and Verifier always rename the task's code file to `task.wasm` when writing local `tmp.giver_`..., `tmp.solver_`..., and `tmp.verifier_`... files.  The JIT, on the other hand, *requires* that the task file submitted by the Task Giver be named `task.wasm`.
+
+In the example above, one would find all the task files in the indicated directory `/truebit-eth/tmp.giver_1c5ek5jnhug0`.  Files derived from task processing will have a `.out` suffix.  In this example, one should expect to find both an empty file called `output.data`, which was supplied as a task data file, and a file called `output.data.out` containing data generated through task execution.  Note that the file contents of `output.data.out` do not depend on whether `output.data` was specified as one of the `outputs` in `scrypt.json`.
 
 
 ## Sample tasks via smart contracts
@@ -810,12 +812,12 @@ contractAddress.then(address => console.log(address))
 
 Truebit requires a `codeRoot` input when registering a .wasm or .wast program file to Truebit's file system.  The `codeRoot` for a task program file can be obtained inside Truebit OS using the `task initial` command and read off from the `vm.code` entry. In order to use the template command below, first create a task .json file following the [example](#Writing-task-outputs-via-Truebit-OS) above.  Be sure to run `task initial` with the same virtual machine parameters that you plan to use when you later issue the task.
 ```sh
-$ task -f scrypt.json initial
-[10-12 12:25:20] info: TASK GIVER: Created local directory: /Users/Shared/truebit/tmp.giver_fukrnufpj9g0
+truebit-os:> task -f scrypt.json initial
+[03-04 19:05:12] info: TASK GIVER: Created local directory: /truebit-eth/tmp.giver_kquvus9u7680
 Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -input -memory-size 20 -stack-size 20 -table-size 20 -globals-size 8 -call-stack-size 10 -file output.data -file input.data -wasm task.wasm
 {
   vm: {
-    code: '0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d',
+    code: '0xef34a351f42869ed0a1c4f5ba39f4be2377415082083f18592d858bc4361629b',
     stack: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
     memory: '0xb4c11951957c6f8f642c4af61cd6b24640fec6dc7fc607ee8206a99e92410d30',
     input_size: '0x7c047c6a0b7e3f293efb6009eca04353577f88f7a88afd4b6d53c11d724c442f',
@@ -830,7 +832,7 @@ Executing: ./../wasm-client/ocaml-offchain/interpreter/wasm -m -disable-float -i
     call_ptr: 0,
     memsize: 0
   },
-  hash: '0x156eca8fb73785621b1bf3a28354ee8e022275a1ac1ffedcc049b029480de4c5'
+  hash: '0x60d2429c93b96f2ccc81b06525dfb5538fe18ef096dee42834562fcfedadfb91'
 }
 ```
 In this example, the `codeRoot` of `task.wasm` is `0xc8ada82e770779e03b2058b5e0b9809c0c2dbbdc6532ebf626d1f03b61e0a28d`.
@@ -889,15 +891,15 @@ function setCodeRoot(uint nonce, bytes32 codeRoot, uint8 codeType, uint8 stack, 
 
 * The entered `codeType` must match the code type of the associated code file (0=WAST, 1=WASM).  The code type selected should match the program file extension (.wasm or .wast).
 
-* `stack`, `mem`, `globals`, `table`, `call`: These are the same VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).  You may need to tweak these value to get your task to run, and try changing `memory-size` first.  The task is more likely to succeed with larger parameters.  You may wish to experiment with these parameters by issuing the task [locally](#Writing-task-outputs-via-Truebit-OS) within Truebit OS using `task initial` (to get the `codeRoot`) and `task final` (to verify that the task executes correctly with the given parameters).
+* `stack`, `memory`, `globals`, `table`, `call`: These are the same VM parameters `stack-size`, `memory-size`, `globals-size`, `table-size`, `call-stack-size` discussed [above](#Building-your-own-tasks).  You may need to tweak these value to get your task to run, and try changing `memory-size` first.  The task is more likely to succeed with larger parameters.  You may wish to experiment with these parameters by issuing the task [locally](#Writing-task-outputs-via-Truebit-OS) within Truebit OS using `task initial` (to get the `codeRoot`) and `task final` (to verify that the task executes correctly with the given VM parameters).
 
 
 ### Naming files and bundles
 
 ```solidity
-function calcId(uint nonce) external view returns (bytes32);
+function calculateId(uint nonce) external view returns (bytes32);
 ```
-`calcId` returns the public fileID/bundleID for the corresponding `nonce` used when generating file/bundle content.  Truebit's filesystem derives fileID's and bundleID's identically from nonces.  Distinct addresses yield distinct fileID/bundleID's for the same `nonce`.
+`calculateId` returns the public fileID/bundleID for the corresponding `nonce` used when generating file/bundle content.  Truebit's filesystem derives fileID's and bundleID's identically from nonces.  Distinct addresses yield distinct fileID/bundleID's for the same `nonce`.
 
 ### Managing bundles
 
@@ -927,9 +929,9 @@ function getFileList(bytes32 bid) external view returns (bytes32[] memory);
 `getFileList` returns an array of fileID's contained in the bundle `bid`.  If `bid` was created via standard task procedure, this array contains fileID's from the Task Giver but not the Solver.
 
 ```solidity
-function getInitHash(bytes32 bid) external view returns (bytes32);
+function getInitialHash(bytes32 bid) external view returns (bytes32);
 ```
-`getInitHash` returns the initial machine state corresponding to the code root and data files in bundle `bid`.  Solvers and Verifiers reconstruct this value locally from fileID and VM metadata before executing the task.
+`getInitialHash` returns the initial machine state corresponding to the code root and data files in bundle `bid`.  Solvers and Verifiers reconstruct this value locally from fileID and VM metadata before executing the task.
 
 ### Reading file data
 
@@ -966,11 +968,6 @@ function getIpfsHash(bytes32 fid) external view returns (string memory);
 `getIpfsHash` returns the IPFS content address associated with fileID `fid` where `fid` must have file type IPFS.
 
 ```solidity
-function forwardData(bytes32 fid, address a) external;
-```
-`forwardData` sends the data associated with fileID `fid` to the contract at address `a`.  `fid` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 fid, bytes32[] calldata dta) external;` that determines how to process the incoming data.
-
-```solidity
 function vmParameters(bytes32 codeFileID) external view returns (bytes32, uint8, uint8, uint8, uint8, uint8, uint8);
 ```
 `vmParameters` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileID` in the following order, namely:
@@ -981,6 +978,13 @@ function vmParameters(bytes32 codeFileID) external view returns (bytes32, uint8,
 * 4: uint8 `globalsSize`: depth of Merkle tree for the globals table
 * 5: uint8 `tableSize`: depth of Merkle tree for the call table
 * 6: uint8 `callSize`: depth of Merkle tree for the call stack
+
+When calling `vmParameters` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
+
+```solidity
+function forwardData(bytes32 fid, address a) external;
+```
+`forwardData` sends the data associated with fileID `fid` to the contract at address `a`.  `fid` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 fid, bytes32[] calldata dta) external;` that determines how to process the incoming data.
 
 ### Reading file metadata
 
@@ -1026,10 +1030,10 @@ We describe some methods used to issue tasks, manage payments, and enhance secur
 Task Givers must specify task parameters, including filesystem, economic, virtual machine (VM), and output files when requesting a computation from the network.  The network uniquely identifies each task by its taskID.
 
 ```solidity
-function createTaskID(bytes32 bundleID, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint blockLimit) external returns (bytes32);
+function createTaskId(bytes32 bundleID, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint blockLimit) external returns (bytes32);
 ```
-`createTaskID` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
-<!-- * `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash) or by calling `getInitHash` from the `fileSystem` contract. -->
+`createTaskId` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
+
 * `bundleID`: the bundleID containing all files and VM parameters for the task
 * `mindeposit`: the minimum TRU deposit required for a Solver or Verifier to participate
 * `solverReward`: the reward paid to the Solver for correctly solving the task
@@ -1042,7 +1046,7 @@ See also sample task [above](#Writing-task-outputs-via-Truebit-OS).
 ```solidity
 function requireFile(bytes32 tid, bytes32 namehash, uint8 fileType) external;
 ```
-`requireFile` tells the Solver to upload a file with `fileType` (0:BYTES, 1:CONTRACT, 2:IPFS) upon obtaining a solution to task `tid`. `tid`'s filesystem bundle must include an (empty) file whose file name hashes to `namehash`.  `namehash` can be computed using `hashName` from the fileSystem API.  This method must be called once for each output file after calling `createTaskID` but before calling `submitTask`.
+`requireFile` tells the Solver to upload a file with `fileType` (0:BYTES, 1:CONTRACT, 2:IPFS) upon obtaining a solution to task `tid`. `tid`'s filesystem bundle must include an (empty) file whose file name hashes to `namehash`.  `namehash` can be computed using `hashName` from the fileSystem API.  This method must be called once for each output file after calling `createTaskId` but before calling `submitTask`.
 
 ```solidity
 function submitTask(bytes32 tid) external payable;
@@ -1072,9 +1076,9 @@ function getBondedDeposit(bytes32 tid, address account) external view returns (u
 `getBondedDeposit` returns the amount of TRU (in wei) that `account` has bonded to task `tid`.
 
 ```solidity
-function deposits(address account) external view returns (uint);
+function getUnbondedDeposit(address account) external view returns (uint);
 ```
-`deposits` returns the number of TRU (in wei) that `account` has stored in Truebit's incentive layer which are not bonded to any task.
+`getUnbondedDeposit` returns the number of TRU (in wei) that `account` has stored in Truebit's incentive layer which are not bonded to any task.
 
 ```solidity
 function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
@@ -1088,7 +1092,7 @@ One may wish to browse inputs, outputs, and parameters for previously issued tas
 ```solidity
 function taskParameters(tid) external view returns (bytes32, uint, uint, uint, uint, uint, address, address, address, bytes32, uint8);
 ```
-`taskParameters()` returns a list of information about data inputs, participants, and economics for task `tid`.  The first 6 return outputs mirror those of the [`createTaskID`](#Creating-tasks) method, namely
+`taskParameters()` returns a list of information about data inputs, participants, and economics for task `tid`.  The first 6 return outputs mirror those of the [`createTaskId`](#Creating-tasks) method, namely
 
 * 0: bytes32 `bundleID`
 * 1: uint `mindeposit`
@@ -1104,6 +1108,8 @@ One can retrieve the list of input files by plugging `bundleID` into the [`getFi
 * 8: address `selectedSolver`: the address of the Solver that performs the task
 * 9: bytes32 `currentGame`: gameID for current verification game (if any)
 * 10: uint8 `state`: task progress.  7 = successfully finalized, 8 = terminated with error
+
+When calling `taskParameters` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
 
 ```solidity
 function getSolverUploads(bytes32 tid) external view returns (bytes32[] memory);

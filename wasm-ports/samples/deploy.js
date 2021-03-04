@@ -22,7 +22,7 @@ async function addRandomIPFSFile(tbFileSystem, account, name, buf) {
     //setup file
     let fileNonce = Math.floor(Math.random() * Math.pow(2, 30))
     let mr = merkleRoot(web3, buf)
-    let fileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
+    let fileID = await tbFileSystem.methods.calculateId(fileNonce).call({ from: account })
     await tbFileSystem.methods.addIpfsFile(name, size, ipfsHash, mr, fileNonce).send({ from: account, gas: 300000 })
     console.log("Uploaded file", name, "with root", mr)
     return fileID
@@ -65,7 +65,7 @@ async function deploy() {
     }
 
     // List constructor parameters for sample contract
-    let codeFileID = await tbFileSystem.methods.calcId(fileNonce).call({ from: account })
+    let codeFileID = await tbFileSystem.methods.calculateId(fileNonce).call({ from: account })
     let args = [
         artifacts.incentiveLayer.address,
         artifacts.tru.address,
