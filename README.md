@@ -943,8 +943,12 @@ function getByteData(bytes32 id) external view returns (bytes memory);
 ```solidity
 function getBytesData(bytes32 fid) external view returns (bytes32[] memory);
 ```
-`getBytesData` returns the data for fileID `fid` as an bytes32 array, as it is stored in the EVM.  `fid` must have file type BYTES.
+`getBytesData` returns the data for fileID `fid` as a bytes32 array, as it is stored in EVM contract storage.  `fid` must have file type BYTES.
 
+```solidity
+function getFormattedBytesData(bytes32 id) external view returns (bytes memory);
+```
+`getFormattedBytesData` converts the data for fileID `fid` to a bytes type.  `fid` must have file type BYTES.
 
 ```solidity
 function getContractCode(bytes32 fid) external view returns (bytes memory);
@@ -967,9 +971,9 @@ function forwardData(bytes32 fid, address a) external;
 `forwardData` sends the data associated with fileID `fid` to the contract at address `a`.  `fid` must have filetype BYTES, and the contract at address `a` must have a function called `consume` with interface `function consume(bytes32 fid, bytes32[] calldata dta) external;` that determines how to process the incoming data.
 
 ```solidity
-function vmParameters(bytes32 codeFileId) external view returns (bytes32, uint8, uint8, uint8, uint8, uint8, uint8);
+function vmParameters(bytes32 codeFileID) external view returns (bytes32, uint8, uint8, uint8, uint8, uint8, uint8);
 ```
-`vmParameters` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileId` in the following order, namely:
+`vmParameters` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileID` in the following order, namely:
 * 0: bytes32 [`codeRoot`](#Obtaining-codeRoot): initial machine state restricted to the program code
 * 1: uint8 `codeType`: the progrma code format (0=WAST, 1=WASM)
 * 2: uint8 `stackSize`: depth of Merkle tree for the stack
@@ -1024,7 +1028,7 @@ We describe some methods used to issue tasks, manage payments, and enhance secur
 Task Givers must specify task parameters, including filesystem, economic, virtual machine (VM), and output files when requesting a computation from the network.  The network uniquely identifies each task by its taskID.
 
 ```solidity
-function createTaskID(bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint blockLimit) external returns (bytes32);
+function createTaskID(bytes32 bundleID, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint blockLimit) external returns (bytes32);
 ```
 `createTaskID` stores task parameters to the Incentive Layer, including filesystem, economics and VM and assigns them a taskID.  The inputs are as follows:
 <!-- * `initTaskHash`: initial machine state `hash` for the interpreter.  This `hash` can be obtained through Truebit OS as described [above](#obtaining-codeRoot-and-hash) or by calling `getInitHash` from the `fileSystem` contract. -->
@@ -1033,7 +1037,7 @@ function createTaskID(bytes32 bundleId, uint minDeposit, uint solverReward, uint
 * `solverReward`: the reward paid to the Solver for correctly solving the task
 * `verifierTax`: the payment to be split among all Verifiers
 * `ownerFee`: the fee paid by the Task Submitter to the smart contract issuing the task (if any)
-* `blockLimit`: the maximum number of blocks a Solver or Verifier should spend solving the task.
+* `blockLimit`: the maximum number of blocks a Solver or Verifier spends executing the task
 
 See also sample task [above](#Writing-task-outputs-via-Truebit-OS).
 
@@ -1043,9 +1047,9 @@ function requireFile(bytes32 tid, bytes32 namehash, uint8 fileType) external;
 `requireFile` tells the Solver to upload a file with `fileType` (0:BYTES, 1:CONTRACT, 2:IPFS) upon obtaining a solution to task `tid`. `tid`'s filesystem bundle must include an (empty) file whose file name hashes to `namehash`.  `namehash` can be computed using `hashName` from the fileSystem API.  This method must be called once for each output file after calling `createTaskID` but before calling `submitTask`.
 
 ```solidity
-function submitTask(bytes32 id) external payable;
+function submitTask(bytes32 tid) external payable;
 ```
-`submitTask` broadcasts details of task `id` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
+`submitTask` broadcasts details of task `tid` to the Truebit network and requests a Solver solution.  This method finalizes all task parameters, and the Task Submitter pays the platform fee.
 
 <!-- ```solidity
 function submitEmitTask(bytes32 initTaskHash, uint8 codeType, bytes32 bundleId, uint minDeposit, uint solverReward, uint verifierTax, uint ownerFee, uint8 stack, uint8 mem, uint8 globals, uint8 table, uint8 call, uint limit) external payable returns (bytes32);
@@ -1065,9 +1069,9 @@ function withdrawDeposit(uint amount) external returns (uint);
 `withdrawDeposit` withdraws `amount` TRU (in wei) from the Incentive Layer into the sender's account and returns the sender's resulting deposit balance.
 
 ```solidity
-function getBondedDeposit(bytes32 id, address account) external view returns (uint);
+function getBondedDeposit(bytes32 tid, address account) external view returns (uint);
 ```
-`getBondedDeposit` returns the amount of TRU (in wei) that `account` has bonded to task `id`.
+`getBondedDeposit` returns the amount of TRU (in wei) that `account` has bonded to task `tid`.
 
 ```solidity
 function deposits(address account) external view returns (uint);
@@ -1084,7 +1088,7 @@ function PLATFORM_FEE_TASK_GIVER() external view returns (uint);
 One may wish to browse inputs, outputs, and parameters for previously issued tasks.
 
 ```solidity
-function taskParameters(tid) external view returns (bytes32, uint, uint, uint, uint, uint, address, address, address);
+function taskParameters(tid) external view returns (bytes32, uint, uint, uint, uint, uint, address, address, address, bytes32, uint8);
 ```
 `taskParameters()` returns a list of information about data inputs, participants, and economics for task `tid`.  The first 6 return outputs mirror those of the [`createTaskID`](#Creating-tasks) method, namely
 
@@ -1097,21 +1101,23 @@ function taskParameters(tid) external view returns (bytes32, uint, uint, uint, u
 
 One can retrieve the list of input files by plugging `bundleID` into the [`getFileList`](#Managing-bundles) method.  The final 3 return outputs are as follows.
 
-* 6: address `owner`: the address of the Task Owner smart contract (if any)
-* 7: address `submitter`: the address of the "human" Task Submitter's address (may be the same as Task Owner)
-* 8: address `selectedSolver`: the address of the Solver that performed the tax
+* 6: address `owner`: the address of the Task Owner's smart contract (if any)
+* 7: address `submitter`: the address of the "human" Task Submitter's address (may be same as Task Owner)
+* 8: address `selectedSolver`: the address of the Solver that performs the task
+* 9: bytes32 `currentGame`: gameID for current verification game (if any)
+* 10: uint8 `state`: task progress.  7 = successfully finalized, 8 = terminated with error
 
-When calling `taskParameters` from web3.js, the created dictionary will außtomatically contain the above parameter names as attributes.
+When calling `taskParameters` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
 
 ```solidity
 function getSolverUploads(bytes32 tid) external view returns (bytes32[] memory);
 ```
-Return the verified outputs uploaded by the Solver for task `tid` as a list of fileID's.
+`getSolverUploads` returns the verified outputs uploaded by the Solver for task `tid` as a list of fileID's.  Note that the Merkle root returned by [`getRoot`](Reading-file-data) is authoritative, whereas the content address returned by [`getIpfsHash`](Reading-file-data) or [`getContractCode`](Reading-file-data) is just a hint.  Thus, when downloading an output from IPFS or a contract file, one should also compute its [Merkle root](#getRoot) to confirm correctness.  [`getBytesData`](Reading-file-data) is always authoritative.
 
 ```solidity
 function getVerifierList(bytes32 tid) external view returns (address[] memory);
 ```
-Return a list of Verifiers who checked task `tid`.
+`getVerifierList` returns the list of Verifiers who checked task `tid`.
 
 
 ### Security
