@@ -58,7 +58,7 @@ async function main() {
 
     // Broadcast task
     let IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
-    console.log('DEBUG:', await IncentiveLayer.methods.getTaskInfo(taskID).call({from:account})) // Debug (optional)
+    console.log('DEBUG:', await IncentiveLayer.methods.taskParameters(taskID).call({from:account})) // Debug (optional)
     let platformFee = await IncentiveLayer.methods.PLATFORM_FEE_TASK_GIVER().call({from:account})
     await sampleSubmitter.methods.emitTask(taskID).send({ gas: 100000, from: account, value: platformFee, gasPrice: web3.gp })
     console.log('Task submitted.  Waiting for solution...')

@@ -982,8 +982,6 @@ function vmParameters(bytes32 codeFileID) external view returns (bytes32, uint8,
 * 5: uint8 `tableSize`: depth of Merkle tree for the call table
 * 6: uint8 `callSize`: depth of Merkle tree for the call stack
 
-When calling `vmParameters` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
-
 ### Reading file metadata
 
 The following methods retrieve metadata from files of any type.
@@ -1106,8 +1104,6 @@ One can retrieve the list of input files by plugging `bundleID` into the [`getFi
 * 8: address `selectedSolver`: the address of the Solver that performs the task
 * 9: bytes32 `currentGame`: gameID for current verification game (if any)
 * 10: uint8 `state`: task progress.  7 = successfully finalized, 8 = terminated with error
-
-When calling `taskParameters` from web3.js, the created dictionary will automatically contain the above parameter names as attributes.
 
 ```solidity
 function getSolverUploads(bytes32 tid) external view returns (bytes32[] memory);
