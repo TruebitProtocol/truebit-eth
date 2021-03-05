@@ -736,7 +736,7 @@ For Windows, follow the templates above.
 
 The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  Note that the file `truebit-eth/wasm-client/goerli.json` contains addresses and the ABI interface for Truebit's `fileSystem` and `incentiveLayer` contracts on Görli testnet.  An analogous file for Ethereum mainnet appears in the same directory.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
 
-Here is a simple "hello world" example in JavaScript which prints task data from Truebit's `fileSystem` and `incentiveLayer`.
+Below is a simple "hello world" JavaScript example which prints task data from Truebit's `fileSystem` and `incentiveLayer`.
 ```js
 const fs = require('fs')
 const Web3 = require('web3')
@@ -759,7 +759,11 @@ let example
   console.log(await FileSystem.methods.vmParameters(codeFileID).call())
 })()
 ```
-The following web3.js script provides an additional template for interacting with Truebit's smart contract API.
+To execute the example above or the [auxiliary functions](#Auxiliary-functions) in the next section, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
+```bash
+npm i truebit-util web3
+```
+Each code template can then be pasted into a `.js` file and run using Node.js, e.g. `node example.js`.  The following script provides an additional template for interacting with Truebit's smart contract API.
 ```bash
 truebit-eth/wasm-ports/samples/deploy.js
 ```
@@ -767,11 +771,7 @@ truebit-eth/wasm-ports/samples/deploy.js
 
 ## Auxiliary functions
 
-We present three JavaScript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).  To execute the functions, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
-```bash
-npm i fs truebit-util web3
-```
-Each function below can then be pasted into a `.js` file and run using Node.js, e.g. `node getroot.js`.  Your working directory must include a data file called `example.txt` containing the input you wish to process.
+We present three JavaScript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the [creating files](#creating-files) section.   In order to run the code templates below, your working directory must include a data file called `example.txt` containing the input you wish to process.
 
 ### getRoot
 When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
