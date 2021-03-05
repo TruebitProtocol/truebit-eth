@@ -734,15 +734,40 @@ For Windows, follow the templates above.
 
 # Contract API reference
 
-The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  Note that the file `truebit-eth/wasm-client/goerli.json` contains addresses and the ABI interface for Truebit's `fileSystem` and `incentiveLayer` contracts on Görli testnet.  An analogous file for Ethereum mainnet appears in the same directory.  The following example provides a template for interacting with Truebit's smart contract API.
+The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  Note that the file `truebit-eth/wasm-client/goerli.json` contains addresses and the ABI interface for Truebit's `fileSystem` and `incentiveLayer` contracts on Görli testnet.  An analogous file for Ethereum mainnet appears in the same directory.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
+
+Here is a simple "hello world" example in JavaScript which prints task data from Truebit's `fileSystem` and `incentiveLayer`.
+```js
+const fs = require('fs')
+const Web3 = require('web3')
+const net = require('net');
+const web3 = new Web3('/root/.ethereum/goerli/geth.ipc', net)
+
+// Get contract artifacts
+let artifacts = JSON.parse(fs.readFileSync('/truebit-eth/wasm-client/goerli.json'))
+let FileSystem = new web3.eth.Contract(artifacts.fileSystem.abi, artifacts.fileSystem.address)
+let IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifacts.incentiveLayer.address)
+
+// Sample contract interaction
+let example
+(async () => {
+  let taskID = '0x897d2ec7054507f2d76bb6a119442321d4bfc74c2766862ed6feb9dcafdfa533'
+  let taskInfo = await IncentiveLayer.methods.taskParameters(taskID).call()
+  console.log(taskInfo)
+  let bundleID = taskInfo.bundleId
+  let codeFileID = await FileSystem.methods.getCodeFileId(bundleID).call()
+  console.log(await FileSystem.methods.vmParameters(codeFileID).call())
+})()
+```
+The following web3.js script provides an additional template for interacting with Truebit's smart contract API.
 ```bash
 truebit-eth/wasm-ports/samples/deploy.js
 ```
-The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
+
 
 ## Auxiliary functions
 
-We present three Javascript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).  To execute the functions, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
+We present three JavaScript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the next [section](#creating-files).  To execute the functions, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
 ```bash
 npm i fs truebit-util web3
 ```
@@ -785,7 +810,8 @@ CONTRACT files should be created with [web3.js](https://web3js.readthedocs.io/en
 ```js
 const fs = require('fs')
 const Web3 = require('web3')
-const web3 = new Web3('http://localhost:8545')
+const net = require('net');
+const web3 = new Web3('/root/.ethereum/goerli/geth.ipc', net)
 
 async function uploadOnchain(filePath) {
 
@@ -1094,7 +1120,7 @@ function taskParameters(tid) external view returns (bytes32, uint, uint, uint, u
 ```
 `taskParameters()` returns a list of information about data inputs, participants, and economics for task `tid`.  The first 6 return outputs mirror those of the [`createTaskId`](#Creating-tasks) method, namely
 
-* 0: bytes32 `bundleID`
+* 0: bytes32 `bundleId`
 * 1: uint `mindeposit`
 * 2: uint `solverReward`
 * 3: uint `verifierTax`
