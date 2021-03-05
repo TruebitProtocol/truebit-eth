@@ -260,7 +260,7 @@ task -f factorial.json submit -a 0
 ```
 The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here:
 
-<https://goerli.etherscan.io/address/0x63156dd37ca19545a3fc7d7c99a542b967100af2>
+<https://goerli.etherscan.io/address/0x76c73774bC137F3229c422a8E054A022d9066b22>
 
 Solvers and Verifiers will continue to solve and verify new tasks until instructed to stop.  To limit task participation based on TRU rewards, Solvers and Verifiers can use the `-l` flag to set a minimum, (constant) non-zero reward threshold per task, or use `-p` to fix a minimum TRU reward per block of computation.  For example,
 ```sh
@@ -482,9 +482,13 @@ To run this example on-chain, enter the following commands in Truebit OS, prefer
 start solve
 task -f reverse.json submit
 ```
-Unless you specify otherwise with the `-a` flag, Truebit will issue the task from your account with index 0.  You can find names of other sample .json meta-files by typing `task -f` followed by a space and then press `tab` twice to request an autofill.  In the event that the Solver disappears in the middle of a task (or never shows up), you can try a command of the form to recover both your and the Solver's deposits.
+Unless you specify otherwise with the `-a` flag, Truebit will issue the task from your account with index 0.  You can find names of other sample .json meta-files by typing `task -f` followed by a space and then press `tab` twice to request an autofill.  In the event that the Solver disappears in the middle of a task (or one never shows up), you can try a command of the form to recover both your and the Solver's deposits.
 ```sh
 task cancel -t 0x361b1a715e94f56368f78e1c478a659cab4b9b4dec1edf13d5280a26d2f72442
+```
+You can review the progress of your task and its parameters with `task status`, e.g.
+```sh
+task status -t 0x361b1a715e94f56368f78e1c478a659cab4b9b4dec1edf13d5280a26d2f72442
 ```
 
 If you wish to experiment with tasks locally without involving the blockchain, use `task initial` to get the initial state, `task final` to get the final state, or `task jit` to run with a faster, just-in-time compiler in place of the interpreter.  Truebit OS will then tell you the local directory where it is writing the output file(s) as well as the interpreter command it used to generate them.
@@ -740,7 +744,7 @@ Below is a simple "hello world" JavaScript example which prints task data from T
 ```js
 const fs = require('fs')
 const Web3 = require('web3')
-const net = require('net');
+const net = require('net')
 const web3 = new Web3('/root/.ethereum/goerli/geth.ipc', net)
 
 // Get contract artifacts
@@ -751,12 +755,13 @@ let IncentiveLayer = new web3.eth.Contract(artifacts.incentiveLayer.abi, artifac
 // Sample contract interaction
 let example
 (async () => {
-  let taskID = '0x897d2ec7054507f2d76bb6a119442321d4bfc74c2766862ed6feb9dcafdfa533'
+  let taskID = '0x50ee4af6810cf64ea04c1f9818101a200f3b8c00c4f6a5e85a14b327a1f8d03f'
   let taskInfo = await IncentiveLayer.methods.taskParameters(taskID).call()
   console.log(taskInfo)
   let bundleID = taskInfo.bundleId
   let codeFileID = await FileSystem.methods.getCodeFileId(bundleID).call()
   console.log(await FileSystem.methods.vmParameters(codeFileID).call())
+  process.exit(1)
 })()
 ```
 To execute the example above or the [auxiliary functions](#Preparing-task-inputs) in the next section, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
