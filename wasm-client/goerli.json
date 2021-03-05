@@ -1,7 +1,7 @@
 {
   "WAIT_TIME": 15000,
   "fileSystem": {
-    "address": "0xfCEF528b1c2E0595A9560dd6f5A3127037aE4944",
+    "address": "0xF1705b4b6993BBc97F22B9A50B58830709DDEBed",
     "abi": [
       {
         "anonymous": false,
@@ -20,12 +20,6 @@
           }
         ],
         "name": "CreatedFile",
-        "type": "event"
-      },
-      {
-        "anonymous": false,
-        "inputs": [],
-        "name": "MakeEvent",
         "type": "event"
       },
       {
@@ -93,17 +87,12 @@
             "type": "bytes32"
           },
           {
-            "internalType": "bytes32",
-            "name": "codeRoot",
-            "type": "bytes32"
-          },
-          {
             "internalType": "uint256",
             "name": "nonce",
             "type": "uint256"
           }
         ],
-        "name": "addIPFSCodeFile",
+        "name": "addIpfsFile",
         "outputs": [
           {
             "internalType": "bytes32",
@@ -119,54 +108,13 @@
         "constant": false,
         "inputs": [
           {
-            "internalType": "string",
-            "name": "name",
-            "type": "string"
-          },
-          {
-            "internalType": "uint256",
-            "name": "size",
-            "type": "uint256"
-          },
-          {
-            "internalType": "string",
-            "name": "hash",
-            "type": "string"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "root",
-            "type": "bytes32"
-          },
-          {
             "internalType": "uint256",
             "name": "nonce",
             "type": "uint256"
-          }
-        ],
-        "name": "addIPFSFile",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
           },
           {
             "internalType": "bytes32",
-            "name": "file_id",
+            "name": "fid",
             "type": "bytes32"
           }
         ],
@@ -180,12 +128,38 @@
         "constant": true,
         "inputs": [
           {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "name": "bundles",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "codeFileId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "init",
+            "type": "bytes32"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
             "internalType": "uint256",
             "name": "nonce",
             "type": "uint256"
           }
         ],
-        "name": "calcId",
+        "name": "calculateId",
         "outputs": [
           {
             "internalType": "bytes32",
@@ -237,12 +211,17 @@
             "type": "uint256"
           },
           {
-            "internalType": "bytes",
+            "internalType": "bytes32[]",
             "name": "arr",
-            "type": "bytes"
+            "type": "bytes32[]"
+          },
+          {
+            "internalType": "uint256",
+            "name": "sz",
+            "type": "uint256"
           }
         ],
-        "name": "createFileFromBytes",
+        "name": "createFileFromArray",
         "outputs": [
           {
             "internalType": "bytes32",
@@ -268,90 +247,30 @@
             "type": "uint256"
           },
           {
-            "internalType": "bytes32[]",
+            "internalType": "bytes",
             "name": "arr",
-            "type": "bytes32[]"
-          },
+            "type": "bytes"
+          }
+        ],
+        "name": "createFileFromBytes",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "nonpayable",
+        "type": "function"
+      },
+      {
+        "constant": false,
+        "inputs": [
           {
             "internalType": "uint256",
-            "name": "sz",
+            "name": "nonce",
             "type": "uint256"
-          }
-        ],
-        "name": "createFileWithContents",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "bundleID",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "codeFileID",
-            "type": "bytes32"
-          }
-        ],
-        "name": "debugFinalizeBundle",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [],
-        "name": "ev",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "bundleID",
-            "type": "bytes32"
           },
           {
             "internalType": "bytes32",
@@ -400,12 +319,33 @@
             "type": "bytes32"
           }
         ],
-        "name": "getByteData",
+        "name": "getBytesData",
         "outputs": [
           {
-            "internalType": "bytes",
+            "internalType": "bytes32[]",
             "name": "",
-            "type": "bytes"
+            "type": "bytes32[]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "bid",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getCodeFileId",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
           }
         ],
         "payable": false,
@@ -421,54 +361,12 @@
             "type": "bytes32"
           }
         ],
-        "name": "getByteSize",
+        "name": "getCodeType",
         "outputs": [
           {
-            "internalType": "uint256",
+            "internalType": "uint8",
             "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          }
-        ],
-        "name": "getCode",
-        "outputs": [
-          {
-            "internalType": "bytes",
-            "name": "",
-            "type": "bytes"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "bundleID",
-            "type": "bytes32"
-          }
-        ],
-        "name": "getCodeFileID",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
+            "type": "uint8"
           }
         ],
         "payable": false,
@@ -505,7 +403,28 @@
             "type": "bytes32"
           }
         ],
-        "name": "getData",
+        "name": "getContractCode",
+        "outputs": [
+          {
+            "internalType": "bytes",
+            "name": "",
+            "type": "bytes"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "bid",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getFileList",
         "outputs": [
           {
             "internalType": "bytes32[]",
@@ -543,16 +462,37 @@
         "inputs": [
           {
             "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getFormattedBytesData",
+        "outputs": [
+          {
+            "internalType": "bytes",
+            "name": "",
+            "type": "bytes"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "bytes32",
             "name": "bid",
             "type": "bytes32"
           }
         ],
-        "name": "getFiles",
+        "name": "getInitialHash",
         "outputs": [
           {
-            "internalType": "bytes32[]",
+            "internalType": "bytes32",
             "name": "",
-            "type": "bytes32[]"
+            "type": "bytes32"
           }
         ],
         "payable": false,
@@ -568,59 +508,12 @@
             "type": "bytes32"
           }
         ],
-        "name": "getHash",
+        "name": "getIpfsHash",
         "outputs": [
           {
             "internalType": "string",
             "name": "",
             "type": "string"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "bid",
-            "type": "bytes32"
-          }
-        ],
-        "name": "getInitHash",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "loc",
-            "type": "uint256"
-          }
-        ],
-        "name": "getLeaf",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
           }
         ],
         "payable": false,
@@ -694,6 +587,27 @@
         "constant": true,
         "inputs": [
           {
+            "internalType": "bytes32",
+            "name": "id",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getSize",
+        "outputs": [
+          {
+            "internalType": "uint256",
+            "name": "",
+            "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
             "internalType": "string",
             "name": "name",
             "type": "string"
@@ -721,53 +635,6 @@
         "type": "function"
       },
       {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "uint256",
-            "name": "num",
-            "type": "uint256"
-          }
-        ],
-        "name": "makeBundle",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "sz",
-            "type": "uint256"
-          }
-        ],
-        "name": "setByteSize",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "constant": false,
         "inputs": [
           {
@@ -779,6 +646,36 @@
             "internalType": "bytes32",
             "name": "codeRoot",
             "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "codeType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "stackSize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "memorySize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "globalsSize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "tableSize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "callSize",
+            "type": "uint8"
           }
         ],
         "name": "setCodeRoot",
@@ -788,39 +685,54 @@
         "type": "function"
       },
       {
-        "constant": false,
+        "constant": true,
         "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "root",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "idx",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "depth",
-            "type": "uint256"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "value",
-            "type": "bytes32"
-          }
-        ],
-        "name": "setNode",
-        "outputs": [
           {
             "internalType": "bytes32",
             "name": "",
             "type": "bytes32"
           }
         ],
+        "name": "vmParameters",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "codeRoot",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint8",
+            "name": "codeType",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "stackSize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "memorySize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "globalsSize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "tableSize",
+            "type": "uint8"
+          },
+          {
+            "internalType": "uint8",
+            "name": "callSize",
+            "type": "uint8"
+          }
+        ],
         "payable": false,
-        "stateMutability": "nonpayable",
+        "stateMutability": "view",
         "type": "function"
       }
     ]
@@ -2302,7 +2214,7 @@
     ]
   },
   "incentiveLayer": {
-    "address": "0x63156Dd37Ca19545a3fC7d7c99A542b967100aF2",
+    "address": "0x76c73774bC137F3229c422a8E054A022d9066b22",
     "abi": [
       {
         "anonymous": false,
@@ -2655,51 +2567,6 @@
         "type": "function"
       },
       {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint8",
-            "name": "stack",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "mem",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "globals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "table",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "call",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "limit",
-            "type": "uint256"
-          }
-        ],
-        "name": "InitializeTaskVM",
-        "outputs": [],
-        "payable": false,
-        "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
         "constant": true,
         "inputs": [],
         "name": "LICENSE_FEE",
@@ -2902,21 +2769,6 @@
         "inputs": [
           {
             "internalType": "bytes32",
-            "name": "id",
-            "type": "bytes32"
-          }
-        ],
-        "name": "commitRequiredFiles",
-        "outputs": [],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
             "name": "taskID",
             "type": "bytes32"
           },
@@ -2935,16 +2787,6 @@
       {
         "constant": false,
         "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "initTaskHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "enum IncentiveStructs.CodeType",
-            "name": "codeType",
-            "type": "uint8"
-          },
           {
             "internalType": "bytes32",
             "name": "bundleId",
@@ -2969,9 +2811,14 @@
             "internalType": "uint256",
             "name": "ownerFee",
             "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "blockLimit",
+            "type": "uint256"
           }
         ],
-        "name": "createTaskID",
+        "name": "createTaskId",
         "outputs": [
           {
             "internalType": "bytes32",
@@ -2981,27 +2828,6 @@
         ],
         "payable": false,
         "stateMutability": "nonpayable",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          }
-        ],
-        "name": "deposits",
-        "outputs": [
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
         "type": "function"
       },
       {
@@ -3116,8 +2942,35 @@
       },
       {
         "constant": true,
-        "inputs": [],
-        "name": "getPlatformFeeTaskGiver",
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "taskID",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getSolverUploads",
+        "outputs": [
+          {
+            "internalType": "bytes32[]",
+            "name": "",
+            "type": "bytes32[]"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "address",
+            "name": "account",
+            "type": "address"
+          }
+        ],
+        "name": "getUnbondedDeposit",
         "outputs": [
           {
             "internalType": "uint256",
@@ -3135,62 +2988,6 @@
           {
             "internalType": "bytes32",
             "name": "taskID",
-            "type": "bytes32"
-          }
-        ],
-        "name": "getTaskInfo",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "address",
-            "name": "",
-            "type": "address"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
-          },
-          {
-            "internalType": "enum IncentiveStructs.CodeType",
-            "name": "",
-            "type": "uint8"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "id",
             "type": "bytes32"
           }
         ],
@@ -3211,7 +3008,7 @@
         "inputs": [
           {
             "internalType": "bytes32",
-            "name": "id",
+            "name": "taskID",
             "type": "bytes32"
           }
         ],
@@ -3221,52 +3018,6 @@
             "internalType": "enum IncentiveStructs.FileType[]",
             "name": "",
             "type": "uint8[]"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "view",
-        "type": "function"
-      },
-      {
-        "constant": true,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "taskID",
-            "type": "bytes32"
-          }
-        ],
-        "name": "getVMParameters",
-        "outputs": [
-          {
-            "internalType": "uint8",
-            "name": "",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "",
-            "type": "uint256"
           }
         ],
         "payable": false,
@@ -3313,6 +3064,27 @@
             "internalType": "bool",
             "name": "",
             "type": "bool"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "taskID",
+            "type": "bytes32"
+          }
+        ],
+        "name": "getVerifierList",
+        "outputs": [
+          {
+            "internalType": "address[]",
+            "name": "",
+            "type": "address[]"
           }
         ],
         "payable": false,
@@ -3657,161 +3429,14 @@
         "inputs": [
           {
             "internalType": "bytes32",
-            "name": "initTaskHash",
+            "name": "id",
             "type": "bytes32"
-          },
-          {
-            "internalType": "enum IncentiveStructs.CodeType",
-            "name": "codeType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "bundleId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minDeposit",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "solverReward",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "verifierTax",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "ownerFee",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint8",
-            "name": "stack",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "mem",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "globals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "table",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "call",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "limit",
-            "type": "uint256"
-          }
-        ],
-        "name": "submitEmitTask",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": true,
-        "stateMutability": "payable",
-        "type": "function"
-      },
-      {
-        "constant": false,
-        "inputs": [
-          {
-            "internalType": "bytes32",
-            "name": "initTaskHash",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "enum IncentiveStructs.CodeType",
-            "name": "codeType",
-            "type": "uint8"
-          },
-          {
-            "internalType": "bytes32",
-            "name": "bundleId",
-            "type": "bytes32"
-          },
-          {
-            "internalType": "uint256",
-            "name": "minDeposit",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "solverReward",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "verifierTax",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint256",
-            "name": "ownerFee",
-            "type": "uint256"
-          },
-          {
-            "internalType": "uint8",
-            "name": "stack",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "mem",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "globals",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "table",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint8",
-            "name": "call",
-            "type": "uint8"
-          },
-          {
-            "internalType": "uint256",
-            "name": "limit",
-            "type": "uint256"
           }
         ],
         "name": "submitTask",
-        "outputs": [
-          {
-            "internalType": "bytes32",
-            "name": "",
-            "type": "bytes32"
-          }
-        ],
-        "payable": false,
-        "stateMutability": "nonpayable",
+        "outputs": [],
+        "payable": true,
+        "stateMutability": "payable",
         "type": "function"
       },
       {
@@ -3823,6 +3448,77 @@
             "internalType": "uint256",
             "name": "",
             "type": "uint256"
+          }
+        ],
+        "payable": false,
+        "stateMutability": "view",
+        "type": "function"
+      },
+      {
+        "constant": true,
+        "inputs": [
+          {
+            "internalType": "bytes32",
+            "name": "",
+            "type": "bytes32"
+          }
+        ],
+        "name": "taskParameters",
+        "outputs": [
+          {
+            "internalType": "bytes32",
+            "name": "bundleId",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "uint256",
+            "name": "minDeposit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "reward",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "tax",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "ownerFee",
+            "type": "uint256"
+          },
+          {
+            "internalType": "uint256",
+            "name": "blockLimit",
+            "type": "uint256"
+          },
+          {
+            "internalType": "address",
+            "name": "owner",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "submitter",
+            "type": "address"
+          },
+          {
+            "internalType": "address",
+            "name": "selectedSolver",
+            "type": "address"
+          },
+          {
+            "internalType": "bytes32",
+            "name": "currentGame",
+            "type": "bytes32"
+          },
+          {
+            "internalType": "enum IncentiveStructs.State",
+            "name": "state",
+            "type": "uint8"
           }
         ],
         "payable": false,
@@ -3940,13 +3636,7 @@
       },
       {
         "constant": false,
-        "inputs": [
-          {
-            "internalType": "address payable",
-            "name": "piggybank",
-            "type": "address"
-          }
-        ],
+        "inputs": [],
         "name": "withdrawEth",
         "outputs": [],
         "payable": false,
