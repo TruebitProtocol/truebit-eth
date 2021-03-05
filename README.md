@@ -734,7 +734,7 @@ For Windows, follow the templates above.
 
 # Contract API reference
 
-The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  Note that the file `truebit-eth/wasm-client/goerli.json` contains addresses and the ABI interface for Truebit's `fileSystem` and `incentiveLayer` contracts on Görli testnet.  An analogous file for Ethereum mainnet appears in the same directory.  The `tru` token contract follows the standard ERC-20 interface described [here](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
+The following reference highlights some key [Solidity](https://solidity.readthedocs.io/) functions that you may wish to use in your own smart contracts or interact with via [web3.js](https://web3js.readthedocs.io/).  Note that the file `truebit-eth/wasm-client/goerli.json` contains addresses and the ABI interface for Truebit's `fileSystem` and `incentiveLayer` contracts on Görli testnet.  An analogous file for Ethereum mainnet appears in the same directory.  The `tru` token contract follows the standard [ERC-20 interface](https://docs.openzeppelin.com/contracts/3.x/api/token/erc20#IERC20).
 
 Below is a simple "hello world" JavaScript example which prints task data from Truebit's `fileSystem` and `incentiveLayer`.
 ```js
@@ -759,19 +759,25 @@ let example
   console.log(await FileSystem.methods.vmParameters(codeFileID).call())
 })()
 ```
-To execute the example above or the [auxiliary functions](#Auxiliary-functions) in the next section, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
+To execute the example above or the [auxiliary functions](#Preparing-task-inputs) in the next section, first [install](https://nodejs.org/en/download/package-manager/) Node.js and npm, [check](https://www.npmjs.com/get-npm) your installations, and install the prerequisite packages:
 ```bash
 npm i truebit-util web3
 ```
-Each code template can then be pasted into a `.js` file and run using Node.js, e.g. `node example.js`.  The following script provides an additional template for interacting with Truebit's smart contract API.
+Each code template can then be pasted into a `.js` file and run using Node.js, e.g. `node example.js`.  You'll need to be connected to Görli testnet using `bash /goerli.sh` or otherwise.
+The following script provides an additional template for interacting with Truebit's smart contract API.
 ```bash
 truebit-eth/wasm-ports/samples/deploy.js
 ```
+For a template interaction with Solidity, see any one of the [sample tasks](#Sample-tasks-via-smart-contracts), e.g.
+```bash
+truebit-eth/wasm-ports/samples/scrypt/contract.sol
+truebit-eth/wasm-ports/samples/scrypt/send.js
+```
 
 
-## Auxiliary functions
+## Preparing task inputs
 
-We present three JavaScript functions and one Truebit OS method to assist in preparing data for use in Truebit.  Their uses will become clear in the [creating files](#creating-files) section.   In order to run the code templates below, your working directory must include a data file called `example.txt` containing the input you wish to process.
+We present three JavaScript functions and one Truebit OS method to assist in preparing code and data for use in Truebit.  Their uses will become clear in the [creating files](#creating-files) section below.   In order to run the following code templates, your working directory must include a data file called `example.txt` containing the input you wish to process.
 
 ### getRoot
 When writing CONTRACT and IPFS files, one must tell Truebit the [Merkle root](https://en.wikipedia.org/wiki/Merkle_tree) of the data.  Such a root for a file `example.txt` may be computed using the following [web3.js](https://github.com/ethereum/web3.js) template.
