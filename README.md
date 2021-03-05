@@ -846,7 +846,7 @@ Recall that Truebit reads and writes three [file types](#Getting-data-into-and-o
 We enumerate methods for creating Truebit files.
 
 ```solidity
-function createFileFromBytes(string memory name, uint nonce, bytes calldata data) external returns (bytes32);
+function createFileFromBytes(string calldata name, uint nonce, bytes calldata data) external returns (bytes32);
 ```
 `createFileFromBytes` returns a fileID for a BYTES file called `name` with content `data`.  Here `nonce` is a random, non-negative integer that uniquely identifies the newly created file.  This method converts `data`and stores it as a bytes32 array.
 
@@ -855,7 +855,7 @@ function createFileFromBytes(string memory name, uint nonce, bytes calldata data
 `bytes32 fileID = createFileFromBytes("input.data", 12345, "hello world!");`
 
 ```solidity
-function createFileFromArray(string memory name, uint nonce, bytes32[] calldata arr, uint fileSize) external returns (bytes32);
+function createFileFromArray(string calldata name, uint nonce, bytes32[] calldata arr, uint fileSize) external returns (bytes32);
 ```
 `createFileFromArray` returns a fileID for a BYTES file called `name` whose contents consist of a concatenation of array `arr`.  `nonce` can be any random, non-negative integer that uniquely identifies the new file. `fileSize` should be the total number of bytes in the concatenation of elements in `arr`, excluding any "empty" bytes in the final element.  This operation adds `arr` to contract storage.
 
@@ -866,12 +866,12 @@ function createFileFromArray(string memory name, uint nonce, bytes32[] calldata 
 `filesystem.createFileFromArray("output.data", 67890, empty, 0);`
 
 ```solidity
-function addContractFile(string memory name, uint size, address contractAddress, bytes32 root, uint nonce) external returns (bytes32);
+function addContractFile(string calldata name, uint size, address contractAddress, bytes32 root, uint nonce) external returns (bytes32);
 ```
 `addContractFile` returns a fileID for a CONTRACT file called `name` using existing data stored at address `contractAddress`.  The data stored at `contractAddress` must conform to the [`uploadOnchain`](#uploadOnchain) format above, and `root` must conform to [`getRoot`](#getRoot).  The `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
 ```solidity
-function addIpfsFile(string memory name, uint size, string calldata IPFShash, bytes32 root, uint nonce) external returns (bytes32);
+function addIpfsFile(string calldata name, uint size, string calldata IPFShash, bytes32 root, uint nonce) external returns (bytes32);
 ```
 `addIpfsFile` returns a fileID for an IPFS file called `name` using existing data stored at IPFS address `IPFShash`.  `Root` must conform to [`getRoot`](#getRoot), and the `size` parameter can be obtained using [`getSize`](#getSize).  `nonce` can be any random, non-negative integer that uniquely identifies the new file.
 
