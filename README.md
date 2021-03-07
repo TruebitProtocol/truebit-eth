@@ -985,7 +985,7 @@ function getBytesData(bytes32 fid) external view returns (bytes32[] memory);
 `getBytesData` returns the data for fileID `fid` as a bytes32 array, as it is stored in EVM contract storage.  `fid` must have file type BYTES.
 
 ```solidity
-function getFormattedBytesData(bytes32 id) external view returns (bytes memory);
+function getFormattedBytesData(bytes32 fid) external view returns (bytes memory);
 ```
 `getFormattedBytesData` converts the data for fileID `fid` to a bytes type.  `fid` must have file type BYTES.
 
@@ -1009,7 +1009,7 @@ function vmParameters(bytes32 codeFileID) external view returns (bytes32, uint8,
 ```
 `vmParameters` returns the Truebit virtual machine parameters associated with a program file fileID `codeFileID` in the following order, namely:
 * 0: bytes32 [`codeRoot`](#Obtaining-codeRoot): initial machine state restricted to the program code
-* 1: uint8 `codeType`: the progrma code format (0=WAST, 1=WASM)
+* 1: uint8 `codeType`: the program code format (0=WAST, 1=WASM)
 * 2: uint8 `stackSize`: depth of Merkle tree for the stack
 * 3: uint8 `memorySize`: depth of the Merkle tree for memory
 * 4: uint8 `globalsSize`: depth of Merkle tree for the globals table
