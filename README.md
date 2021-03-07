@@ -571,7 +571,7 @@ See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/f
 
 
 # Building your own tasks
-We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks.
+We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks. Inspect sample source codes and their respective compile scripts [here](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples).  Each compile script first compiles C, C++, or Rust source code, along with included library dependencies, to a pair of WebAssembly JavaScript runtime files using [Emscripten](https://emscripten.org/).  Truebit's [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) then converts these files into a WebAssemebly format executable in Truebit.  Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as a [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 ## Compiling from C/C++
 From your Truebit container, run the following commands (in this order) to configure the compiler for C/C++ (if you are starting a fresh container, then the last line, `bash /goerli.sh`, will suffice).
@@ -618,7 +618,7 @@ sh compile.sh
 ```
 
 ## Runtime
-Once you have the samples running, try using the files `compile.sh`, `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.   Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as Harley's [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+Once you have compiled your task to Truebit-flavored WebAssmebly, try using the files `contract.sol`, and `send.js`, and `../deploy.js` as templates for issuing your own tasks directly from smart contracts.  The API reference [below](#Contract-API-reference) will help you navigate through these templates.  Alternatively, follow the .json template [above](#Writing-task-outputs-via-Truebit-OS) to launch your task within Truebit OS.
 
 When building and executing your own tasks, you may have to adjust some of the interpreter execution parameters (within range 5 to 30 exclusive), including:
 
