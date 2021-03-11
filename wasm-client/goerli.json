@@ -4814,7 +4814,7 @@
       },
       {
         "inputs": [],
-        "name": "withdraw",
+        "name": "withdrawETH",
         "outputs": [],
         "stateMutability": "nonpayable",
         "type": "function"
