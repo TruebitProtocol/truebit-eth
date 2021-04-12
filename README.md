@@ -28,7 +28,7 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
 4. [Client configuration](#Client-configuration)
 5. [Building your own tasks](#Building-your-own-tasks)
-6. [Running Truebit OS natively](#Running-Truebit-OS-natively)
+6. [Native installation](#Native-installation)
 7. [Contract API reference](#Contract-API-reference)
 
 # Quickstart guide: computational playground
