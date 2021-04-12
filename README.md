@@ -28,7 +28,7 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 3. [Getting data into and out of Truebit](#Getting-data-into-and-out-of-Truebit)
 4. [Client configuration](#Client-configuration)
 5. [Building your own tasks](#Building-your-own-tasks)
-6. [Native installation](#Native-installation)
+6. [Running Truebit OS natively](#Running-Truebit-OS-natively)
 7. [Contract API reference](#Contract-API-reference)
 
 # Quickstart guide: computational playground
@@ -657,9 +657,16 @@ To get started, install both [Geth](https://geth.ethereum.org/docs/install-and-b
 
 <https://truebit.io/downloads/>
 
-Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.  This downloads page contains the latest Truebit OS version, and you should keep your local copy updated to avoid client errors.  Truebit OS displays your local version at startup, and you can compare this against the latest one listed in the badge at the top of this README file.
+Choose from Linux, MacOS, or Windows flavors, and paste your chosen executable into the top level of the `truebit-eth` directory.  This downloads page contains the latest Truebit OS version, and you should keep your local copy updated to avoid client errors.  Truebit OS displays your local version at startup, and you can compare this against the latest one listed in the badge at the top of this README file.  For consistency with the Docker container, the steps [below](#Starting-up) assume that you rename your executable file to `truebit-os`, however you may choose any name for your downloaded file.
 
-You must also build the Truebit WASM interpreter from source as described below.
+You may need to give your system permission to execute the `truebit-os` download.  In MacOS, for example, this can be done via the following commands.
+```bash
+mv truebit-macos truebit-os
+chmod 755 truebit-os
+```
+If running `./truebit-os` in MacOS returns a pop-up error like: “truebit-os” cannot be opened because the developer cannot be verified, go to System Preferences -> Security & Privacy and where it says: "truebit-os" was blocked from use because it is not from an identified developer, choose "Allow Anyway."
+
+Next, build the Truebit WebAssmebly interpreter from source as described below.
 
 #### macOS interpreter install
 In macOS, once [Brew](https://brew.sh/) is installed, one can install the interpreter as follows, starting from the `truebit-eth` directory:
@@ -687,7 +694,7 @@ make
 ```
 
 #### Windows interpreter install
-Follow the patterns above for Linux and macOS.
+Follow the patterns above for Linux and macOS.  You may wish to use a Linux emulator.
 
 ### Starting up
 We now walk through the steps to start IPFS, Clef, Geth, and then Truebit-OS.
