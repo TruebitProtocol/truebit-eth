@@ -191,7 +191,7 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                                                    |___/
 [01-21 14:42:00] info: Truebit OS 1.2.6 has been initialized on goerli network at block 4145800 with throttle 3 and gas price 20.1 gwei.
 ```
-Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` Truebit OS and restart.
+Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` Truebit OS and restart.  **To avoid gas waste on Ethereum mainnet, make sure your account(s) have sufficient ETH balance(s) to complete desired operation(s).  Try first a dry run on Görli testnet using account(s) with identical ETH balance(s) before moving to mainnet.**  Some methods, like uploading data onchain, may require your account to authorize an ETH equivalent of 5 million gas even if the corresponding transaction consumes only a small fraction of that amount.
 
 For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
@@ -261,6 +261,10 @@ task -f factorial.json submit -a 0
 The Task Submitter address always has first right-of-refusal to solve its own task, so your Solver should pick this one up!  You can check progress of your Görli task here:
 
 <https://goerli.etherscan.io/address/0x76c73774bC137F3229c422a8E054A022d9066b22>
+
+For mainnet, check here:
+
+<https://etherscan.io/address/0x388a3bD8f54F305266898e77B126609Ec6265f1e>
 
 Solvers and Verifiers will continue to solve and verify new tasks until instructed to stop.  To limit task participation based on TRU rewards, Solvers and Verifiers can use the `-l` flag to set a minimum, (constant) non-zero reward threshold per task, or use `-p` to fix a minimum TRU reward per block of computation.  For example,
 ```sh
