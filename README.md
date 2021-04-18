@@ -64,7 +64,7 @@ Docker will then store your Clef, Geth, and IPFS configuration files in the dire
 
 If you are using Windows,  try the following incantation.
 ```bash
-YYY=%userprofile%/truebit-docker
+SET YYY=%userprofile%/truebit-docker
 docker run --network host -v %YYY%/docker-clef:/root/.clef -v %YYY%/docker-geth:/root/.ethereum -v %YYY%/docker-ipfs:/root/.ipfs --name truebit --rm -it truebitprotocol/truebit-eth:latest /bin/bash
 ```
 
@@ -191,7 +191,7 @@ THIS SOFTWARE IS PROVIDED "AS IS" WITHOUT WARRANTY OF ANY KIND, EXPRESS OR IMPLI
                                                                    |___/
 [01-21 14:42:00] info: Truebit OS 1.2.6 has been initialized on goerli network at block 4145800 with throttle 3 and gas price 20.1 gwei.
 ```
-Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545` ... or `error: no suitable peers available`).  If this happens, `exit` Truebit OS and restart.  **To avoid gas waste on Ethereum mainnet, make sure your account(s) have sufficient ETH balance(s) to complete desired operation(s).  Try first a dry run on Görli testnet using account(s) with identical ETH balance(s) before moving to mainnet.**  Some methods, like uploading data onchain, may require your account to authorize an ETH equivalent of 5 million gas even if the corresponding transaction consumes only a small fraction of that amount.
+Note that you must be connected to either Görli testnet or Ethereum mainnet in order to execute commands in Truebit OS.  You may see error messages at this point if your local node has not yet synchronized with the blockchain or is not connected to a suitable peer (e.g. `Error: CONNECTION ERROR: Couldn't connect to node on IPC.`, `Error: Invalid JSON RPC response: "Error: connect ECONNREFUSED 127.0.0.1:8545`, or `error: no suitable peers available`).  If this happens, `exit` Truebit OS and restart.  **To avoid gas waste on Ethereum mainnet, make sure your account(s) have sufficient ETH balance(s) to complete desired operation(s).  Try first a dry run on Görli testnet using account(s) with identical ETH balance(s) before moving to mainnet.**  Some methods, like uploading data onchain, may require your account to authorize an ETH equivalent of 5 million gas even if the corresponding transaction consumes only a small fraction of that amount.  Always close your Görli (respectively mainnet) connection before running `mainnet.sh` (respectively `goerli.sh`); clef can only handle one connection per masterseed, and `mainnet.sh` and `goerli.sh` each redirect Truebit OS's connection.
 
 For a self-guided tour or to explore additional options not provided in this tutorial, type `help` at the command line, and (optionally) include a command that you want to learn more about.  Here is a list of available commands:
 ```
@@ -576,6 +576,11 @@ See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/f
 
 # Building your own tasks
 We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks. Inspect sample source codes and their respective compile scripts [here](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples).  Each compile script first compiles C, C++, or Rust source code, along with included library dependencies, to a pair of WebAssembly JavaScript runtime files using [Emscripten](https://emscripten.org/).  Truebit's [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) then converts these files into a WebAssemebly format executable in Truebit.  Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as a [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
+
+To view the current Emscripten compiler configuration, which varies based on whether you are using the C/C++ or Rust pipeline, type the following command.
+```bash
+emcc -v
+```
 
 ## Compiling from C/C++
 From your Truebit container, run the following commands (in this order) to configure the compiler for C/C++ (if you are starting a fresh container, then the last line, `bash /goerli.sh`, will suffice).
