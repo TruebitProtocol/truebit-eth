@@ -120,7 +120,7 @@ On testnet one can create keystore files with shorter passwords using `geth --go
 ### Importing existing accounts
 For hardware wallets, you can either add the [`--privileged`](https://docs.docker.com/engine/reference/run/#runtime-privilege-and-linux-capabilities) flag when starting Docker or run Truebit OS outside the Docker container using a [native install](#Running-Truebit-OS-natively).  In either case, you will need to remove the `--nousb` flag from both the `clef` and `geth` startup incantations.
 
-If you wish to use an existing keystore file with Truebit, simply paste it into your local folder `docker-geth/goerli/keystore` (for testnet) or `docker-geth/keystore` (for mainnet).  Alternatively use [`docker cp`](#Share-files) to paste into the Docker container at `~/.ethereum/goerli/keystore` (testnet) or `~/.ethereum/keystore` (mainnet).
+If you wish to use an existing keystore file with Truebit, simply paste it into your local folder `docker-geth/goerli/keystore` (for testnet) or `docker-geth/keystore` (for mainnet).  Alternatively use [`docker cp`](#Share-files) to paste into the Docker container at `~/.ethereum/goerli/keystore` (testnet) or `~/.ethereum/keystore` (mainnet).  MyCrypto's [Desktop App](https://download.mycrypto.com/) conveniently manages keystore files offline (i.e. outside the browser).
 
 ### Funding your accounts with ETH
 
