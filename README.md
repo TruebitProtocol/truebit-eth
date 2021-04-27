@@ -590,7 +590,7 @@ From your Truebit container, run the following commands (in this order) to confi
 source /emsdk/emsdk_env.sh
 bash /goerli.sh
 ```
-Exit the `tmux` shell using Ctrl-C, Ctrl-D.  You should now be able to re-compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
+Note that `bash /goerli.sh` includes compiler setup, so don't skip it.  Exit the `tmux` shell using Ctrl-C, Ctrl-D.  You should now be able to re-compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
 ```bash
 cd /truebit-eth/wasm-ports/samples/chess
 sh compile.sh
