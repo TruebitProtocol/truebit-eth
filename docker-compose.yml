@@ -1,0 +1,76 @@
+version: "3"
+services:
+  clef:
+    build:
+      context: docker_env/clef
+    networks:
+      - truebit-net
+    environment:
+      - CLEF_MASTER_SECRET=anotherlittlesecret123
+      - CLEF_ACCOUNT_SECRET=mylittlesecret129381!l2314tl23t
+      - CLEF_NETWORK=goerli
+      - CLEF_ATTEST=6441d5def6ec7ebe4ade8a9cf5d74f81088efaef314d8c4bda91221d02a9d976
+    ports:
+      - 8550:8550
+    volumes:
+      - ./docker/clef:/home/truebit
+  geth:
+    image: ethereum/client-go:stable
+    depends_on:
+      clef:
+        condition: service_healthy
+      ipfs:
+        condition: service_healthy
+    ports:
+      - 8545:8545
+    networks:
+      - truebit-net
+    command: "--nousb --goerli --syncmode=light --signer='http://clef:8550' --http.addr=0.0.0.0 --http --http.vhosts=*"
+    healthcheck:
+      test: 'wget --no-verbose --tries=1 --spider http://localhost:8545'
+    volumes:
+      - ./docker/geth/.ethereum:/root/.ethereum
+  ipfs:
+    build:
+      context: docker_env/ipfs
+    networks:
+      - truebit-net
+    ports:
+      - 4001:4001
+      - 5001:5001
+      - 8080:8080
+    volumes:
+      - ./docker/ipfs/export:/export
+      - ./docker/ipfs/export:/data/ipfs
+      - ./docker/ipfs/.ipfs:/root/.ipfs
+  os:
+    depends_on:
+      geth:
+        condition: service_healthy
+    build:
+      context: docker_env/truebit
+    volumes:
+      - ./docker/truebit-os:/truebit-eth/logs
+    environment:
+      - TRUEBIT_SOLVER=1
+      - TRUEBIT_SOLVER_ACCOUNT=0
+      - TRUEBIT_VERIFIER=1
+      - TRUEBIT_VERIFIER_ACCOUNT=0
+      - TRUEBIT_WASM_SERVICE_HOST=truebit-toolchain
+      - TRUEBIT_WASM_SERVICE_PORT=5700
+    networks:
+      - truebit-net
+  truebit-toolchain:
+    build:
+      context: docker_env/wasm
+    networks:
+      - truebit-net
+    environment:
+      - TRUEBIT_WASM_SERVICE_PORT=5700
+  sample_tasks:
+    build:
+      context: docker_env/examples
+
+networks:
+  truebit-net:
+    driver: bridge

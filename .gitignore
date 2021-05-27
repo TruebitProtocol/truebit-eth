@@ -1,0 +1,9 @@
+docker/clef/.clef
+docker/clef/.ethereum
+docker/clef/logs
+docker/geth/.ethereum
+docker/ipfs/.ipfs
+docker/ipfs/export
+docker/truebit-os/*.txt
+docker/truebit-os/*.log
+.idea

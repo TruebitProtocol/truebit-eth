@@ -1,0 +1,18 @@
+{
+  "codeFile": {
+    "path": "/tasks/factorial/data/factorial.wast",
+    "fileType": "CONTRACT"
+  },
+  "dataFiles": "",
+  "outputs": "",
+  "minDeposit": "10",
+  "solverReward": "2",
+  "verifierTax": "6",
+  "maxDifficulty": "1",
+  "stackSize":"14",
+  "memorySize":"16",
+  "globalsSize":"8",
+  "tableSize":"8",
+  "callSize":"10",
+  "blockLimit":"1"
+}

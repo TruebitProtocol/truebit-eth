@@ -1,0 +1,13 @@
+{
+  "geth": {
+    "providerURL": "http://geth:8545"
+  },
+  "ipfs": {
+    "protocol": "http",
+    "host": "ipfs",
+    "port": "5001"
+  },
+  "gasPrice": 20.1,
+  "throttle": 3,
+  "incentiveLayer": "incentiveLayer"
+}

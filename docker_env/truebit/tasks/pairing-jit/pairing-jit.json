@@ -1,0 +1,23 @@
+{
+  "codeFile": {
+    "path": "/tasks/pairing-jit/data/task.wasm",
+    "fileType": "IPFS"
+  },
+  "dataFiles": {
+    "/wasm-ports/samples/pairing/input.data": "BYTES",
+    "/wasm-ports/samples/pairing/output.data": "CONTRACT",
+    "/wasm-ports/samples/pairing/_dev_urandom": "IPFS"
+  },
+  "outputs": {
+    "output.data": "CONTRACT"
+  },
+  "minDeposit": "10",
+  "solverReward": "2",
+  "verifierTax": "6",
+  "stackSize":"20",
+  "memorySize":"25",
+  "globalsSize":"8",
+  "tableSize":"20",
+  "callSize":"10",
+  "blockLimit":"14"
+}
