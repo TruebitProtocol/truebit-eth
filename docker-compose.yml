@@ -2,14 +2,12 @@ version: "3"
 services:
   clef:
     build:
-      context: docker_env/clef
+      context: .
+      dockerfile: clef.dockerfile
     networks:
       - truebit-net
-    environment:
-      - CLEF_MASTER_SECRET=anotherlittlesecret123
-      - CLEF_ACCOUNT_SECRET=mylittlesecret129381!l2314tl23t
-      - CLEF_NETWORK=goerli
-      - CLEF_ATTEST=6441d5def6ec7ebe4ade8a9cf5d74f81088efaef314d8c4bda91221d02a9d976
+    env_file:
+      - .env
     ports:
       - 8550:8550
     volumes:
@@ -32,7 +30,8 @@ services:
       - ./docker/geth/.ethereum:/root/.ethereum
   ipfs:
     build:
-      context: docker_env/ipfs
+      context: .
+      dockerfile: ipfs.dockerfile
     networks:
       - truebit-net
     ports:
@@ -44,32 +43,32 @@ services:
       - ./docker/ipfs/export:/data/ipfs
       - ./docker/ipfs/.ipfs:/root/.ipfs
   os:
+    build:
+      context: .
+      dockerfile: truebit-os.dockerfile
     depends_on:
       geth:
         condition: service_healthy
-    build:
-      context: docker_env/truebit
     volumes:
       - ./docker/truebit-os:/truebit-eth/logs
-    environment:
-      - TRUEBIT_SOLVER=1
-      - TRUEBIT_SOLVER_ACCOUNT=0
-      - TRUEBIT_VERIFIER=1
-      - TRUEBIT_VERIFIER_ACCOUNT=0
-      - TRUEBIT_WASM_SERVICE_HOST=truebit-toolchain
-      - TRUEBIT_WASM_SERVICE_PORT=5700
+    env_file:
+      - .env
     networks:
       - truebit-net
+
   truebit-toolchain:
     build:
-      context: docker_env/wasm
+      context: .
+      dockerfile: wasm.dockerfile
     networks:
       - truebit-net
-    environment:
-      - TRUEBIT_WASM_SERVICE_PORT=5700
+    env_file:
+      - .env
+
   sample_tasks:
     build:
-      context: docker_env/examples
+      context: .
+      dockerfile: samples-legacy.dockerfile
 
 networks:
   truebit-net:
