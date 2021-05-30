@@ -124,7 +124,7 @@ RUN apt-get install -y autoconf bison flex libtool lzip \
 
 
 COPY src/wasm/emscripten-module-wrapper/c /root/emscripten-module-wrapper
-COPY src/wasm/wasm-ports/c/* /truebit-eth/wasm-ports
+COPY src/wasm/wasm-ports/c/ /truebit-eth/wasm-ports/
 
 # Compile  C/C++ sample tasks
 RUN ipfs init \
@@ -142,17 +142,18 @@ RUN ipfs init \
  && sh compile.sh \
  && rm -r /root/.ipfs
 
-COPY src/wasm/wasm-ports/rust/* /truebit-eth/wasm-ports
+COPY src/wasm/wasm-ports/rust/ /truebit-eth/wasm-ports/
 
 
 # Compile Rust sample task
 RUN ipfs init \
  && ( ipfs daemon & ) \
  && source ~/.nvm/nvm.sh \
- && mv /truebit-eth/wasm-ports/wasm/ / \
- && cd / \
+ && mv /truebit-eth/wasm-ports/wasm/ /wasm/ \
+ && cd /wasm \
+ && cp -r /truebit-eth/ocaml-offchain ./ocaml-offchain \
  && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
- && cd /emscripten-module-wrapper \
+ && cd /wasm/emscripten-module-wrapper \
  && npm install \
  && /emsdk/emsdk activate 1.39.8 \
  && source /emsdk/emsdk_env.sh \
@@ -160,7 +161,7 @@ RUN ipfs init \
  && cd /wasm \
  && npm i \
  && sh compile.sh \
- && rm -r /emscripten-module-wrapper \
+ #&& rm -r /emscripten-module-wrapper \
  && mv /wasm /truebit-eth/wasm-ports/samples \
  && rm -r /root/.ipfs
 

@@ -1,12 +1,27 @@
 #!/usr/bin/env python3
 
-# This is a wasm relay.
+"""
+This file is used to proxy wasm requests from the truebit container into the wasm-toolchain container through
+zeromq.
+"""
+
 
 import os
 import uuid
 from zipfile import ZipFile
 from io import BytesIO
 import pathlib
+
+
+def extract_zip(td, binary):
+    with ZipFile(BytesIO(binary)) as thezip:
+        for zipinfo in thezip.infolist():
+            with thezip.open(zipinfo) as thefile:
+                file_path = pathlib.Path(td).joinpath(zipinfo.filename)
+                if not zipinfo.is_dir():
+                    file_path.parent.mkdir(parents=True, exist_ok=True)
+                    file_path.write_bytes(thefile.read())
+
 
 def zip_current_dir():
     in_memory = BytesIO()
@@ -47,6 +62,9 @@ if __name__ == "__main__":
 
     # Hangs until it gets response
     message = socket.recv_pyobj()
+
+    if message["zip"]:
+        extract_zip(os.getcwd(), message["zip"])
 
     # Outputs the resulting json
     print(message["data"])

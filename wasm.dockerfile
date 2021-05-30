@@ -40,7 +40,7 @@ make && \
 rm -rf ~/.opam
 
 RUN pip3 install loguru pyzmq
-COPY src/wasm/wasm/job_server.py /truebit-toolchain/job_server.py
+COPY src/wasm/python/wasm_proxy/job_server.py /truebit-toolchain/job_server.py
 RUN chmod +x /truebit-toolchain/job_server.py
 EXPOSE 5700
 ENTRYPOINT ["python3", "/truebit-toolchain/job_server.py"]

@@ -19,6 +19,6 @@ COPY ${BUILD_DATA_PATH}entrypoint.sh /entrypoint.sh
 RUN chmod +x /entrypoint.sh
 
 COPY ${BUILD_DATA_PATH}tasks /truebit-eth/tasks
-COPY ${BUILD_DATA_PATH}wasm.py /truebit-eth/wasm-client/ocaml-offchain/interpreter/wasm
+COPY src/wasm/python/wasm_proxy/wasm.py /truebit-eth/wasm-client/ocaml-offchain/interpreter/wasm
 RUN chmod +x /truebit-eth/wasm-client/ocaml-offchain/interpreter/wasm
 ENTRYPOINT ["/entrypoint.sh"]

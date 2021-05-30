@@ -2,6 +2,7 @@
 mkdir -p /truebit-eth/logs
 tmux new -d -s Truebit \; split-window -d 50 \; split-window -d \; split-window -h
 
+sleep 1
 tmux send-keys -t Truebit.2 "cd /truebit-eth && ./truebit-os 2>&1 | tee logs/os.txt" ENTER
 
 if [ -n "$TRUEBIT_SOLVER" ]; then
@@ -22,8 +23,11 @@ if [ -n "$TRUEBIT_VERIFIER" ]; then
 
 fi
 
-tmux send-keys -t Truebit.2 "task -f tasks/reverse_alphabet/reverse.json submit" ENTER
+#tmux send-keys -t Truebit.2 "task -f tasks/reverse_alphabet/reverse.json submit" ENTER
 
-sleep 1000
-ls -la /truebit-eth/logs
-tail -f /truebit-eth/logs/solver.txt
+
+while true
+do
+  tail -f /truebit-eth/logs/solver.txt
+  sleep 2
+done
