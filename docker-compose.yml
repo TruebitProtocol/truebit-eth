@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   clef:
     build:
@@ -12,6 +12,7 @@ services:
       - 8550:8550
     volumes:
       - ./docker/clef:/home/truebit
+    restart: always
   geth:
     image: ethereum/client-go:stable
     depends_on:
@@ -19,15 +20,20 @@ services:
         condition: service_healthy
       ipfs:
         condition: service_healthy
-    ports:
-      - 8545:8545
+    # For access to geth from host-OS
+    # 1. Uncomment ports mapping
+    # 2. Replace "--http.vhosts='geth'" with --http.vhosts='*'
+    # Note that this expose your geth instance
+    #ports:
+    #  - 8545:8545
     networks:
       - truebit-net
-    command: "--nousb --goerli --syncmode=light --signer='http://clef:8550' --http.addr=0.0.0.0 --http --http.vhosts=*"
+    command: "--nousb --goerli --syncmode=light --signer='http://clef:8550' --ipcdisable --http.addr=0.0.0.0 --http --http.vhosts='geth,localhost'"
     healthcheck:
-      test: 'wget --no-verbose --tries=1 --spider http://localhost:8545'
+      test: 'wget --no-verbose --tries=1 --spider http://geth:8545'
     volumes:
       - ./docker/geth/.ethereum:/root/.ethereum
+    restart: always
   ipfs:
     build:
       context: .
@@ -42,6 +48,7 @@ services:
       - ./docker/ipfs/export:/export
       - ./docker/ipfs/export:/data/ipfs
       - ./docker/ipfs/.ipfs:/root/.ipfs
+    restart: always
   os:
     build:
       context: .
@@ -55,6 +62,7 @@ services:
       - .env
     networks:
       - truebit-net
+    restart: always
 
   truebit-toolchain:
     build:
@@ -73,3 +81,6 @@ services:
 networks:
   truebit-net:
     driver: bridge
+    ipam:
+      config:
+        - subnet: 172.28.0.0/16

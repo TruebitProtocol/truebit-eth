@@ -1,9 +1,14 @@
 #!/bin/bash
 mkdir -p /truebit-eth/logs
+touch /truebit-eth/logs/os.log
+touch /truebit-eth/logs/solver.log
+touch /truebit-eth/logs/verifier.log
+
+
 tmux new -d -s Truebit \; split-window -d 50 \; split-window -d \; split-window -h
 
 sleep 1
-tmux send-keys -t Truebit.2 "cd /truebit-eth && ./truebit-os 2>&1 | tee logs/os.txt" ENTER
+tmux send-keys -t Truebit.2 "cd /truebit-eth && ./truebit-os 2>&1 | tee logs/os.log" ENTER
 
 if [ -n "$TRUEBIT_SOLVER" ]; then
   if [[ -z "$TRUEBIT_SOLVER_ACCOUNT" ]]; then
@@ -28,6 +33,6 @@ fi
 
 while true
 do
-  tail -f /truebit-eth/logs/solver.txt
+  tail -f /truebit-eth/logs/solver.log /truebit-eth/logs/verifier.log /truebit-eth/logs/os.log
   sleep 2
 done
