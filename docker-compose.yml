@@ -28,7 +28,7 @@ services:
     #  - 8545:8545
     networks:
       - truebit-net
-    command: "--nousb --goerli --syncmode=light --signer='http://clef:8550' --ipcdisable --http.addr=0.0.0.0 --http --http.vhosts='geth,localhost'"
+    command: "--nousb --goerli --syncmode=light --signer='http://clef:8550' --ipcdisable --http --http.api personal,eth,net,web3 --http.addr=0.0.0.0 --http.vhosts='geth,localhost'"
     healthcheck:
       test: 'wget --no-verbose --tries=1 --spider http://geth:8545'
     volumes:
