@@ -1,5 +1,14 @@
 # This script compile all example code using the truebit/compiler image.
 
+# Compile Security Example
+docker run \
+--rm \
+-e RUNTIME=c \
+-v "$PWD/c/security:/input" \
+-v "$PWD/compiled/c/security:/output" \
+truebit/compiler
+
+
 # Compile pairing example
 docker run \
 --rm \
@@ -33,15 +42,6 @@ docker run \
 -e RUNTIME=c \
 -v "$PWD/c/scrypt:/input" \
 -v "$PWD/compiled/c/scrypt:/output" \
-truebit/compiler
-
-
-# Compile Security Example
-docker run \
---rm \
--e RUNTIME=c \
--v "$PWD/c/security:/input" \
--v "$PWD/compiled/c/security:/output" \
 truebit/compiler
 
 
