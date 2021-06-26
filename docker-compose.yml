@@ -73,10 +73,12 @@ services:
     env_file:
       - .env
 
-  sample_tasks:
+  compiler:
     build:
       context: .
-      dockerfile: samples-legacy.dockerfile
+      dockerfile: compiler.dockerfile
+    volumes:
+      - ./docker/truebit-samples:/samples
 
 networks:
   truebit-net:

@@ -1,9 +1,11 @@
 docker/clef/.clef
 docker/clef/.ethereum
 docker/clef/logs
+docker/clef/.ash_history
 docker/geth/.ethereum
 docker/ipfs/.ipfs
 docker/ipfs/export
 docker/truebit-os/*.txt
 docker/truebit-os/*.log
 .idea
+samples/compiled/

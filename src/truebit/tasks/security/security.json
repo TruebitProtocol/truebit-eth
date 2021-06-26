@@ -1,0 +1,22 @@
+{
+    "codeFile": {
+      "path": "/tasks/security/data/task.wasm",
+      "fileType": "IPFS"
+    },
+    "dataFiles": {
+      "/tasks/security/data/input.data": "CONTRACT",
+      "/tasks/security/data/output.data": "BYTES"
+    },
+    "outputs": {
+      "output.data": "BYTES"
+    },
+    "solverReward": "2",
+    "verifierTax": "6",
+    "minDeposit": "10",
+    "stackSize":"14",
+    "memorySize":"20",
+    "globalsSize":"8",
+    "tableSize":"8",
+    "callSize":"10",
+    "blockLimit":"1"
+}
