@@ -60,7 +60,7 @@ RUN cd bin \
  && chmod 744 solc
 
 # Install Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.10.2-97d11b01.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.10.5-33ca98ec.tar.gz \
  && tar xf geth*tar.gz \
  && rm geth*tar.gz \
  && cd geth* \
