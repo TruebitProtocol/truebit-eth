@@ -9,3 +9,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/).
 ### Changed
 Update version of geth to 1.10.20-8f2416a8
  
+## [1.4.7] - 2022-04-08
+
+### Changed
+Update version of geth to 1.10.21-67109427
