@@ -119,8 +119,8 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
 FROM stage-base-02 as final-image
 COPY --from=stage-Emscripten /emsdk /emsdk
 COPY --from=stage-Solidity /bin/solc /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/geth  /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/clef  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.23-d901d853/geth  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.23-d901d853/clef  /bin/
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
 ARG URL_TRUEBIT_OS=https://truebit.io/downloads/truebit-linux
