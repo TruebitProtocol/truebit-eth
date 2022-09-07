@@ -84,10 +84,25 @@ RUN cd bin \
 
 # Install Geth
 FROM stage-base-plain AS stage-Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.10.21-67109427.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.10.23-d901d853.tar.gz \
  && tar xf geth*tar.gz \
  && rm geth*tar.gz \
  && cd geth*
+
+# Install Consensus
+FROM stage-base-plain AS stage-Prysm
+RUN mkdir ethereum \
+&& cd ethereum \
+&& mkdir consensus \
+&& cd consensus \
+&& mkdir prysm && cd prysm \
+&& curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh \
+&& chmod 777 prysm.sh \
+#Prater genesis 
+&& wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz \
+&& ./prysm.sh beacon-chain generate-auth-secret \
+&& cp jwt.hex ..\
+&& chmod 0444
 
 # Install IPFS
 FROM stage-base-plain AS stage-IPFS
