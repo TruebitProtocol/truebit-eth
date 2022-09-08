@@ -4,7 +4,6 @@ MAINTAINER Jason Teutsch
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install --no-install-recommends -y curl wget git \
-
 # Plain image packages
  python xz-utils ca-certificates
 # && rm -rf /var/lib/apt/lists/*
@@ -92,17 +91,28 @@ RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd6
 # Install Consensus
 FROM stage-base-plain AS stage-Prysm
 RUN mkdir ethereum \
-&& cd ethereum \
-&& mkdir consensus \
-&& cd consensus \
-&& mkdir prysm && cd prysm \
-&& curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh && chmod +x prysm.sh \
-&& chmod 777 prysm.sh \
-#Prater genesis 
-&& wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz \
-&& ./prysm.sh beacon-chain generate-auth-secret \
-&& cp jwt.hex ..\
-&& chmod 0444
+ && cd ethereum \
+ && mkdir consensus \
+ && cd consensus \
+ && mkdir prysm \
+ && cd prysm
+
+RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh
+
+RUN chmod +x prysm.sh
+
+RUN chmod 777 prysm.sh
+
+RUN wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz
+
+RUN export PRYSM_ALLOW_UNVERIFIED_BINARIES=1 \
+ && ./prysm.sh beacon-chain generate-auth-secret
+
+RUN cp jwt.hex ..
+
+RUN cd ..
+
+RUN chmod 0444 jwt.hex
 
 # Install IPFS
 FROM stage-base-plain AS stage-IPFS
@@ -198,7 +208,6 @@ RUN ipfs init \
  && rm -r /emscripten-module-wrapper \
  && mv /wasm /truebit-eth/wasm-ports/samples \
  && rm -r /root/.ipfs \
-
 ### Initialize
  && cd / \
  && rm -r boot home media mnt opt srv \
