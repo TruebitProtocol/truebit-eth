@@ -95,24 +95,16 @@ RUN mkdir ethereum \
  && mkdir consensus \
  && cd consensus \
  && mkdir prysm \
- && cd prysm
-
-RUN curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh
-
-RUN chmod +x prysm.sh
-
-RUN chmod 777 prysm.sh
-
-RUN wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz
-
-RUN export PRYSM_ALLOW_UNVERIFIED_BINARIES=1 \
- && ./prysm.sh beacon-chain generate-auth-secret
-
-RUN cp jwt.hex ..
-
-RUN cd ..
-
-RUN chmod 0444 jwt.hex
+ && cd prysm \
+ && curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh \
+ && chmod +x prysm.sh \
+ && chmod 777 prysm.sh \
+ && wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz \
+ && export PRYSM_ALLOW_UNVERIFIED_BINARIES=1 \
+ && ./prysm.sh beacon-chain generate-auth-secret \
+ && cp jwt.hex .. \
+ && cd .. \
+ && chmod 0444 jwt.hex
 
 # Install IPFS
 FROM stage-base-plain AS stage-IPFS
@@ -131,9 +123,10 @@ COPY --from=stage-Emscripten /emsdk /emsdk
 COPY --from=stage-Solidity /bin/solc /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.23-d901d853/geth  /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.23-d901d853/clef  /bin/
+COPY --from=stage-Prysm /ethereum /ethereum
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
-ARG URL_TRUEBIT_OS=https://truebit.io/downloads/truebit-linux
+ARG URL_TRUEBIT_OS=http://downloads.truebit.io/truebit-linux
 ADD $URL_TRUEBIT_OS truebit-eth/truebit-os
 
 # Install ocaml-offchain interpreter

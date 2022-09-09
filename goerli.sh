@@ -10,6 +10,8 @@ sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = 
 rm ~/.clef/clef.ipc &>/dev/null
 rm ~/.ethereum/goerli/geth.ipc &>/dev/null
 
+export PRYSM_ALLOW_UNVERIFIED_BINARIES=1
+
 # Start IPFS
 ipfs init &>/dev/null
 tmux new -d 'ipfs daemon'
