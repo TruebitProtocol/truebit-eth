@@ -97,8 +97,7 @@ RUN mkdir ethereum \
  && mkdir prysm \
  && cd prysm \
  && curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh \
- && chmod +x prysm.sh \
- && chmod 777 prysm.sh \
+ && chmod 755 prysm.sh \
  && wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz \
  && export PRYSM_ALLOW_UNVERIFIED_BINARIES=1 \
  && ./prysm.sh beacon-chain generate-auth-secret \
