@@ -51,9 +51,10 @@ std::vector<uint8_t> merkleHash(std::vector<uint8_t>::const_iterator begin, std:
 	return ret;
 }
 
-int main(int argc, char *argv[])
+int main() 
 {
-    std::ifstream fin("input.data", std::ios::binary);
+    std::cout << "Here\n";
+    std::ifstream fin("input.dta", std::ios::binary);
     // std::cout << "Error: " << strerror(errno);
     std::ostringstream ostrm;
     
@@ -66,12 +67,12 @@ int main(int argc, char *argv[])
     std::cout << "Got string: " << indata << std::endl;
 
 	char out[32];
-	char scratchpad[SCRYPT_SCRATCHPAD_SIZE];
+	char *scratchpad = (char*)malloc(SCRYPT_SCRATCHPAD_SIZE);
 
 	unsigned wantedStep = 0;
 
-	std::vector<uint8_t> data;
-	data.resize(4 * 32 + 131072);
+	// std::vector<uint8_t> data;
+	// data.resize(4 * 32 + 131072);
 	scrypt_1024_1_1_256_sp_generic(indata.data(), &out[0], scratchpad, [&](unsigned i, char* X, char* V) {
 		/* if (true || i == wantedStep) {
 			uint32_t const* x = reinterpret_cast<uint32_t const*>(X);
@@ -91,10 +92,11 @@ int main(int argc, char *argv[])
 	});
 
 	std::cout << "Scrypt output: " << toHex(out) << std::endl;
-    std::ofstream fout("output.data", std::ios::binary);
+    std::ofstream fout("output.dta", std::ios::binary);
     
     for (int i= 0; i < 32; i++) fout << out[i];
     
     fout.close();
-    
+	std::cout << "Exiting..." << std::endl;
+    // exit(0);
 }
