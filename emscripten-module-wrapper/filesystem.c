@@ -13,12 +13,14 @@ void outputSize(int, int);
 void outputName(int, int, unsigned char);
 void outputData(int, int, unsigned char);
 
-int debugString(char *dta);
-int debugBuffer(char *dta, int len);
+int debugString(const char *dta);
+int debugBuffer(const char *dta, int len);
 int debugInt(int c);
 int debugSeek(int c);
 void debugRead(int c);
 int debugReadCount(int c);
+
+void exit(int code);
 
 // Output to a linked list, not a linear block?
 struct piece {
@@ -52,11 +54,18 @@ struct iovec {
   int iov_len;
 };
 
-// Global variable that will store our system
-struct system *system_ptr;
-
 struct system *getSystem(void);
 void setSystem(struct system *s);
+void initSystem();
+
+struct system *getSystemLazy(void) {
+  struct system *s = getSystem();
+  if (!s) {
+    initSystem();
+    return getSystem();
+  }
+  return s;
+}
 
 int getNameLength(int ptr) {
   int res = 0;
@@ -84,7 +93,7 @@ unsigned char *getData(int ptr) {
   return res;
 }
 
-unsigned char* copyBytes(unsigned char* bytes, int len) {
+unsigned char* copyBytes(const unsigned char* bytes, int len) {
   unsigned char* res = malloc(len);
   for (int i = 0; i < len; i++) {
     res[i] = bytes[i];
@@ -108,7 +117,7 @@ void copyChunk(unsigned char* _source, unsigned char* _destination, int size, in
   }
 }
 
-void addPiece(int idx, unsigned char *bytes, int len) {
+void addPiece(int idx, const unsigned char *bytes, int len) {
   struct piece *p = malloc(sizeof(struct piece));
   struct system *s = getSystem();
   p->prev = s->file_output[idx];
@@ -122,7 +131,7 @@ int findFile(unsigned char *name) {
   if (!name || !name[0]) return -1;
   debugString((char*)name);
   int index = 0;
-  struct system *s = getSystem();
+  struct system *s = getSystemLazy();
   if (!s) return -1;
   while (s->file_name[index]) {
       if (str_eq(s->file_name[index], name)) {
@@ -139,17 +148,23 @@ int openFile(unsigned char *name) {
   if (!name || !name[0]) return -1;
   debugString((char*)name);
   int index = 0;
-  struct system *s = getSystem();
+  struct system *s = getSystemLazy();
   if (!s) return -1;
   while (s->file_name[index]) {
       if (str_eq(s->file_name[index], name)) {
-              int fd = s->next_fd;
-              s->ptr[fd] = index;
-              s->pos[fd] = 0;
-              s->closed[fd] = 0;
-              s->next_fd++;
-              debugInt(fd);
-              return fd;
+        debugInt(111000);
+        debugString(name);
+        int fd = s->next_fd;
+        s->ptr[fd] = index;
+        s->pos[fd] = 0;
+        s->closed[fd] = 0;
+        s->next_fd++;
+        debugInt(fd);
+        debugInt(333444);
+        debugInt(s->pos[4]);
+        debugInt((uint64_t)s);
+        debugInt((uint64_t)malloc(10));
+        return fd;
       }
       index++;
   }
@@ -157,12 +172,16 @@ int openFile(unsigned char *name) {
   return -1;
 }
 
+
+
 void initSystem() {
   struct system *s = malloc(sizeof(struct system));
+  debugInt((uint64_t)s);
   s->ptr[0] = -1;
   s->ptr[1] = -2;
   s->ptr[2] = -3;
-  s->next_fd = 3; // 0:stdin, 1:stdout, 2:stderr
+  s->ptr[3] = -4;
+  s->next_fd = 4; // 0:stdin, 1:stdout, 2:stderr
   // Actually we should here have a list of file names?
   // Read input byte by byte, it includes file names and data
   int loc = 0;
@@ -856,4 +875,271 @@ int env__gettimeofday(void *a, void *b) {
     return 0;
 }
 
+// WASI types
+
+typedef struct {
+    /**
+     * The length of the directory name for use with `fd_prestat_dir_name`.
+     */
+    uint32_t pr_name_len;
+
+} prestat_dir_t;
+
+typedef union {
+    prestat_dir_t dir;
+} prestat_u_t;
+
+typedef struct {
+    uint8_t tag;
+    prestat_u_t u;
+} prestat_t;
+
+typedef struct {
+    /**
+     * The address of the buffer to be written.
+     */
+    const uint8_t * buf;
+
+    /**
+     * The length of the buffer to be written.
+     */
+    uint32_t buf_len;
+
+} ciovec_t;
+
+typedef struct {
+    /**
+     * The address of the buffer to be filled.
+     */
+    uint8_t * buf;
+
+    /**
+     * The length of the buffer to be filled.
+     */
+    uint32_t buf_len;
+
+} iovec_t;
+
+typedef uint64_t linkcount_t;
+typedef uint64_t timestamp_t;
+typedef uint64_t filesize_t;
+typedef uint8_t filetype_t;
+typedef uint64_t inode_t;
+typedef uint64_t device_t;
+
+typedef uint64_t rights_t;
+typedef uint16_t fdflags_t;
+
+typedef struct {
+    /**
+     * Device ID of device containing the file.
+     */
+    device_t dev;
+
+    /**
+     * File serial number.
+     */
+    inode_t ino;
+
+    /**
+     * File type.
+     */
+    filetype_t filetype;
+
+    /**
+     * Number of hard links to the file.
+     */
+    linkcount_t nlink;
+
+    /**
+     * For regular files, the file size in bytes. For symbolic links, the length in bytes of the pathname contained in the symbolic link.
+     */
+    filesize_t size;
+
+    /**
+     * Last data access timestamp.
+     */
+    timestamp_t atim;
+
+    /**
+     * Last data modification timestamp.
+     */
+    timestamp_t mtim;
+
+    /**
+     * Last file status change timestamp.
+     */
+    timestamp_t ctim;
+
+} filestat_t;
+
+
+typedef struct {
+    /**
+     * File type.
+     */
+    filetype_t fs_filetype;
+
+    /**
+     * File descriptor flags.
+     */
+    fdflags_t fs_flags;
+
+    /**
+     * Rights that apply to this file descriptor.
+     */
+    rights_t fs_rights_base;
+
+    /**
+     * Maximum set of rights that may be installed on new file descriptors that
+     * are created through this file descriptor, e.g., through `path_open`.
+     */
+    rights_t fs_rights_inheriting;
+
+} fdstat_t;
+
+typedef uint64_t timestamp_t;
+typedef uint32_t clockid_t;
+
+// WASI functions
+
+int wasi_snapshot_preview1_fd_filestat_get(int fd, filestat_t *fstat) {
+  return -1;
+}
+
+int wasi_snapshot_preview1_fd_fdstat_get(int fd, fdstat_t *fstat) {
+  debugInt(fd);
+  if (fd == 3) {
+    fstat->fs_filetype = 3; // directory
+    fstat->fs_rights_base = 0xfffffffff;
+    fstat->fs_rights_inheriting = 0xfffffffff;
+  }
+  return 0;
+}
+
+int wasi_snapshot_preview1_fd_read(int fd, iovec_t *bufs, int len, uint32_t *ret) {
+  struct system *s = getSystemLazy();
+  debugInt(3+1000000);
+  debugInt(fd + 2000000);
+  // read
+  debugInt(s->pos[fd]);
+  debugInt(s->pos[5]);
+  int index = s->ptr[fd];
+  int pos = s->pos[fd];
+  int i, j;
+  int acc = 0;
+  for (j = 0; j < len; j++) {
+    for (i = 0; i < bufs[j].buf_len && i+pos < s->file_size[index]; i++) {
+      bufs[j].buf[i] = s->file_data[index][pos+i];
+      debugInt(bufs[j].buf[i]);
+    }
+    s->pos[fd] += i;
+    acc += i;
+  }
+  debugInt(i);
+  debugInt(s->pos[fd]);
+  *ret = acc;
+  return 0;
+}
+
+int wasi_snapshot_preview1_fd_close(int fd) {
+  return 0;
+}
+
+void wasi_snapshot_preview1_proc_exit(int fd) {
+  exit(fd);
+}
+
+int wasi_snapshot_preview1_fd_write(int fd, ciovec_t *a, uint32_t len, uint32_t *ret) {
+  int acc = 0;
+  if (fd == 2 || fd == 1) {
+    debugInt(fd);
+    debugInt(len);
+    for (int i = 0; i < len; i++) {
+      debugBuffer((const char*)a[i].buf, a[i].buf_len);
+      acc += a[i].buf_len;
+      *ret = acc;
+    }
+    return 0;
+  }
+  struct system *s = getSystemLazy();
+  for (int i = 0; i < len; i++) {
+    debugBuffer((const char*)a[i].buf, a[i].buf_len);
+    addPiece(s->ptr[fd], a[i].buf, a[i].buf_len);
+    acc += a[i].buf_len;
+  }
+  *ret = acc;
+  return 0;
+}
+
+int wasi_snapshot_preview1_fd_prestat_dir_name(int fd, uint8_t *a, uint32_t len) {
+  a[0] = '.';
+  a[1] = 0;
+  return 0;
+}
+
+int wasi_snapshot_preview1_fd_prestat_get(int fd, prestat_t *stat) {
+  if (fd != 3) {
+    return 8;
+  }
+  debugInt(fd);
+  stat->tag = 0;
+  stat->u.dir.pr_name_len = 1;
+  return 0;
+}
+
+int wasi_snapshot_preview1_path_open(
+  int fd,
+  int flags,
+  uint8_t *path,
+  int rights_base,
+  int rights_inheriting,
+  uint64_t x,
+  uint64_t y,
+  int aa,
+  uint32_t *ret
+) {
+  debugString((const char*)path);
+  *ret = openFile(path);
+  debugInt(*ret);
+  return 0;
+}
+
+int wasi_snapshot_preview1_fd_seek(int fd, uint64_t b, int a, int c) {
+  return -1;
+}
+
+int wasi_snapshot_preview1_environ_get(uint8_t **items, uint8_t *buf) {
+  return -1;
+}
+
+int wasi_snapshot_preview1_args_sizes_get(uint32_t *num, uint32_t *sizes) {
+  *num = 0;
+  *sizes = 0;
+  return 0;
+}
+
+int wasi_snapshot_preview1_args_get(uint8_t **num, uint8_t *sizes) {
+  *num = 0;
+  *sizes = 0;
+  return 0;
+}
+
+int wasi_snapshot_preview1_random_get(uint8_t *buf, uint32_t len) {
+  for (int i = 0; i < len; i++) {
+    buf[i] = 42;
+  }
+  return 0;
+}
+
+int wasi_snapshot_preview1_clock_time_get(clockid_t id, timestamp_t prec, timestamp_t *ret) {
+  *ret = 100000000000;
+  return 0;
+}
+
+int wasi_snapshot_preview1_environ_sizes_get(uint32_t **fd, uint32_t *fstat) {
+  *fd = 0;
+  *fstat = 0;
+  return 0;
+}
 
