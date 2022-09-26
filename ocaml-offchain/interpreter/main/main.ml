@@ -27,7 +27,8 @@ let configure () =
   Import.register (Utf8.decode "global") Global.lookup;
   Import.register (Utf8.decode "global.Math") Global.lookup_math;
   Import.register (Utf8.decode "asm2wasm") Global.lookup_asm2wasm;
-  Import.register (Utf8.decode "env") Env.lookup
+  Import.register (Utf8.decode "env") Env.lookup;
+  Import.register (Utf8.decode "wasi_snapshot_preview1") Env.lookup
 
 let banner () =
   print_endline (name ^ " " ^ version ^ " reference interpreter")
@@ -51,6 +52,7 @@ let print_imports = ref false
 let do_compile = ref false
 let run_inited : string option ref = ref None
 let underscore_mode = ref false
+let orig_mode = ref false
 let counter_mode = ref false
 let test_counter_mode = ref false
 let handle_nan_mode = ref false
@@ -107,6 +109,7 @@ let argspec = Arg.align
 
   "-shift-mem", Arg.Int (fun x -> shift_mem_mode := Some x), " shift memory by an offset";
   "-underscore", Arg.Set underscore_mode, " add underscores to all of the names";
+  "-orig", Arg.Set orig_mode, " process emscripten orig$ tags";
   "-counter", Arg.Set counter_mode, " add a counter variable to the file";
   "-test-counter", Arg.Set test_counter_mode, " add a counter variable to the file (new test version)";
   "-handle-nan", Arg.Set handle_nan_mode, " canonize floating point values to remove non-determinism";
@@ -254,6 +257,11 @@ let () =
     | true, m :: _ ->
       let m = Underscore.process m in
       Run.create_binary_file "underscore.wasm" () (fun () -> m)
+    | _ -> () );
+    ( match !orig_mode, !lst with
+    | true, m :: _ ->
+      let m = Orig.process m in
+      Run.create_binary_file "orig.wasm" () (fun () -> m)
     | _ -> () );
     ( match !counter_mode, !lst with
     | true, m :: _ ->

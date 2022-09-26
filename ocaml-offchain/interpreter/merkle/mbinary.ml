@@ -502,11 +502,12 @@ let location_proof = Fastmerkle.location_proof
 let map_location_proof = Fastmerkle.map_location_proof
 *)
 
+(*
 open Fastmerkle
 
 let { get_hash; get_hash16; map_hash; location_proof; map_location_proof } =
-  try Fastmerkle.init ()
-  with _ -> { get_hash; get_hash16; map_hash; location_proof; map_location_proof }
+ { get_hash; get_hash16; map_hash; location_proof; map_location_proof }
+*)
 
 (* simple hash, not merkle root *)
 let hash_stack arr =

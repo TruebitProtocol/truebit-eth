@@ -20,7 +20,7 @@ WINMAKE =	winmake.bat
 DIRS =		util syntax binary text valid merkle exec script host main
 LIBS =		
 FLAGS = 	-cflags '-w +a-4-27-42-44-45'
-OCB =		ocamlbuild -package ctypes -package ctypes.foreign -package cryptokit -package yojson $(FLAGS) $(DIRS:%=-I %) $(LIBS:%=-libs %)
+OCB =		ocamlbuild -package cryptokit -package yojson -package bigarray $(FLAGS) $(DIRS:%=-I %) $(LIBS:%=-libs %)
 JS =		# set to JS shell command to run JS tests
 
 # Main targets

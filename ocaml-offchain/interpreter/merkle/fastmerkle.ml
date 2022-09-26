@@ -1,12 +1,4 @@
 
-open Ctypes
-open Foreign
-
-let rec calc n = if n = 0 then 0 else 1 + calc(n/2)
-
-let rec pow2 n = if n = 0 then 1 else 2 * pow2 (n-1)
-
-let size n = pow2 (calc (n-1))
 
 type w256 = string
 
@@ -18,6 +10,7 @@ let w256_to_string bs =
   done;
   !res
 
+
 type res = {
    get_hash : w256 array -> w256;
    get_hash16 : w256 array -> w256;
@@ -25,6 +18,17 @@ type res = {
    location_proof : w256 array -> int -> w256 list;
    map_location_proof : 'a. ('a -> w256) -> 'a array -> int -> w256 list;
 }
+
+
+(*
+open Ctypes
+open Foreign
+
+let rec calc n = if n = 0 then 0 else 1 + calc(n/2)
+
+let rec pow2 n = if n = 0 then 1 else 2 * pow2 (n-1)
+
+let size n = pow2 (calc (n-1))
 
 let init () =
    let mylib = Dl.dlopen ~flags:[Dl.RTLD_LAZY] ~filename:"/usr/local/bin/fastmerkle.sox" in
@@ -88,6 +92,7 @@ let init () =
       let res = calc_map_hash f arr num in
       f arr.(num) :: get_proof res in
    {map_hash=map_hash; get_hash=get_hash2; get_hash16=get_hash16; location_proof; map_location_proof=map_location_proof}
+*)
 (*   get_hash2, get_hash16, map_hash, location_proof, map_location_proof *)
 
 (*

@@ -189,7 +189,7 @@ and compile' ctx id = function
  | Drop ->
     (* trace "drop"; *)
     {ctx with ptr=ctx.ptr-1}, [DROP 1]
- | GrowMemory -> {ctx with ptr=ctx.ptr-1}, [GROW]
+ | GrowMemory -> ctx, [GROW]
  | CurrentMemory -> {ctx with ptr=ctx.ptr+1}, [CURMEM]
  | GetGlobal x -> {ctx with ptr=ctx.ptr+1}, [LOADGLOBAL (Int32.to_int x.it)]
  | SetGlobal x ->
@@ -261,7 +261,10 @@ let compile_func ctx idx func =
   let ctx, body = compile' {ctx with ptr=ctx.ptr+List.length par+List.length func.it.locals} 0l (Block (ret, func.it.body)) in
   trace ("---- function end " ^ string_of_int ctx.ptr);
   ctx,
-  ( if false (* !Flags.trace *) then [STUB (find_export_name ctx.mdle idx ^ " Idx " ^ string_of_int idx ^ " Params " ^ String.concat "," (List.map type_to_str par) ^  " Return " ^ String.concat "," (List.map type_to_str ret))] else [] ) @
+  ( if !Flags.trace then 
+      let name = find_export_name ctx.mdle idx in
+      if name = "internal function" then [] else
+      [STUB (find_export_name ctx.mdle idx ^ " Idx " ^ string_of_int idx ^ " Params " ^ String.concat "," (List.map type_to_str par) ^  " Return " ^ String.concat "," (List.map type_to_str ret))] else [] ) @
   List.map (fun x -> PUSH (default_value x)) func.it.locals @
   body @
   List.flatten (List.mapi (fun i _ -> [DUP (List.length ret - i); SWAP (ctx.ptr-i+1); DROP 1]) ret) @
@@ -341,8 +344,8 @@ let init_system mdle inst =
       [LOADGLOBAL initial_gas_limit; CONV (I64 I64Op.ExtendUI32); PUSH (I64 1000000L); BIN (I64 I64Op.Mul); STOREGLOBAL gas_limit; PUSH (I64 0L); STOREGLOBAL gas]
     with Not_found -> [] ) @
   simple_call mdle inst "__post_instantiate" @
-  (if (try ignore (find_global_index (elem mdle) (Utf8.decode "ASMJS")); true with Not_found -> false) then init_fs_stack mdle inst else [] ) @
-  simple_call mdle inst "_initSystem"
+  (if (try ignore (find_global_index (elem mdle) (Utf8.decode "ASMJS")); true with Not_found -> false) then init_fs_stack mdle inst else [] )
+  (* @ simple_call mdle inst "_initSystem" *)
 
 let find_initializers mdle =
   let rec do_find = function
@@ -392,7 +395,7 @@ let generic_stub m inst mname fname =
 *)
 
 let mem_init_size m =
-  if !Flags.run_wasm || !Flags.disable_float then Byteutil.pow2 (!Flags.memory_size - 13) else
+(*  if !Flags.run_wasm || !Flags.disable_float then Byteutil.pow2 (!Flags.memory_size - 13) else *)
   let open Ast in
   let open Types in
   let open Source in
@@ -403,7 +406,7 @@ let mem_init_size m =
   !res
 
 let vm_init m =
-  [ PUSH (i (mem_init_size m)); GROW;
+  [ PUSH (i (mem_init_size m)); GROW; DROP 1;
     SETSTACK !Flags.stack_size;
     SETMEMORY !Flags.memory_size;
     SETCALLSTACK !Flags.call_size;
