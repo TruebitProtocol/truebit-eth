@@ -1,10 +1,9 @@
 ### Plain stage to download basic packages ###
-FROM ubuntu:18.04 AS stage-base-plain
+FROM ubuntu:22.04 AS stage-base-plain
 MAINTAINER Jason Teutsch
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install --no-install-recommends -y curl wget git \
-
 # Plain image packages
  python xz-utils ca-certificates
 # && rm -rf /var/lib/apt/lists/*
@@ -24,6 +23,7 @@ RUN apt-get install --no-install-recommends -y \
  libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev \
 # Install Toolchain libraries
  autoconf bison flex libtool lzip \
+ wabt python3-pip python3-venv \
  && rm -rf /var/lib/apt/lists/*
 
 ################################################################################
@@ -32,20 +32,12 @@ RUN apt-get install --no-install-recommends -y \
 
 # Install LLVM components
 FROM stage-base-01 AS stage-base-02
-RUN git clone --depth 1 https://github.com/llvm-mirror/llvm -b release_60 \
- && cd llvm/tools \
- && git clone --depth 1 https://github.com/llvm-mirror/clang -b release_60 \
- && git clone --depth 1 https://github.com/llvm-mirror/lld -b release_60 \
- && cd /llvm \
- && cd tools/clang \
- && cd ../lld \
- && mkdir /build \
- && cd /build \
- && cmake -G Ninja -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/usr/ /llvm \
- && ninja \
- && ninja install \
- && cd / \
- && rm -rf build llvm
+
+ENV PATH="${PATH}:/root/.local/bin"
+
+RUN curl https://raw.githubusercontent.com/wasienv/wasienv/master/install.sh | sh || echo ":(("
+
+RUN wasienv install-sdk unstable
 
 # Install Node package manager
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
@@ -55,9 +47,10 @@ RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | 
 # Add support for Rust tasks
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
  && source $HOME/.cargo/env \
- && rustup install 1.40.0 \
- && rustup default 1.40.0 \
- && rustup target add wasm32-unknown-emscripten
+ && rustup install 1.63.0 \
+ && rustup default 1.63.0 \
+ && rustup target add wasm32-unknown-unknown \
+ && rustup target add wasm32-wasi
 
 #################################################################################
 ############### The following stages run in parallel ############################
@@ -67,12 +60,8 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
 FROM stage-base-01 AS stage-Emscripten
 RUN git clone https://github.com/emscripten-core/emsdk.git emsdk \
  && cd emsdk \
- && ./emsdk install sdk-fastcomp-1.37.36-64bit \
- && ./emsdk install binaryen-tag-1.37.36-64bit \
- && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit \
- && ./emsdk install 1.38.33 \
- && ./emsdk install 1.39.8 \
+ && ./emsdk install 3.1.20 \
+ && ./emsdk activate 3.1.20 \
  && rm -r zips
 
 # Install Solidity
@@ -111,11 +100,14 @@ COPY . truebit-eth/
 ARG URL_TRUEBIT_OS=https://truebit.io/downloads/truebit-linux
 ADD $URL_TRUEBIT_OS truebit-eth/truebit-os
 
-# Install ocaml-offchain interpreter
-RUN opam init -y \
- && eval `opam config env` \
+RUN opam init -y git+https://github.com/ocaml/opam-repository \
  && opam update \
- && opam install cryptokit ctypes ctypes-foreign yojson -y \
+ && opam switch create 4.05.0
+
+# Install ocaml-offchain interpreter
+RUN eval `opam config env` \
+ && opam update \
+ && opam install cryptokit yojson -y \
  && cd /truebit-eth/ocaml-offchain/interpreter \
  && make \
  && rm -rf ~/.opam
@@ -131,8 +123,6 @@ RUN source ~/.nvm/nvm.sh \
 
 # Install Toolchain libraries
 RUN source /emsdk/emsdk_env.sh \
- && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
- && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
  && cd /truebit-eth/wasm-ports \
  && sh gmp.sh \
  && sh openssl.sh \
