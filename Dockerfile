@@ -4,8 +4,7 @@ MAINTAINER Jason Teutsch
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install --no-install-recommends -y curl wget git \
-# Plain image packages
- python xz-utils ca-certificates
+ python3 xz-utils ca-certificates
 # && rm -rf /var/lib/apt/lists/*
 
 ### Base stage to download common packages ###
@@ -42,7 +41,7 @@ RUN wasienv install-sdk unstable
 # Install Node package manager
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
  && source ~/.nvm/nvm.sh \
- && nvm install 14.10.0
+ && nvm install 14.20.1
 
 # Add support for Rust tasks
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
@@ -51,6 +50,20 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
  && rustup default 1.63.0 \
  && rustup target add wasm32-unknown-unknown \
  && rustup target add wasm32-wasi
+
+RUN opam init -y git+https://github.com/ocaml/opam-repository \
+ && opam update \
+ && opam switch create 4.05.0
+
+RUN eval `opam config env` \
+ &&  opam update \
+ && opam install cryptokit yojson ocamlbuild -y
+
+RUN opam switch create 4.14.0
+
+RUN opam switch 4.14.0 \
+ && opam install wasm ocamlbuild -y \
+ && opam switch 4.05.0
 
 #################################################################################
 ############### The following stages run in parallel ############################
@@ -100,80 +113,49 @@ COPY . truebit-eth/
 ARG URL_TRUEBIT_OS=https://truebit.io/downloads/truebit-linux
 ADD $URL_TRUEBIT_OS truebit-eth/truebit-os
 
-RUN opam init -y git+https://github.com/ocaml/opam-repository \
- && opam update \
- && opam switch create 4.05.0
-
 # Install ocaml-offchain interpreter
 RUN eval `opam config env` \
- && opam update \
- && opam install cryptokit yojson -y \
  && cd /truebit-eth/ocaml-offchain/interpreter \
- && make \
+ && make
+
+RUN opam switch 4.14.0 \
+ && eval `opam config env` \
+ && cd /truebit-eth/memory-ops \
+ && rm -f ops.native \
+ && ocamlbuild -package wasm ops.native \
  && rm -rf ~/.opam
 
 # Install Emscripten module wrapper and dependencies for deploying sample tasks
 RUN source ~/.nvm/nvm.sh \
+ && npm i -g yarn \
  && cd /truebit-eth/emscripten-module-wrapper \
  && ln -s /truebit-eth/emscripten-module-wrapper /root/emscripten-module-wrapper \
  && cd /truebit-eth/wasm-client \
  && ln -s /truebit-eth/ocaml-offchain \
  && cd /truebit-eth \
- && npm ci
+ && yarn
 
 # Install Toolchain libraries
-RUN source /emsdk/emsdk_env.sh \
- && cd /truebit-eth/wasm-ports \
- && sh gmp.sh \
- && sh openssl.sh \
- && sh secp256k1.sh \
- && sh libff.sh \
- && sh boost.sh \
- && sh libpbc.sh
+RUN cd /truebit-eth/wasm-ports \
+ && sh openssl.sh
 
 # Move initialization scripts for compiling, network, and authentication.
 RUN chmod 755 /truebit-eth/truebit-os \
  && mv /truebit-eth/goerli.sh / \
- && mv /truebit-eth/mainnet.sh / \
- && cd emsdk \
- && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit
+ && mv /truebit-eth/mainnet.sh /
 
 # Compile  C/C++ sample tasks
 RUN ipfs init \
+ && source ~/.nvm/nvm.sh \
  && ( ipfs daemon & ) \
- && source /emsdk/emsdk_env.sh \
- && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
- && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
  && cd /truebit-eth/wasm-ports/samples/chess \
  && sh compile.sh \
  && cd ../scrypt \
- && sh compile.sh \
- && cd ../pairing \
- && sh compile.sh \
- && cd ../ffmpeg \
  && sh compile.sh \
  && rm -r /root/.ipfs
 
 # Compile Rust sample task
 RUN ipfs init \
- && ( ipfs daemon & ) \
- && source ~/.nvm/nvm.sh \
- && mv /truebit-eth/wasm-ports/samples/wasm / \
- && cd / \
- && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
- && cd /emscripten-module-wrapper \
- && npm install \
- && /emsdk/emsdk activate 1.39.8 \
- && source /emsdk/emsdk_env.sh \
- && source $HOME/.cargo/env \
- && cd /wasm \
- && npm i \
- && sh compile.sh \
- && rm -r /emscripten-module-wrapper \
- && mv /wasm /truebit-eth/wasm-ports/samples \
- && rm -r /root/.ipfs \
-
 ### Initialize
  && cd / \
  && rm -r boot home media mnt opt srv \
