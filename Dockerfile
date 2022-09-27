@@ -41,7 +41,7 @@ RUN wasienv install-sdk unstable
 # Install Node package manager
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
  && source ~/.nvm/nvm.sh \
- && nvm install 14.20.1
+ && nvm install 16.16.0
 
 # Add support for Rust tasks
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
@@ -125,15 +125,18 @@ RUN opam switch 4.14.0 \
  && ocamlbuild -package wasm ops.native \
  && rm -rf ~/.opam
 
+RUN cd /truebit-eth/memory-ops \
+ && wat2wasm impl.wat -o bulkmemory.wasm \
+ && cp bulkmemory.wasm ../emscripten-module-wrapper
+
 # Install Emscripten module wrapper and dependencies for deploying sample tasks
 RUN source ~/.nvm/nvm.sh \
- && npm i -g yarn \
  && cd /truebit-eth/emscripten-module-wrapper \
  && ln -s /truebit-eth/emscripten-module-wrapper /root/emscripten-module-wrapper \
  && cd /truebit-eth/wasm-client \
  && ln -s /truebit-eth/ocaml-offchain \
  && cd /truebit-eth \
- && yarn
+ && npm ci
 
 # Install Toolchain libraries
 RUN cd /truebit-eth/wasm-ports \
