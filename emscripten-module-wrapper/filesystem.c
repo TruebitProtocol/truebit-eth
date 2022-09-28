@@ -1073,9 +1073,16 @@ int wasi_snapshot_preview1_fd_write(int fd, ciovec_t *a, uint32_t len, uint32_t 
     return 0;
   }
   struct system *s = getSystemLazy();
+  // If it is the first write, then check if it has seeked before
+  int index = s->ptr[fd];
+  debugInt(s->pos[fd]);
+  if (s->pos[fd] != 0 && s->file_output[index] == 0) {
+    debugBuffer((const char*)s->file_data[index], s->pos[fd]);
+    addPiece(s->ptr[fd], s->file_data[index], s->pos[fd]);
+  }
   for (int i = 0; i < len; i++) {
     debugBuffer((const char*)a[i].buf, a[i].buf_len);
-    addPiece(s->ptr[fd], a[i].buf, a[i].buf_len);
+    addPiece(index, a[i].buf, a[i].buf_len);
     acc += a[i].buf_len;
   }
   *ret = acc;
@@ -1106,11 +1113,19 @@ int wasi_snapshot_preview1_path_open(
   int rights_inheriting,
   uint64_t x,
   uint64_t y,
-  int aa,
+  int fd_flags,
   uint32_t *ret
 ) {
   debugString((const char*)path);
   *ret = openFile(path);
+  // handle append
+  if (fd_flags & 1) {
+    debugInt(333444);
+    struct system *s = getSystemLazy();
+    int sz = s->file_size[s->ptr[*ret]];
+    debugInt(sz);
+    s->pos[*ret] = sz;
+  }
   debugInt(*ret);
   return 0;
 }
