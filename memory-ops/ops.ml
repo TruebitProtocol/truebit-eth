@@ -46,7 +46,6 @@ let process_export ex =
 let replace m impl =
   let impl = impl.it in
   let num_funcs = List.length (func_imports m) + List.length (m.it.funcs) in
-  prerr_endline (string_of_int num_funcs);
   let num_types = List.length m.it.types in
   let fill = Int32.of_int num_funcs in
   let copy = Int32.of_int (num_funcs+1) in
@@ -59,7 +58,6 @@ let replace m impl =
 let process in_file ops_file out_file =
   let str = read_whole_file in_file in
   let str_impl = read_whole_file ops_file in
-  prerr_endline (string_of_int (String.length str));
   let ast = Decode.decode in_file str in
   let ast_impl = Decode.decode ops_file str_impl in
   let ast = replace ast ast_impl in

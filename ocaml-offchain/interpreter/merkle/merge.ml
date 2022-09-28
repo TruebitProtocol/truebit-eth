@@ -178,4 +178,5 @@ let merge a b =
      types=a.it.types@b.it.types}} in
   let m = add_i32_global m "_system_ptr" 0 in
   let m = add_i32_global m "GAS_LIMIT" (!Flags.gas_limit) in
+  let m = add_i32_global m "TRUEBIT_VERSION" 2 in
   m

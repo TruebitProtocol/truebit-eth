@@ -152,18 +152,11 @@ int openFile(unsigned char *name) {
   if (!s) return -1;
   while (s->file_name[index]) {
       if (str_eq(s->file_name[index], name)) {
-        debugInt(111000);
-        debugString(name);
         int fd = s->next_fd;
         s->ptr[fd] = index;
         s->pos[fd] = 0;
         s->closed[fd] = 0;
         s->next_fd++;
-        debugInt(fd);
-        debugInt(333444);
-        debugInt(s->pos[4]);
-        debugInt((uint64_t)s);
-        debugInt((uint64_t)malloc(10));
         return fd;
       }
       index++;
@@ -231,6 +224,40 @@ void initSystem() {
     s->pthread_key_counter = 0;
 }
 
+void outputFile(int index) {
+  struct system *s = getSystem();
+  // If there is no output, then output the linear block in case it was changed
+  if (!s->file_output[index]) {
+    int sz = s->file_size[index];
+    outputSize(index, sz);
+    debugInt(sz);
+    unsigned char *data = s->file_data[index];
+    for (int i = 0; i < sz; i++) {
+      outputData(index, i, *data);
+      data++;
+    }
+  }
+  else {
+      // Calculate size
+      int sz = 0;
+      struct piece *p = s->file_output[index];
+      while (p) {
+        sz += p->size;
+        p = p->prev;
+      }
+      outputSize(index, sz);
+      debugInt(sz);
+      p = s->file_output[index];
+      while (p) {
+        sz -= p->size;
+        for (int i = 0; i < p->size; i++) {
+          outputData(index, sz+i, p->data[i]);
+        }
+        p = p->prev;
+      }
+  }
+}
+
 void finalizeSystem() {
   struct system *s = getSystem();
   int index = 0;
@@ -245,35 +272,7 @@ void finalizeSystem() {
       i++;
     }
     // If there is no output, then output the linear block in case it was changed
-    if (!s->file_output[index]) {
-      int sz = s->file_size[index];
-      outputSize(index, sz);
-      debugInt(sz);
-      unsigned char *data = s->file_data[index];
-      for (int i = 0; i < sz; i++) {
-        outputData(index, i, *data);
-        data++;
-      }
-    }
-    else {
-       // Calculate size
-       int sz = 0;
-       struct piece *p = s->file_output[index];
-       while (p) {
-         sz += p->size;
-         p = p->prev;
-       }
-       outputSize(index, sz);
-       debugInt(sz);
-       p = s->file_output[index];
-       while (p) {
-         sz -= p->size;
-         for (int i = 0; i < p->size; i++) {
-           outputData(index, sz+i, p->data[i]);
-         }
-         p = p->prev;
-       }
-    }
+    outputFile(index);
     index++;
   }
 }
@@ -283,6 +282,15 @@ void env__internalSync(int fd) {
 }
 
 void env__internalSync2(int index) {
+  struct system *s = getSystem();
+  s->file_size[index] = inputSize(index);
+  s->file_data[index] = getData(index);
+  s->file_output[index] = 0;
+  debugBuffer((char*)s->file_data[index], s->file_size[index]);
+}
+
+void syncFile(int index) {
+  outputFile(index);
   struct system *s = getSystem();
   s->file_size[index] = inputSize(index);
   s->file_data[index] = getData(index);
@@ -1043,6 +1051,8 @@ int wasi_snapshot_preview1_fd_read(int fd, iovec_t *bufs, int len, uint32_t *ret
 }
 
 int wasi_snapshot_preview1_fd_close(int fd) {
+  struct system *s = getSystemLazy();
+  syncFile(s->ptr[fd]);
   return 0;
 }
 
@@ -1105,8 +1115,24 @@ int wasi_snapshot_preview1_path_open(
   return 0;
 }
 
-int wasi_snapshot_preview1_fd_seek(int fd, uint64_t b, int a, int c) {
-  return -1;
+int wasi_snapshot_preview1_fd_seek(int fd, uint64_t offset, int whence, uint32_t *result) {
+  struct system *s = getSystemLazy();
+  if (whence == 0) {
+    s->pos[fd] = offset;
+  }
+  else if (whence == 1) {
+    s->pos[fd] += offset;
+  }
+  // Maybe this is seeking from end?
+  else if (whence == 2) {
+    int sz = s->file_size[s->ptr[fd]];
+    s->pos[fd] = sz + offset;
+    debugSeek(offset);
+  }
+  else return -1;
+  *result = s->pos[fd];
+  if (s->pos[fd] < 0) return -1;
+  return 0;
 }
 
 int wasi_snapshot_preview1_environ_get(uint8_t **items, uint8_t *buf) {
