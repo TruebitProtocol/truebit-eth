@@ -29,7 +29,7 @@ RUN apt-get install --no-install-recommends -y \
 ######## The following stages run in sequence from stage-base-01. ##############
 ################################################################################
 
-# Install LLVM components
+# Install WASI-SDK using Wasienv components
 FROM stage-base-01 AS stage-base-02
 
 ENV PATH="${PATH}:/root/.local/bin"
@@ -51,6 +51,7 @@ RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
  && rustup target add wasm32-unknown-unknown \
  && rustup target add wasm32-wasi
 
+# Installing correct versions of OCaml compilers
 RUN opam init -y git+https://github.com/ocaml/opam-repository \
  && opam update \
  && opam switch create 4.05.0
@@ -118,6 +119,7 @@ RUN eval `opam config env` \
  && cd /truebit-eth/ocaml-offchain/interpreter \
  && make
 
+# Install bulk memory ops handler pass
 RUN opam switch 4.14.0 \
  && eval `opam config env` \
  && cd /truebit-eth/memory-ops \
@@ -125,6 +127,7 @@ RUN opam switch 4.14.0 \
  && ocamlbuild -package wasm ops.native \
  && rm -rf ~/.opam
 
+# Copy the implementation of bulk memory ops
 RUN cd /truebit-eth/memory-ops \
  && wat2wasm impl.wat -o bulkmemory.wasm \
  && cp bulkmemory.wasm ../emscripten-module-wrapper

@@ -1040,11 +1040,8 @@ let vm_step vm = match vm.code.(vm.pc) with
  | GROW ->
    inc_pc vm;
    let old_size = (Int32.of_int vm.memsize) in
-   (* prerr_endline ("Old size " ^ string_of_int vm.memsize);
-   prerr_endline ("Growing " ^ string_of_int (value_to_int vm.stack.(vm.stack_ptr-1))); *)
    vm.memsize <- vm.memsize + value_to_int vm.stack.(vm.stack_ptr-1);
    vm.stack.(vm.stack_ptr-1) <- I32 old_size
-   (* vm.stack_ptr <- vm.stack_ptr - 1 *)
  | SETSTACK v ->
    let sz = pow2 v in
    vm.stack <- Array.make sz (i 0);

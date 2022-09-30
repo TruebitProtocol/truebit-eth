@@ -143,23 +143,6 @@ async function processTask(fname) {
   let mem_size = argv['memory-size'] || '25';
   let result_wasm = 'underscore.wasm';
 
-  /*
-  let flags
-
-  if (argv.analyze && argv.asmjs) flags = ['-asmjs', '-add-globals', 'globals.json', 'merge.wasm']
-  else if (argv.analyze) flags = ['-add-globals', 'globals.json', 'merge.wasm']
-  else if (argv.asmjs) flags = ['-asmjs', '-add-globals', dir + 'globals-asmjs.json', 'merge.wasm']
-  else flags = ['-add-globals', dir + 'globals.json', 'merge.wasm']
-
-  if (gas > 0) {
-    flags = ['-gas-limit', gas].concat(flags)
-  }
-
-  flags = ['-memory-size', mem_size].concat(flags)
-
-  await exec(wasm, flags)
-  */
-
   let args = flatten(argv.arg.map(a => ['-arg', a]));
   args = args.concat(flatten(argv.file.map(a => ['-file', a])));
   if (config.interpreter_args) args = args.concat(config.interpreter_args);

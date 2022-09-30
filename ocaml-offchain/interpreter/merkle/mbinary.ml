@@ -494,21 +494,6 @@ let map_location_proof f arr loc = List.rev (get_map_location_proof f arr 0 loc 
 
 let location_proof arr loc = List.rev (get_location_proof arr 0 loc (depth (Array.length arr*2-1)))
 
-(*
-let get_hash arr = if Array.length arr = 0 then zeroword else Fastmerkle.get_hash arr
-let get_hash16 = Fastmerkle.get_hash16
-let map_hash = Fastmerkle.map_hash
-let location_proof = Fastmerkle.location_proof
-let map_location_proof = Fastmerkle.map_location_proof
-*)
-
-(*
-open Fastmerkle
-
-let { get_hash; get_hash16; map_hash; location_proof; map_location_proof } =
- { get_hash; get_hash16; map_hash; location_proof; map_location_proof }
-*)
-
 (* simple hash, not merkle root *)
 let hash_stack arr =
   let hash = Hash.keccak 256 in
