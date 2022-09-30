@@ -1087,11 +1087,14 @@ int wasi_snapshot_preview1_fd_write(int fd, ciovec_t *a, uint32_t len, uint32_t 
       acc += a[i].buf_len;
       *ret = acc;
     }
-    return 0;
   }
   struct system *s = getSystemLazy();
   // If it is the first write, then check if it has seeked before
   int index = s->ptr[fd];
+  if (index < 0) {
+    return 0;
+  }
+  acc = 0;
   debugInt(s->pos[fd]);
   if (s->pos[fd] != 0 && s->file_output[index] == 0) {
     debugBuffer((const char*)s->file_data[index], s->pos[fd]);
