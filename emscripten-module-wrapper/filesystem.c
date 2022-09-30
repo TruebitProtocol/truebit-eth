@@ -221,7 +221,24 @@ void initSystem() {
      s->closed[1] = 0;
      s->ptr[1] = res;
   }
-    s->pthread_key_counter = 0;
+  name[0] = 's';
+  name[1] = 't';
+  name[2] = 'd';
+  name[3] = 'i';
+  name[4] = 'n';
+  name[5] = 'p';
+  name[6] = '.';
+  name[7] = 'd';
+  name[8] = 't';
+  name[9] = 'a';
+  name[10] = 0;
+  res = findFile(name);
+  if (res >= 0) {
+     s->pos[0] = 0;
+     s->closed[0] = 0;
+     s->ptr[0] = res;
+  }
+  s->pthread_key_counter = 0;
 }
 
 void outputFile(int index) {
