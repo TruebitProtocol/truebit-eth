@@ -102,7 +102,7 @@ COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/geth  /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/clef  /bin/
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
-ARG URL_TRUEBIT_OS=https://truebit.io/downloads/truebit-linux
+ARG URL_TRUEBIT_OS=https://downloads.truebit.io/truebit-linux
 ADD $URL_TRUEBIT_OS truebit-eth/truebit-os
 
 # Install ocaml-offchain interpreter
