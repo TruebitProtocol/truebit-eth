@@ -317,6 +317,8 @@ let simple_call mdle inst name =
   try [STUB name; CALL (find_function_index mdle inst (Utf8.decode name), 0l)]
   with Not_found -> []
 
+let has_global m name = (try ignore (find_global_index (elem m) (Utf8.decode name)); true with Not_found -> false)
+
 let init_fs_stack mdle inst =
 (*  let stack_ptr = List.length (global_imports (elem mdle)) + 2 in
   prerr_endline ("Imported globals " ^ string_of_int (List.length (global_imports (elem mdle))));
@@ -345,7 +347,7 @@ let init_system mdle inst =
     with Not_found -> [] ) @
   simple_call mdle inst "__post_instantiate" @
   (if (try ignore (find_global_index (elem mdle) (Utf8.decode "ASMJS")); true with Not_found -> false) then init_fs_stack mdle inst else [] )
-  (* @ simple_call mdle inst "_initSystem" *)
+  @ ( if has_global mdle "TRUEBIT_VERSION" then [] else simple_call mdle inst "_initSystem" )
 
 let find_initializers mdle =
   let rec do_find = function
@@ -395,7 +397,7 @@ let generic_stub m inst mname fname =
 *)
 
 let mem_init_size m =
-(*  if !Flags.run_wasm || !Flags.disable_float then Byteutil.pow2 (!Flags.memory_size - 13) else *)
+  if not (has_global m "TRUEBIT_VERSION") && (!Flags.run_wasm || !Flags.disable_float) then Byteutil.pow2 (!Flags.memory_size - 13) else
   let open Ast in
   let open Types in
   let open Source in

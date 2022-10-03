@@ -70,14 +70,6 @@ RUN opam switch 4.14.0 \
 ############### The following stages run in parallel ############################
 #################################################################################
 
-# Set up Emscripten
-FROM stage-base-01 AS stage-Emscripten
-RUN git clone https://github.com/emscripten-core/emsdk.git emsdk \
- && cd emsdk \
- && ./emsdk install 3.1.20 \
- && ./emsdk activate 3.1.20 \
- && rm -r zips
-
 # Install Solidity
 FROM stage-base-plain AS stage-Solidity
 RUN cd bin \
@@ -105,7 +97,6 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
 
 # Final Image
 FROM stage-base-02 as final-image
-COPY --from=stage-Emscripten /emsdk /emsdk
 COPY --from=stage-Solidity /bin/solc /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/geth  /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/clef  /bin/
