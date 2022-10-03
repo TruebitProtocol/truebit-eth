@@ -13,10 +13,10 @@
   "minDeposit": "10",
   "solverReward": "2",
   "verifierTax": "6",
-  "stackSize":"20",
-  "memorySize":"25",
+  "stackSize":"16",
+  "memorySize":"16",
   "globalsSize":"8",
-  "tableSize":"20",
+  "tableSize":"16",
   "callSize":"10",
   "blockLimit":"2"
 }
