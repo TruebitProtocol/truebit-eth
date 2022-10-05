@@ -67,6 +67,7 @@ let delim = "_"
 *)
 
 let extra = ""
+let orig = "orig$"
 
 (* probably all funcs will have to stay *)
 let merge a b =
@@ -86,13 +87,13 @@ let merge a b =
   let ftmap2 x = Int32.add x (Int32.of_int (List.length a.it.types)) in
   let reserve_export x =
     let name = Utf8.encode x.it.name in
-    let name = if name = "_malloc" then extra ^ "_env__malloc" else name in
+    let name = if name = "_malloc" then extra ^ "env__malloc" else name in
     Hashtbl.add taken_imports name 0l in
   List.iter reserve_export a.it.exports;
   List.iter reserve_export b.it.exports;
   let add_import taken taken_cur imports map num imp =
     (* check if import was already taken *)
-    let name = extra ^ "_" ^ Utf8.encode imp.it.module_name ^ "_" ^ Utf8.encode imp.it.item_name in
+    let name = extra ^ Utf8.encode imp.it.module_name ^ "_" ^ Utf8.encode imp.it.item_name in
     if not (Hashtbl.mem taken name) || Hashtbl.mem taken_cur name then begin
       let loc = Int32.of_int (List.length !imports) in
       Hashtbl.add map (Int32.of_int num) loc;
@@ -112,7 +113,10 @@ let merge a b =
   List.iteri (fun n x -> add_import taken_imports taken_imports_a f_imports map1 n x) imports_a;
   List.iteri (fun n x -> add_import taken_imports taken_imports_b f_imports map2 n x) imports_b;
   List.iteri (fun n x -> add_import taken_globals taken_imports_a g_imports gmap1 n x) (global_imports a);
+  (* Ignore globals from filesystem *)
+  (*
   List.iteri (fun n x -> add_import taken_globals taken_imports_b g_imports gmap2 n x) (global_imports b);
+  *)
   let num_f = List.length !f_imports in
   let num_g = List.length !g_imports in
   trace ("Function imports: " ^ string_of_int num_f ^ "; Global imports: " ^ string_of_int num_g);
@@ -151,23 +155,28 @@ let merge a b =
   List.iteri (fun i _ ->
     trace ("global " ^ string_of_int i ^ " -> " ^ string_of_int (i + num_ga + offset_ga));
     Hashtbl.add gmap1 (Int32.of_int (i + num_ga)) (Int32.of_int (i + num_ga + offset_ga))) a.it.globals;
+  (*
   List.iteri (fun i _ ->
     trace ("global " ^ string_of_int i ^ " -> " ^ string_of_int (i + num_gb + offset_gb));
     Hashtbl.add gmap2 (Int32.of_int (i + num_gb)) (Int32.of_int (i + num_gb + offset_gb))) b.it.globals;
+  *)
   (* remap exports *)
   let exports_a = List.map (remap_export (Hashtbl.find map1) (Hashtbl.find gmap1) ftmap1 "") a.it.exports in
   let exports_b = List.map (remap_export (Hashtbl.find map2) (Hashtbl.find gmap2) ftmap2 "_b") b.it.exports in
   (* funcs will have to be remapped *)
   let funcs_a = List.map (remap (Hashtbl.find map1) (Hashtbl.find gmap1) ftmap1) a.it.funcs in
-  let funcs_b = List.map (remap (Hashtbl.find map2) (Hashtbl.find gmap2) ftmap2) b.it.funcs in
+  let funcs_b = List.map (remap (Hashtbl.find map2) (Hashtbl.find gmap1(*gmap2*)) ftmap2) b.it.funcs in
   let more_imports = other_imports a @ List.filter drop_table_import (other_imports b) in
   (* table elements have to be remapped *)
   trace ("Remapping globals");
-  {a with it={(a.it) with funcs = funcs_a@funcs_b;
-     globals = List.map (remap_global (Hashtbl.find map1) (Hashtbl.find gmap1) ftmap1) a.it.globals @
-               List.map (remap_global (Hashtbl.find map2) (Hashtbl.find gmap2) ftmap2) b.it.globals;
+  let m = {a with it={(a.it) with funcs = funcs_a@funcs_b;
+     globals = List.map (remap_global (Hashtbl.find map1) (Hashtbl.find gmap1) ftmap1) a.it.globals @ b.it.globals;
+(*     List.map (remap_global (Hashtbl.find map2) (Hashtbl.find gmap2) ftmap2) b.it.globals; *)
      imports = List.rev !f_imports @ List.rev !g_imports @ more_imports;
      exports = exports_a@List.filter drop_table exports_b;
      elems = List.map (remap_elements (Hashtbl.find map1)) a.it.elems;
-     types=a.it.types@b.it.types}}
-
+     types=a.it.types@b.it.types}} in
+  let m = add_i32_global m "_system_ptr" 0 in
+  let m = add_i32_global m "GAS_LIMIT" (!Flags.gas_limit) in
+  let m = add_i32_global m "TRUEBIT_VERSION" 2 in
+  m

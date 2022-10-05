@@ -726,7 +726,8 @@ let get_code = function
  | INITCALLTABLE x -> {noop with immed=i x; read_reg2=StackIn0; write1=(Reg2, CallTableOut); stack_ch=StackDec}
  | INITCALLTYPE x -> {noop with immed=i x; read_reg2=StackIn0; write1=(Reg2, CallTypeOut); stack_ch=StackDec}
  | CURMEM -> {noop with stack_ch=StackInc; read_reg2 = MemsizeIn; write1=(Reg2, StackOut0)}
- | GROW -> {noop with read_reg1=MemsizeIn; read_reg2 = StackIn0; alu_code= Binary (I32 I32Op.Add); mem_ch=true; stack_ch=StackDec}
+ (* Fix this *)
+ | GROW -> {noop with read_reg1=MemsizeIn; read_reg3=MemsizeIn; read_reg2 = StackIn0; alu_code= Binary (I32 I32Op.Add); mem_ch=true; write1=(Reg3, StackOut1)}
  | PUSH lit -> {noop with immed=lit; read_reg1=Immed; stack_ch=StackInc; write1=(Reg1, StackOut0)}
  | CONV op -> {noop with read_reg1=StackIn0; write1=(Reg1, StackOut1); alu_code=Convert op}
  | UNA op -> {noop with read_reg1=StackIn0; write1=(Reg1, StackOut1); alu_code=Unary op}
@@ -774,7 +775,6 @@ let m_step vm op =
     vm.pc <- handle_ptr regs vm.pc op.pc_ch;
     vm.stack_ptr <- handle_ptr regs vm.stack_ptr op.stack_ch;
     vm.call_ptr <- handle_ptr regs vm.call_ptr op.call_ch;
-    prerr_endline ("mem " ^ string_of_int vm.memsize);
     if op.mem_ch then vm.memsize <- value_to_int regs.reg1
   end
 
@@ -828,17 +828,17 @@ let vm_step vm = match vm.code.(vm.pc) with
  | STUB "env . _debugString" ->
    let ptr = value_to_int (vm.stack.(vm.stack_ptr - 1)) in
    let ptr = !Flags.memory_offset + ptr in
-   prerr_endline ("DEBUG: " ^ get_vm_string vm ptr);
+   prerr_endline ("STUB DEBUG: " ^ get_vm_string vm ptr);
    inc_pc vm
  | STUB "env . _debugBuffer" ->
    let ptr = value_to_int (vm.stack.(vm.stack_ptr - 2)) in
    let ptr = !Flags.memory_offset + ptr in
    let len = value_to_int (vm.stack.(vm.stack_ptr - 1)) in
-   prerr_endline ("DEBUG: " ^ String.escaped (get_vm_buffer vm ptr len));
+   prerr_endline ("STUB DEBUG: " ^ String.escaped (get_vm_buffer vm ptr len));
    inc_pc vm
  | STUB "env . _debugInt" ->
    let ptr = value_to_int (vm.stack.(vm.stack_ptr - 1)) in
-   prerr_endline ("DEBUG: " ^ string_of_int ptr);
+   prerr_endline ("STUB DEBUG: " ^ string_of_int ptr);
    inc_pc vm
  | STUB "env . _debugRead" ->
    let chr = value_to_int (vm.stack.(vm.stack_ptr - 1)) in
@@ -906,7 +906,7 @@ let vm_step vm = match vm.code.(vm.pc) with
      | _ ->
        let a = vm.memory.(loc/8) in
        let b = vm.memory.(loc/8+1) in
-       if !Flags.trace then Printf.printf "Loading %s and %s\n" (Int64.to_string a) (Int64.to_string b);
+       (* if !Flags.trace then Printf.printf "Loading %s and %s\n" (Int64.to_string a) (Int64.to_string b); *)
        vm.stack.(vm.stack_ptr-1) <- mem_load (I64 a) (I64 b) x.ty x.sz loc )
    | Types.I64Type, None ->
      let idx = loc land 0x07 in
@@ -915,7 +915,7 @@ let vm_step vm = match vm.code.(vm.pc) with
      | _ ->
        let a = vm.memory.(loc/8) in
        let b = vm.memory.(loc/8+1) in
-       if !Flags.trace then Printf.printf "Loading %s and %s\n" (Int64.to_string a) (Int64.to_string b);
+       (* if !Flags.trace then Printf.printf "Loading %s and %s\n" (Int64.to_string a) (Int64.to_string b); *)
        vm.stack.(vm.stack_ptr-1) <- mem_load (I64 a) (I64 b) x.ty x.sz loc )
    | Types.I32Type, Some (Memory.Mem8, Memory.ZX) ->
      let idx = loc mod 8 in
@@ -923,7 +923,7 @@ let vm_step vm = match vm.code.(vm.pc) with
    | _ ->
      let a = vm.memory.(loc/8) in
      let b = vm.memory.(loc/8+1) in
-     if !Flags.trace then Printf.printf "Loading %s and %s\n" (Int64.to_string a) (Int64.to_string b);
+     (* if !Flags.trace then Printf.printf "Loading %s and %s\n" (Int64.to_string a) (Int64.to_string b); *)
      vm.stack.(vm.stack_ptr-1) <- mem_load (I64 a) (I64 b) x.ty x.sz loc )
  | STORE x ->
    inc_pc vm;
@@ -1039,8 +1039,9 @@ let vm_step vm = match vm.code.(vm.pc) with
    vm.stack_ptr <- vm.stack_ptr + 1
  | GROW ->
    inc_pc vm;
+   let old_size = (Int32.of_int vm.memsize) in
    vm.memsize <- vm.memsize + value_to_int vm.stack.(vm.stack_ptr-1);
-   vm.stack_ptr <- vm.stack_ptr - 1
+   vm.stack.(vm.stack_ptr-1) <- I32 old_size
  | SETSTACK v ->
    let sz = pow2 v in
    vm.stack <- Array.make sz (i 0);

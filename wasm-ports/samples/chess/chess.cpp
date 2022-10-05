@@ -8,7 +8,7 @@
 using namespace std;
 
 void result(int num, const char *string) {
-  std::ofstream t("output.data");
+  std::ofstream t("output.dta");
   t << "At move " << num << " " << string << endl;
   t.close();
   exit(0);
@@ -62,7 +62,7 @@ bool validKnight(string &state, int x1, int y1, int x2, int y2) {
 }
 
 bool validQueen(string &state, int x1, int y1, int x2, int y2) {
-  return validRook(state, x1, y1, x2, y2) || validKnight(state, x1, y1, x2, y2);
+  return validRook(state, x1, y1, x2, y2) || validBishop(state, x1, y1, x2, y2);
 }
 
 bool validKing(string &state, int x1, int y1, int x2, int y2) {
@@ -210,7 +210,7 @@ bool staleMate(string &state, bool white) {
 }
 
 int main(int argc, char **argv) {
-  std::ifstream t("input.data");
+  std::ifstream t("input.dta");
   std::stringstream buffer;
   buffer << t.rdbuf();
 

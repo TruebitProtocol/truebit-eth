@@ -4,19 +4,19 @@
     "fileType": "IPFS"
   },
   "dataFiles": {
-    "/wasm-ports/samples/scrypt/input.data": "BYTES",
-    "/wasm-ports/samples/scrypt/output.data": "CONTRACT"
+    "/wasm-ports/samples/scrypt/input.dta": "BYTES",
+    "/wasm-ports/samples/scrypt/output.dta": "CONTRACT"
   },
   "outputs": {
-    "output.data": "BYTES"
+    "output.dta": "BYTES"
   },
   "minDeposit": "10",
   "solverReward": "2",
   "verifierTax": "6",
-  "stackSize":"20",
-  "memorySize":"20",
+  "stackSize":"16",
+  "memorySize":"16",
   "globalsSize":"8",
-  "tableSize":"20",
+  "tableSize":"16",
   "callSize":"10",
   "blockLimit":"2"
 }

@@ -1,12 +1,10 @@
 ### Plain stage to download basic packages ###
-FROM ubuntu:18.04 AS stage-base-plain
+FROM ubuntu:22.04 AS stage-base-plain
 MAINTAINER Jason Teutsch
 SHELL ["/bin/bash", "-c"]
 
 RUN apt-get update && apt-get install --no-install-recommends -y curl wget git \
-
-# Plain image packages
- python xz-utils ca-certificates
+ python3 xz-utils ca-certificates
 # && rm -rf /var/lib/apt/lists/*
 
 ### Base stage to download common packages ###
@@ -24,56 +22,53 @@ RUN apt-get install --no-install-recommends -y \
  libffi-dev libzarith-ocaml-dev m4 opam pkg-config zlib1g-dev \
 # Install Toolchain libraries
  autoconf bison flex libtool lzip \
+ wabt python3-pip python3-venv \
  && rm -rf /var/lib/apt/lists/*
 
 ################################################################################
 ######## The following stages run in sequence from stage-base-01. ##############
 ################################################################################
 
-# Install LLVM components
+# Install WASI-SDK using Wasienv components
 FROM stage-base-01 AS stage-base-02
-RUN git clone --depth 1 https://github.com/llvm-mirror/llvm -b release_60 \
- && cd llvm/tools \
- && git clone --depth 1 https://github.com/llvm-mirror/clang -b release_60 \
- && git clone --depth 1 https://github.com/llvm-mirror/lld -b release_60 \
- && cd /llvm \
- && cd tools/clang \
- && cd ../lld \
- && mkdir /build \
- && cd /build \
- && cmake -G Ninja -DLLVM_EXPERIMENTAL_TARGETS_TO_BUILD=WebAssembly -DCMAKE_BUILD_TYPE=release -DCMAKE_INSTALL_PREFIX=/usr/ /llvm \
- && ninja \
- && ninja install \
- && cd / \
- && rm -rf build llvm
+
+ENV PATH="${PATH}:/root/.local/bin"
+
+RUN curl https://raw.githubusercontent.com/wasienv/wasienv/master/install.sh | sh || echo ":(("
+
+RUN wasienv install-sdk unstable
 
 # Install Node package manager
 RUN wget -qO- https://raw.githubusercontent.com/nvm-sh/nvm/v0.35.3/install.sh | bash \
  && source ~/.nvm/nvm.sh \
- && nvm install 14.10.0
+ && nvm install 16.16.0
 
 # Add support for Rust tasks
 RUN curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh -s -- -y \
  && source $HOME/.cargo/env \
- && rustup install 1.40.0 \
- && rustup default 1.40.0 \
- && rustup target add wasm32-unknown-emscripten
+ && rustup install 1.63.0 \
+ && rustup default 1.63.0 \
+ && rustup target add wasm32-unknown-unknown \
+ && rustup target add wasm32-wasi
+
+# Installing correct versions of OCaml compilers
+RUN opam init -y git+https://github.com/ocaml/opam-repository \
+ && opam update \
+ && opam switch create 4.05.0
+
+RUN eval `opam config env` \
+ &&  opam update \
+ && opam install cryptokit yojson ocamlbuild -y
+
+RUN opam switch create 4.14.0
+
+RUN opam switch 4.14.0 \
+ && opam install wasm ocamlbuild -y \
+ && opam switch 4.05.0
 
 #################################################################################
 ############### The following stages run in parallel ############################
 #################################################################################
-
-# Set up Emscripten
-FROM stage-base-01 AS stage-Emscripten
-RUN git clone https://github.com/emscripten-core/emsdk.git emsdk \
- && cd emsdk \
- && ./emsdk install sdk-fastcomp-1.37.36-64bit \
- && ./emsdk install binaryen-tag-1.37.36-64bit \
- && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit \
- && ./emsdk install 1.38.33 \
- && ./emsdk install 1.39.8 \
- && rm -r zips
 
 # Install Solidity
 FROM stage-base-plain AS stage-Solidity
@@ -102,23 +97,31 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
 
 # Final Image
 FROM stage-base-02 as final-image
-COPY --from=stage-Emscripten /emsdk /emsdk
 COPY --from=stage-Solidity /bin/solc /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/geth  /bin/
 COPY --from=stage-Geth /geth-alltools-linux-amd64-1.10.21-67109427/clef  /bin/
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
-ARG URL_TRUEBIT_OS=https://truebit.io/downloads/truebit-linux
+ARG URL_TRUEBIT_OS=https://downloads.truebit.io/truebit-linux
 ADD $URL_TRUEBIT_OS truebit-eth/truebit-os
 
 # Install ocaml-offchain interpreter
-RUN opam init -y \
- && eval `opam config env` \
- && opam update \
- && opam install cryptokit ctypes ctypes-foreign yojson -y \
+RUN eval `opam config env` \
  && cd /truebit-eth/ocaml-offchain/interpreter \
- && make \
+ && make
+
+# Install bulk memory ops handler pass
+RUN opam switch 4.14.0 \
+ && eval `opam config env` \
+ && cd /truebit-eth/memory-ops \
+ && rm -f ops.native \
+ && ocamlbuild -package wasm ops.native \
  && rm -rf ~/.opam
+
+# Copy the implementation of bulk memory ops
+RUN cd /truebit-eth/memory-ops \
+ && wat2wasm impl.wat -o bulkmemory.wasm \
+ && cp bulkmemory.wasm ../emscripten-module-wrapper
 
 # Install Emscripten module wrapper and dependencies for deploying sample tasks
 RUN source ~/.nvm/nvm.sh \
@@ -130,60 +133,26 @@ RUN source ~/.nvm/nvm.sh \
  && npm ci
 
 # Install Toolchain libraries
-RUN source /emsdk/emsdk_env.sh \
- && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
- && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
- && cd /truebit-eth/wasm-ports \
- && sh gmp.sh \
- && sh openssl.sh \
- && sh secp256k1.sh \
- && sh libff.sh \
- && sh boost.sh \
- && sh libpbc.sh
+RUN cd /truebit-eth/wasm-ports \
+ && sh openssl.sh
 
 # Move initialization scripts for compiling, network, and authentication.
 RUN chmod 755 /truebit-eth/truebit-os \
  && mv /truebit-eth/goerli.sh / \
- && mv /truebit-eth/mainnet.sh / \
- && cd emsdk \
- && ./emsdk activate sdk-fastcomp-1.37.36-64bit \
- && ./emsdk activate binaryen-tag-1.37.36-64bit
+ && mv /truebit-eth/mainnet.sh /
 
 # Compile  C/C++ sample tasks
 RUN ipfs init \
+ && source ~/.nvm/nvm.sh \
  && ( ipfs daemon & ) \
- && source /emsdk/emsdk_env.sh \
- && sed -i "s|LLVM_ROOT = emsdk_path + '/fastcomp-clang/e1.37.36_64bit'|LLVM_ROOT = '/usr/bin'|" /emsdk/.emscripten \
- && sed -i "s|EMSCRIPTEN_NATIVE_OPTIMIZER = emsdk_path + '/fastcomp-clang/e1.37.36_64bit/optimizer'|EMSCRIPTEN_NATIVE_OPTIMIZER = ''|" /emsdk/.emscripten \
  && cd /truebit-eth/wasm-ports/samples/chess \
  && sh compile.sh \
  && cd ../scrypt \
- && sh compile.sh \
- && cd ../pairing \
- && sh compile.sh \
- && cd ../ffmpeg \
  && sh compile.sh \
  && rm -r /root/.ipfs
 
 # Compile Rust sample task
 RUN ipfs init \
- && ( ipfs daemon & ) \
- && source ~/.nvm/nvm.sh \
- && mv /truebit-eth/wasm-ports/samples/wasm / \
- && cd / \
- && git clone https://github.com/georgeroman/emscripten-module-wrapper.git \
- && cd /emscripten-module-wrapper \
- && npm install \
- && /emsdk/emsdk activate 1.39.8 \
- && source /emsdk/emsdk_env.sh \
- && source $HOME/.cargo/env \
- && cd /wasm \
- && npm i \
- && sh compile.sh \
- && rm -r /emscripten-module-wrapper \
- && mv /wasm /truebit-eth/wasm-ports/samples \
- && rm -r /root/.ipfs \
-
 ### Initialize
  && cd / \
  && rm -r boot home media mnt opt srv \

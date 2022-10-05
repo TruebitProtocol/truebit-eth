@@ -525,8 +525,9 @@ let check_import (im : import) (c : context) : context =
     check_memory_type t idesc.at; {c with memories = t :: c.memories}
   | GlobalImport t ->
     let GlobalType (_, mut) = t in
+    (*
     require (mut = Immutable) idesc.at
-      "mutable globals cannot be imported (yet)";
+      "mutable globals cannot be imported (yet)"; *)
     {c with globals = t :: c.globals}
 
 module NameSet = Set.Make(struct type t = Ast.name let compare = compare end)
@@ -537,10 +538,11 @@ let check_export (c : context) (set : NameSet.t) (ex : export) : NameSet.t =
   | FuncExport x -> ignore (func c x)
   | TableExport x -> ignore (table c x)
   | MemoryExport x -> ignore (memory c x)
-  | GlobalExport x ->
+  | GlobalExport x -> ignore (global c x)
+  (*
     let GlobalType (_, mut) = global c x in
     require (mut = Immutable) edesc.at
-      "mutable globals cannot be exported (yet)"
+      "mutable globals cannot be exported (yet)" *)
   );
   require (not (NameSet.mem name set)) ex.at ("duplicate export name " ^ Utf8.encode name);
   NameSet.add name set

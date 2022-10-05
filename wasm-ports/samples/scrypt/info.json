@@ -21,5 +21,5 @@
     "hash": "0xc1b4849ea229d80d757c358859e9c2408b775febe819e3f42ca6747036e72b41"
   },
   "memsize": 20,
-  "blocklimit": 2
+  "gas": 5000
 }

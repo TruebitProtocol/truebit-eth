@@ -4,3 +4,6 @@ node_modules
 *.prep.js
 *.o
 *.bin
+*.wasm
+*.dir
+*.dta
