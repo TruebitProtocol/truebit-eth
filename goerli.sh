@@ -20,7 +20,7 @@ tmux new -d 'ipfs daemon'
 CLEF='/root/.clef/clef.ipc'
 GETHIPC='./root/.ethereum/geth.ipc'
 
-GETH=$(echo 'geth  console --goerli --http --http.api web3,eth,net,engine,admin --datadir ~/.ethereum/ --authrpc.jwtsecret /ethereum/consensus/jwt.hex --authrpc.vhosts localhost  --signer' $CLEF)
+GETH=$(echo 'geth  console --goerli --http --http.api web3,eth,net,engine,admin --datadir ~/.ethereum/goerli --authrpc.jwtsecret /ethereum/consensus/jwt.hex --authrpc.vhosts localhost  --signer' $CLEF)
 PRYSM=$(echo '/ethereum/consensus/prysm/prysm.sh beacon-chain --execution-endpoint=http://localhost:8551 --prater --jwt-secret=/ethereum/consensus/jwt.hex --genesis-state=/ethereum/consensus/prysm/genesis.ssz --suggested-fee-recipient=0x1Da28542742614B3CA2941F9DFcD23FFc3CB0071')                         
 cat <<< $(jq '.geth.providerURL="/root/.ethereum/goerli/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
 tmux \
