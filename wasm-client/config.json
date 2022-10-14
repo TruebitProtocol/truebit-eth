@@ -1,6 +1,6 @@
 {
   "geth": {
-    "providerURL": "http://localhost:8545"
+    "providerURL": "/root/.ethereum/geth.ipc"
   },
   "ipfs": {
     "protocol": "http",
