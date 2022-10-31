@@ -167,6 +167,8 @@ RUN ipfs init \
  && sh compile.sh \
  && cd ../scrypt \
  && sh compile.sh \
+ && cd /truebit-eth/data \
+ && sh compile.sh \
  && rm -r /root/.ipfs
 
 # Compile Rust sample task
