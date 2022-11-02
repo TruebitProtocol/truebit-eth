@@ -1,6 +1,6 @@
 {
     "codeFile": {
-      "path": "/data/reverse_alphabet.wasm",
+      "path": "/data/task.wasm",
       "fileType": "IPFS"
     },
     "dataFiles": {
