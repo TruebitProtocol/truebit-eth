@@ -35,4 +35,3 @@ selectp -L \; swap-pane -U
 # cd /truebit-eth
 # ./truebit-os -c "ipfs register" --batch > /ipfs-connect.log &
 # ./truebit-os -c "ipfs connect" --batch >> /ipfs-connect.log &
-

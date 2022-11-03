@@ -30,6 +30,7 @@ split-window "echo 'Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ];
 split-window -hf  "echo 'Prysm Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $PRYSM " \; \
 selectp -L \; swap-pane -U
 
+
 # Improve IPFS connectivity by connecting to other Truebit users
 # echo 'Registering IPFS address and connecting with other registered IPFS nodes running Truebit OS (if Geth is synchronized).'
 # cd /truebit-eth

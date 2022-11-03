@@ -19,5 +19,3 @@ wasimake make -j 12 libcrypto.a
 rm -rf $SYSROOT/include/openssl
 cp -R include/openssl $SYSROOT/include
 cp libcrypto.a libssl.a $SYSROOT/lib/wasm32-wasi
-
-
