@@ -30,6 +30,7 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 5. [Building your own tasks](#Building-your-own-tasks)
 6. [Native installation](#Native-installation)
 7. [Contract API reference](#Contract-API-reference)
+8. [If you are using Windows or Mac](#Windows-and-Mac-considerations)
 
 # Quickstart guide: computational playground
 
@@ -1202,3 +1203,12 @@ function cancelled(bytes32 taskID) external;
 Truebit calls the Task Owner's `cancelled` method when `taskID` terminates without a solution due to a Solver timeout, loss of verification game, blockLimit error, or prematureReveal.
 
   
+# Windows and Mac considerations
+
+If you are using Windows or Mac and its your first time clonning this repository, run the following git commands to 
+ensure that the repo files are using the correct EOL config.
+
+```
+git rm --cached -r .
+git reset --hard
+```
