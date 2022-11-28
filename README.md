@@ -2,6 +2,8 @@
   <img src="./data/images/truebit-logo.png" width="650">
 </p>
 
+
+
 [![Docker Image](https://img.shields.io/docker/cloud/build/truebitprotocol/truebit-eth)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
 [![Docker size](https://img.shields.io/docker/image-size/truebitprotocol/truebit-eth/latest)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
 [![Truebit OS version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker?label=truebit-os)](https://truebit.io/downloads/)
