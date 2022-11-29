@@ -1199,3 +1199,5 @@ Truebit calls the Task Owner's `solved` method when `taskID` successfully termin
 function cancelled(bytes32 taskID) external;
 ```
 Truebit calls the Task Owner's `cancelled` method when `taskID` terminates without a solution due to a Solver timeout, loss of verification game, blockLimit error, or prematureReveal.
+
+
