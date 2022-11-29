@@ -4,14 +4,14 @@
 
 [![Docker Image](https://img.shields.io/docker/cloud/build/truebitprotocol/truebit-eth)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
 [![Docker size](https://img.shields.io/docker/image-size/truebitprotocol/truebit-eth/latest)](https://hub.docker.com/r/truebitprotocol/truebit-eth)
-[![Truebit OS version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker?label=truebit-os)](https://truebit.io/downloads/)
+[![Truebit OS version](https://img.shields.io/github/package-json/v/TruebitProtocol/package-tracker?label=truebit-os)](https://downloads.truebit.io/)
 [![Gitter](https://img.shields.io/gitter/room/TruebitProtocol/community?color=yellow)](https://gitter.im/TruebitProtocol/community)
 [![Discord](https://img.shields.io/discord/681631420674080993?color=yellow&label=discord)](https://discord.gg/CpjSeGK4Px)
 
 # What is Truebit?
 [Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.  You may wish to familiarize yourself with the practical, high-level [user guide](https://medium.com/truebit/getting-started-with-truebit-on-ethereum-ac1c7cdb0907) before proceeding.
 
-This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, some [libraries ported to WebAssembly](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) for adding runtime hooks, a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](#Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
+This comprehensive Ethereum implementation includes everything you need to create (from C, C++, or Rust code), issue, solve, and verify Truebit tasks.  This repo includes the Truebit-OS command line [client configurations](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-client) for solving and verifying tasks, some [libraries ported to WebAssembly](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports), an [wasm module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-module-wrapper) for adding runtime hooks, a [Rust tool](https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool) for generating tasks, the [off-chain interpreter](https://github.com/TruebitProtocol/truebit-eth/tree/master/ocaml-offchain) for executing and snapshotting computations, as well as [sample tasks](#Sample-tasks-via-smart-contracts).  You can install Truebit using Docker or build it from source for Linux, MacOS, or Windows.
 
 Feel free to browse the [legacy wiki](https://github.com/TruebitProtocol/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -130,6 +130,8 @@ https://goerli-faucet.slock.it/
 
 https://faucet.goerli.mudit.blog/
 
+https://goerli-faucet.pk910.de/
+
 As Ethereum mainnet lacks a faucet, you'll have to source ETH from an existing account (or mining).
 
 
@@ -143,7 +145,7 @@ If you wish to connect to Ethereum mainnet rather than Görli, use instead
 ```bash
 bash /mainnet.sh
 ```
-After running the startup script, the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, your Geth node should start to synchronize with the blockchain.
+After running the startup script, the [Clef](https://geth.ethereum.org/docs/clef/tutorial) account management tool should pop up at the bottom of a split `tmux` screen with Geth waiting to start above.  After you enter the master seed password for your accounts, use Ctrl+b+<KEYBOARD_ARROW> to navigate through the different windows within the terminal, and accept terms and condicionts of the clients to start syncing with the blockchain. After the Ethereum Merge the node clients were splitted into two different parts that must coexist (consensus and execution clients), thats why after running goerli or mainnet shell script it appears 2 different node client windows.
 
 Once your Geth node is fully synchronized, you may enhance IPFS connectivity by running the last four lines in `/goerli.sh` (sans comment symbol `#`) or by running the [equivalent](#Faster-IPFS-uploads-and-downloads) commands in Truebit OS.  [Open](#Open-terminal-window) a new Docker terminal and type `cat /goerli.sh` to view the file contents, cut and paste to your command line, and `cat /ipfs-connect.log` for connection results.  Alternatively, you can [configure](#Client-configuration) Truebit OS to synchronize with an external IPFS node rather than running one in Docker.
 
@@ -167,12 +169,38 @@ Note that Truebit OS automatically detects the blockchain network to which Geth 
 
 To view a list of your connected addresses inside the `geth console`, type `personal.listWallets` at the Geth command line.
 
+We also enable using Truebit with zero sync-up time by creating a fork Görli or Mainnet on a local blockchain that you can use for development.
+
+First, we need to install Ganache, using the following command
+
+npm install ganache --global
+
+Once is installed, open a new terminal window, and raise a Ganache local fork node using:
+
+For Görli fork
+
+```ganache --fork.url https://goerli.infura.io/v3/<INFURA_TOKEN> --miner.blockTime 12```
+
+For Mainnet Fork
+
+```ganache --fork.url https://mainnet.infura.io/v3/<INFURA_TOKEN> --miner.blockTime 12```
+
 # Solve and verify tasks
 
 We are now ready to run Truebit Solver and Verifier nodes.  This walk-through assumes you've already [set up your accounts](#Initializing-accounts) and [connected to the network](#Connect-to-the-network).  Use the ["open terminal window"](#Open-terminal-window) incantation to connect to your Docker container in a terminal window separate from Geth.  Then start Truebit OS!  
-```bash
+
+Görli/Mainnet
+``` bash
 cd /truebit-eth
 ./truebit-os
+```
+
+
+Ganache local fork
+
+``` bash 
+cd /truebit-eth
+./truebit-os -p ws://host.docker.internal:8545
 ```
 You should now see a new shell prompt.
 ```
@@ -575,22 +603,10 @@ See the source code [here](https://github.com/mrsmkl/FFmpeg/blob/truebit_check/f
 
 
 # Building your own tasks
-We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks. Inspect sample source codes and their respective compile scripts [here](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples).  Each compile script first compiles C, C++, or Rust source code, along with included library dependencies, to a pair of WebAssembly JavaScript runtime files using [Emscripten](https://emscripten.org/).  Truebit's [Emscripten module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/emscripten-module-wrapper) then converts these files into a WebAssemebly format executable in Truebit.  Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as a [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
-
-To view the current Emscripten compiler configuration, which varies based on whether you are using the C/C++ or Rust pipeline, type the following command.
-```bash
-emcc -v
-```
+We now explore the Truebit Toolchain.  Each of the samples below produces a task code file called `task.wasm`, and each such file is produced by running a script called `compile.sh`.  You can use the `compile.sh` files as templates for generating your own tasks. Inspect sample source codes and their respective compile scripts [here](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples).  Each compile script first compiles C, C++, or Rust source code, along with included library dependencies, to a pair of WebAssembly JavaScript runtime files using [WASI-SDK](https://github.com/WebAssembly/wasi-sdk).  Truebit's [Wasm module wrapper](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-module-wrapper) then converts these files into a WebAssemebly format executable in Truebit.  Here are is a helpful, legacy [tutorial](https://github.com/TruebitProtocol/truebit-eth/tree/master/wasm-ports/samples/scrypt/README.md) for creating and deploying Truebit tasks as well as a [demo video](https://www.youtube.com/watch?v=dDzPCMBlZN4) illustrating this process.
 
 ## Compiling from C/C++
-From your Truebit container, run the following commands (in this order) to configure the compiler for C/C++ (if you are starting a fresh container, then the last line, `bash /goerli.sh`, will suffice).
-```bash
-/emsdk/emsdk activate sdk-fastcomp-1.37.36-64bit
-/emsdk/emsdk activate binaryen-tag-1.37.36-64bit
-source /emsdk/emsdk_env.sh
-bash /goerli.sh
-```
-Note that `bash /goerli.sh` includes compiler setup, so don't skip it.  Exit the `tmux` shell using Ctrl-C, Ctrl-D.  You should now be able to re-compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
+You should now be able to re-compile the sample tasks yourself in C++ (chess, scrypt, pairing), and C (ffmpeg) below.
 ```bash
 cd /truebit-eth/wasm-ports/samples/chess
 sh compile.sh
@@ -605,15 +621,9 @@ Note that `sh compile.sh` will rebuild both the `build` and `dist` directories.
 
 ## Compiling from Rust
 For Rust tasks, take a look @georgeroman's [walk-through](
-https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool).  You can use this guide to re-compile the `/truebit-eth/wasm-ports/samples/wasm` task via the steps below.  First, set up the Rust compiler.
+https://github.com/TruebitProtocol/truebit-eth/tree/master/rust-tool).  You can use this guide to compile the `/truebit-eth/wasm-ports/samples/wasm` task via the steps below.  First, set up the Rust compiler.
 ```bash
-cd /
-git clone https://github.com/georgeroman/emscripten-module-wrapper.git
-cd /emscripten-module-wrapper && npm install
-/emsdk/emsdk activate 1.39.8
-source /emsdk/emsdk_env.sh
 ipfs init
-( ipfs daemon & )
 ```
 
 Then you can recompile the Rust sample task as follows.

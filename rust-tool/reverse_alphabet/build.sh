@@ -13,7 +13,7 @@ cd target/wasm32-unknown-emscripten/release
 # Transform to WAT
 wasm2wat "$rust_project_name.wasm" -o "$rust_project_name.wat"
 
-# The WASI functions are exported from `env` in the filesystem from `emscripten-module-wrapper`
+# The WASI functions are exported from `env` in the filesystem from `wasm-module-wrapper`
 sed -i 's/wasi_snapshot_preview1/env/g' "$rust_project_name.wat"
 sed -i 's/wasi_unstable/env/g' "$rust_project_name.wat"
 sed -i 's/wasi/env/g' "$rust_project_name.wat"

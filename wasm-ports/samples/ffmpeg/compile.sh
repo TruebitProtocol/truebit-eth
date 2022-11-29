@@ -34,7 +34,7 @@ cd ..
 
 emcc -o ffcheck.js ffcheck.bc
 
-node ~/emscripten-module-wrapper/prepare.js ffcheck.js --file output.data --file input.ts \
+node ~/wasm-module-wrapper/prepare.js ffcheck.js --file output.data --file input.ts \
      --run --memory-size=21 --upload-ipfs --out=dist --debug --float
 
 cp dist/intfloat.wasm task.wasm
