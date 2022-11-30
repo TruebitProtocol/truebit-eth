@@ -180,4 +180,3 @@ RUN ipfs init \
 
 # Open IPFS and blockchain ports
 EXPOSE 4001 8080 8545 8546 30303
-
