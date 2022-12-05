@@ -44,9 +44,25 @@ docker pull truebitprotocol/truebit-eth:latest
 ```
 If you are running older version of Truebit OS and receive errors in your client, you should update to the latest Docker container via the same command.  The current Truebit OS version is listed in the badge at the top of this README file, and you can compare this against the local version which Truebit OS displays at startup.
 
+# Windows and Mac considerations
+
+If you are using Windows or Mac and it is not your first time clonning this repository, run the following git commands to 
+ensure that the repo files are using the correct EOL config.
+
+```
+git rm --cached -r .
+git reset --hard
+```
+
 ## Docker incantations
 
 Building the image above will take some minutes, but thereafter running the container will give an instant prompt.  While you are waiting for the image download to complete, familiarize yourself with the following three command classes with which you will access the Truebit network.
+
+## MacOS build steps
+
+- Increase Docker Desktop Swap memory to 4gb
+- run `export DOCKER_DEFAULT_PLATFORM=linux/amd64
+docker build . -t truebit-macos`
 
 ### "Start container"
 
@@ -1212,13 +1228,3 @@ function cancelled(bytes32 taskID) external;
 ```
 Truebit calls the Task Owner's `cancelled` method when `taskID` terminates without a solution due to a Solver timeout, loss of verification game, blockLimit error, or prematureReveal.
 
-  
-# Windows and Mac considerations
-
-If you are using Windows or Mac and its your first time clonning this repository, run the following git commands to 
-ensure that the repo files are using the correct EOL config.
-
-```
-git rm --cached -r .
-git reset --hard
-```
