@@ -1228,3 +1228,13 @@ function cancelled(bytes32 taskID) external;
 ```
 Truebit calls the Task Owner's `cancelled` method when `taskID` terminates without a solution due to a Solver timeout, loss of verification game, blockLimit error, or prematureReveal.
 
+  
+# Windows and Mac considerations
+
+If you are using Windows or Mac and its your first time clonning this repository, run the following git commands to 
+ensure that the repo files are using the correct EOL config.
+
+```
+git rm --cached -r .
+git reset --hard
+```
