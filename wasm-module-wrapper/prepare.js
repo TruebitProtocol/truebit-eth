@@ -7,7 +7,7 @@ const path = require('path');
 
 let dir = path.dirname(fs.realpathSync(__filename)) + '/';
 
-let tmp_dir = "/tmp/emscripten-module-wrapper" + Math.floor(Math.random() * Math.pow(2, 32)).toString(32)
+let tmp_dir = "/tmp/wasm-module-wrapper" + Math.floor(Math.random() * Math.pow(2, 32)).toString(32)
 if (argv.out) tmp_dir = path.resolve(process.cwd(), argv.out);
 
 fs.mkdirpSync(tmp_dir);

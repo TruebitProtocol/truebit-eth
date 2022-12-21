@@ -38,7 +38,7 @@ This will generate `scrypt.wasm` (the WebAssembly file) and `scrypt.js` (JS runt
 So, the file `scrypt.wasm` has to be linked with Truebit runtime that is written in C and compiled into WASM.
 This is done with the command
 ```
-node ~/emscripten-module-wrapper/prepare.js scrypt.js --file input.data --file output.data --run --debug --out=dist --memory-size=20 --metering=5000 --upload-ipfs --limit-stack
+node ~/wasm-module-wrapper/prepare.js scrypt.js --file input.data --file output.data --run --debug --out=dist --memory-size=20 --metering=5000 --upload-ipfs --limit-stack
 ```
 
 The important generated files are `dist/globals.wasm` and `dist/info.json`. `globals.wasm` is the linked WASM file, `info.json` has the calculated code hash that
