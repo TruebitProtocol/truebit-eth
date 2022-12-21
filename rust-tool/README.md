@@ -10,7 +10,7 @@ When transpiling from Rust to WASM via Emscripten, the resulting WASM file has t
 
 Truebit doesn't support the WASI APIs out of the box, so there is a need to manually implement and make available the required WASI APIs in Truebit's WASM runtime.
 To make this happen, using the `wasm2wat` and `wat2wasm` utilities, the WASI imports should be changed to regular `env` imports in the WAT representation of the WASM file
-and then implementations for those APIs should be provided in `filesystem.c` of `emscripten-module-wrapper` so that the APIs will be available at runtime.
+and then implementations for those APIs should be provided in `filesystem.c` of `wasm-module-wrapper` so that the APIs will be available at runtime.
 
 At the moment, `fd_environ_get`, `fd_environ_sizes_get`, `fd_fdstat_get`, `fd_write` and `fd_close` are the WASI APIs provided in this workaround,
 although additional APIs can be easily supported via similar changes.
@@ -30,12 +30,12 @@ The directory structure needs to be as follows:
     | run.sh
 | emsdk
 | ocaml-offchain
-| emscripten-module-wrapper
+|`wasm-module-wrapper
 ```
-Note that the [Docker container](https://hub.docker.com/r/truebitprotocol/truebit-eth) already contains the required `emsdk` installation as well as a symlink to `ocaml-offchain` in its top-level directory.  You may clone and run a modified version of `emscripten-module-wrapper` as follows:
+Note that the [Docker container](https://hub.docker.com/r/truebitprotocol/truebit-eth) already contains the required `emsdk` installation as well as a symlink to `ocaml-offchain` in its top-level directory.  You may clone and run a modified version of `wasm-module-wrapper` as follows:
 ```
-git clone https://github.com/georgeroman/emscripten-module-wrapper.git
-cd emscripten-module-wrapper
+git clone https://github.com/georgeroman`wasm-module-wrapper.git
+cd`wasm-module-wrapper
 npm install
 # Optional - only needed if additional WASI APIs are to be supported
 # Make sure Emsscripten 1.38.33 is activated before running this
@@ -49,7 +49,7 @@ rustup default 1.40.0
 rustup target add wasm32-unknown-emscripten
 ```
 
-If you working outside the Docker container, you will need to install Emscripten (versions `1.38.33` (needed in `emscripten-module-wrapper`) and `1.39.8` (needed for transpiling the Rust code to WebAssembly)):
+If you working outside the Docker container, you will need to install Emscripten (versions `1.38.33` (needed in `wasm-module-wrapper`) and `1.39.8` (needed for transpiling the Rust code to WebAssembly)):
 ```
 git clone https://github.com/emscripten-core/emsdk
 cd emsdk
