@@ -79,7 +79,7 @@ RUN cd bin \
 
 # Install Geth
 FROM stage-base-plain AS stage-Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.11.5-a38f4108.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.11.6-ea9e62ca.tar.gz \
     && tar xf geth*tar.gz \
     && rm geth*tar.gz \
     && cd geth*
