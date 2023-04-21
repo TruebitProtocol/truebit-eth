@@ -115,8 +115,8 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
 # Final Image
 FROM stage-base-02 as final-image
 COPY --from=stage-Solidity /bin/solc /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.11.5-a38f4108/geth  /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.11.5-a38f4108/clef  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.11.6-ea9e62ca/geth  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.11.6-ea9e62ca/clef  /bin/
 COPY --from=stage-Prysm /ethereum /ethereum
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
