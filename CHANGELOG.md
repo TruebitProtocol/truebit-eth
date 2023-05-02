@@ -2,6 +2,13 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.2.0](https://github.com/TruebitProtocol/truebit-eth/compare/v1.1.0...v1.2.0) (2023-05-02)
+
+
+### Features
+
+* updating geth on dockerfile ([76e598a](https://github.com/TruebitProtocol/truebit-eth/commit/76e598a74ed3958707ad595df52067822de60b9c))
+
 ## [1.1.0](https://github.com/TruebitProtocol/truebit-eth/compare/v1.0.0...v1.1.0) (2023-01-26)
 
 
