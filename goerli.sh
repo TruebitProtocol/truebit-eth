@@ -7,8 +7,8 @@
 #emcc -v
 
 # Refresh Clef and Geth IPC sockets
-rm ~/.clef/clef.ipc &>/dev/null
-rm ~/.ethereum/goerli/geth.ipc &>/dev/null
+rm /root/.clef/clef.ipc &>/dev/null
+rm /root/.ethereum/geth.ipc &>/dev/null
 
 export PRYSM_ALLOW_UNVERIFIED_BINARIES=1
 
@@ -18,7 +18,7 @@ tmux new -d 'ipfs daemon'
 
 # Start Clef and Geth
 CLEF='/root/.clef/clef.ipc'
-GETHIPC='./root/.ethereum/geth.ipc'
+GETHIPC='/root/.ethereum/geth.ipc'
 
 GETH=$(echo 'geth  console --goerli --http --http.api web3,eth,net,engine,admin --datadir=/root/.ethereum --authrpc.jwtsecret /ethereum/consensus/jwt.hex --authrpc.vhosts localhost  --signer' $CLEF)
 PRYSM=$(echo '/ethereum/consensus/prysm/prysm.sh beacon-chain --execution-endpoint=http://localhost:8551 --datadir=/root/.eth2/beaconchain --jwt-secret=/ethereum/consensus/jwt.hex --genesis-state=/ethereum/consensus/prysm/genesis.ssz --suggested-fee-recipient=0x1Da28542742614B3CA2941F9DFcD23FFc3CB0071 --goerli')
