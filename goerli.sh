@@ -7,8 +7,8 @@
 #emcc -v
 
 # Refresh Clef and Geth IPC sockets
-rm ~/.clef/clef.ipc &>/dev/null
-rm ~/.ethereum/goerli/geth.ipc &>/dev/null
+rm /root/.clef/clef.ipc &>/dev/null
+rm /root/.ethereum/geth.ipc &>/dev/null
 
 export PRYSM_ALLOW_UNVERIFIED_BINARIES=1
 
@@ -18,13 +18,13 @@ tmux new -d 'ipfs daemon'
 
 # Start Clef and Geth
 CLEF='/root/.clef/clef.ipc'
-GETHIPC='./root/.ethereum/geth.ipc'
+GETHIPC='/root/.ethereum/geth.ipc'
 
-GETH=$(echo 'geth  console --goerli --http --http.api web3,eth,net,engine,admin --datadir ~/.ethereum/goerli --authrpc.jwtsecret /ethereum/consensus/jwt.hex --authrpc.vhosts localhost  --signer' $CLEF)
-PRYSM=$(echo '/ethereum/consensus/prysm/prysm.sh beacon-chain --execution-endpoint=http://localhost:8551 --prater --jwt-secret=/ethereum/consensus/jwt.hex --genesis-state=/ethereum/consensus/prysm/genesis.ssz --suggested-fee-recipient=0x1Da28542742614B3CA2941F9DFcD23FFc3CB0071')                         
-cat <<< $(jq '.geth.providerURL="/root/.ethereum/goerli/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
+GETH=$(echo 'geth  console --goerli --http --http.api web3,eth,net,engine,admin --datadir=/root/.ethereum --authrpc.jwtsecret /ethereum/consensus/jwt.hex --authrpc.vhosts localhost  --signer' $CLEF)
+PRYSM=$(echo '/ethereum/consensus/prysm/prysm.sh beacon-chain --execution-endpoint=http://localhost:8551 --datadir=/root/.eth2/beaconchain --jwt-secret=/ethereum/consensus/jwt.hex --genesis-state=/ethereum/consensus/prysm/genesis.ssz --suggested-fee-recipient=0x1Da28542742614B3CA2941F9DFcD23FFc3CB0071 --goerli')
+cat <<< $(jq '.geth.providerURL="/root/.ethereum/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
 tmux \
-new-session 'clef --advanced --nousb --chainid 5 --keystore ~/.ethereum/goerli/keystore --rules /truebit-eth/wasm-client/ruleset.js' \; \
+new-session 'clef --advanced --nousb --chainid 5 --keystore=/root/.ethereum/goerli/keystore --configdir=/root/.clef  --rules /truebit-eth/wasm-client/ruleset.js' \; \
 split-window -v  "echo 'Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $GETH " \; \
 split-window -hf  "echo 'Prysm Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $PRYSM " \; \
 selectp -L \; swap-pane -U
