@@ -2,6 +2,16 @@
 
 All notable changes to this project will be documented in this file.
 
+### [1.2.1](https://github.com/TruebitProtocol/truebit-eth/compare/v1.2.0...v1.2.1) (2023-06-23)
+
+
+### Bug Fixes
+
+* gorli consensus ([1dc5595](https://github.com/TruebitProtocol/truebit-eth/commit/1dc559585513cf838219960e5575ce1bfe038d48))
+* IPC clef geth, version ([3a122ec](https://github.com/TruebitProtocol/truebit-eth/commit/3a122ec8a4879c4eee2c49abe9709e4236e55d3b))
+* ipf path ([0b2f849](https://github.com/TruebitProtocol/truebit-eth/commit/0b2f849237d72181fb0f8f2fffde97e560e8117f))
+* Opam and Geth upgrade ([432d9bd](https://github.com/TruebitProtocol/truebit-eth/commit/432d9bd6a953ec86378135825f5a0e57e126dc54))
+
 ## [1.2.0](https://github.com/TruebitProtocol/truebit-eth/compare/v1.1.0...v1.2.0) (2023-05-02)
 
 
