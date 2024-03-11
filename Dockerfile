@@ -79,7 +79,7 @@ RUN cd bin \
 
 # Install Geth
 FROM stage-base-plain AS stage-Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.12.0-e501b3b0.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.13.14-2bd6bd01.tar.gz \
     && tar xf geth*tar.gz \
     && rm geth*tar.gz \
     && cd geth*
@@ -94,7 +94,7 @@ RUN mkdir ethereum \
     && cd prysm \
     && curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh \
     && chmod 755 prysm.sh \
-    && wget https://github.com/eth-clients/eth2-networks/raw/master/shared/prater/genesis.ssz \
+    && wget https://github.com/eth-clients/eth2-networks/blob/master/shared/mainnet/genesis.ssz \
     && export PRYSM_ALLOW_UNVERIFIED_BINARIES=1 \
     && ./prysm.sh beacon-chain generate-auth-secret \
     && cp jwt.hex .. \
@@ -115,8 +115,8 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
 # Final Image
 FROM stage-base-02 as final-image
 COPY --from=stage-Solidity /bin/solc /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.12.0-e501b3b0/geth  /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.12.0-e501b3b0/clef  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.13.14-2bd6bd01/geth  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.13.14-2bd6bd01/clef  /bin/
 COPY --from=stage-Prysm /ethereum /ethereum
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
@@ -148,6 +148,7 @@ RUN source ~/.nvm/nvm.sh \
     && cd /truebit-eth/wasm-client \
     && ln -s /truebit-eth/ocaml-offchain \
     && cd /truebit-eth \
+    && apt-get update && apt-get install -y openssh-client \
     && npm ci
 
 # Install Toolchain libraries
