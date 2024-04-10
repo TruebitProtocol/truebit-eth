@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file.
 
+## [1.3.0](https://github.com/TruebitProtocol/truebit-eth/compare/v1.2.1...v1.3.0) (2024-04-10)
+
+
+### Features
+
+* dencun upgrade ([7b42aa6](https://github.com/TruebitProtocol/truebit-eth/commit/7b42aa600377ecd0b0b108b5a230a1d4901cbf80))
+* update dencun geth and pryms ([0db4ec4](https://github.com/TruebitProtocol/truebit-eth/commit/0db4ec42d25fbc2fd666f5a14a34925ca4752eae))
+
 ### [1.2.1](https://github.com/TruebitProtocol/truebit-eth/compare/v1.2.0...v1.2.1) (2023-06-23)
 
 
