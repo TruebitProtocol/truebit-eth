@@ -9,7 +9,17 @@
 [![Discord](https://img.shields.io/discord/681631420674080993?color=yellow&label=discord)](https://discord.gg/CpjSeGK4Px)
 
 # What is Truebit?
-[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.  You may wish to familiarize yourself with the practical, high-level [user guide](https://docs.truebit.io/v1docs/getting-started/master) before proceeding.
+
+## Documentation Update in Progress
+
+For the latest documentation, please visit our documentation site:
+[https://docs.truebit.io/v1docs](https://docs.truebit.io/v1docs)
+
+_This README will be updated soon. Thank you for your patience._
+
+
+<br><br>
+[Truebit](https://truebit.io/) is a blockchain enhancement which enables smart contracts to securely perform complex computations in standard programming languages at reduced gas costs. As described in the [whitepaper](https://people.cs.uchicago.edu/~teutsch/papers/truebit.pdf) and this graphical, developer-oriented [overview](https://medium.com/truebit/truebit-the-marketplace-for-verifiable-computation-f51d1726798f), Task Givers can issue computational tasks while Solvers and Verifiers receive remuneration for correctly solving them.  You may wish to familiarize yourself with the installation instructions [user guide](https://docs.truebit.io/v1docs/getting-started/master) before proceeding.
 
 Feel free to browse the [legacy wiki](https://github.com/TruebitProtocol/wiki), contribute to this repo's wiki, or check out these classic development blog posts:
 * [Developing with Truebit: An Overview](https://medium.com/truebit/developing-with-truebit-an-overview-86a2e3565e22)
@@ -21,7 +31,7 @@ Feel free to browse the [legacy wiki](https://github.com/TruebitProtocol/wiki), 
 In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel features links to some excellent introductions and mainstream media articles about Truebit.  If you'd like to speak with developers working on this project, come say hello on Truebit's [Gitter](https://gitter.im/TruebitProtocol/Lobby) and [Discord](https://discord.gg/CzpsQ66) channels.
 
 
-# Quickstart guide: computational playground
+## Quickstart guide: computational playground
 
 This tutorial demonstrates how to install Truebit, connect to Ethereum Main or forking mainnet networks using hardhat, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to Ethereum blockchain and solve tasks with your friends!
 
