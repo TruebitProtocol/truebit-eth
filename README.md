@@ -37,7 +37,7 @@ This tutorial demonstrates how to get started with Truebit using Ethereum mainne
 
 ## GETTING STARTED
 
-Follow the [getting started] (https://docs.truebit.io/v1docs) guide to learn about:<br>
+Follow the [getting started](https://docs.truebit.io/v1docs) guide to learn about:<br>
 -Install Truebit on Ethereum<br>
 -Truebit on Ethereum Structure<br>
 -Start Docker container<br>
