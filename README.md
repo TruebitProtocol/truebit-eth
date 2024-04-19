@@ -479,7 +479,7 @@ function getInitialHash(bytes32 bid) external view returns (bytes32);
 ```
 `getInitialHash` returns the initial machine state corresponding to the code root and data files in bundle `bid`.  Solvers and Verifiers reconstruct this value locally from fileID and VM metadata before executing the task.
 
-### Reading file data
+### Reading-file-data
 
 The following methods retrieve data from fileID's.
 
@@ -659,7 +659,7 @@ When calling `taskParameters` from web3.js, the created dictionary will automati
 ```solidity
 function getSolverUploads(bytes32 tid) external view returns (bytes32[] memory);
 ```
-`getSolverUploads` returns the verified outputs uploaded by the Solver for task `tid` as a list of fileID's.  Note that the Merkle root returned by [`getRoot`](Reading-file-data) is authoritative, whereas the content address returned by [`getIpfsHash`](Reading-file-data) or [`getContractCode`](Reading-file-data) is just a hint.  Thus, when downloading an output from IPFS or a contract file, one should also compute its [Merkle root](#getRoot) to confirm correctness.  [`getBytesData`](Reading-file-data) is always authoritative.
+`getSolverUploads` returns the verified outputs uploaded by the Solver for task `tid` as a list of fileID's.  Note that the Merkle root returned by getRoot is authoritative, whereas the content address returned by [`getIpfsHash`](#Reading-file-data) or [`getContractCode`](#Reading-file-data) is just a hint.  Thus, when downloading an output from IPFS or a contract file, one should also compute its [Merkle root](#getRoot) to confirm correctness.  [`getBytesData`](#Reading-file-data) is always authoritative.
 
 ```solidity
 function getVerifierList(bytes32 tid) external view returns (address[] memory);
