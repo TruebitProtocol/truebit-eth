@@ -23,7 +23,7 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 
 # Quickstart guide: computational playground
 
-This tutorial demonstrates how to install Truebit, connect to Görli or Ethereum mainnet networks, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to the Görli testnet blockchain and solve tasks with your friends!
+This tutorial demonstrates how to install Truebit, connect to Ethereum Main or forking mainnet networks using hardhat, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to Ethereum blockchain and solve tasks with your friends!
 
 ## GETTING STARTED
 
@@ -218,9 +218,7 @@ and the keystore files at one of these:
 ```bash
 ~/Library/Ethereum/keystore
 ```
-The `--chainid` for Görli is still 5, and the `--chainid` for mainnet is still 1.
-
-In MacOS, a startup cheatsheet for Görli testnet might look something like this.
+The `--chainid` for mainnet is still 1.
 
 For Ethereum mainnet, it might look like this:
 ```bash
@@ -232,7 +230,7 @@ geth console --syncmode light --signer ~/Library/Signer/clef.ipc
 For Linux, try one of the following.
 ```bash
 ipfs daemon &
-clef --advanced --rules ~/.clef/ruleset.js --chainid 1
+clef --advanced --rules ~/.clef/ruleset.js --chainid 1GörliGörli
 geth console --syncmode light --signer ~/.clef/clef.ipc
 ./truebit-os -p ~/.ethereum/geth.ipc
 ```
