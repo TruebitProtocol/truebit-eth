@@ -33,10 +33,11 @@ In addition, Truebit's [Reddit](https://www.reddit.com/r/truebit/) channel featu
 
 ## Quickstart guide: computational playground
 
-This tutorial demonstrates how to install Truebit, connect to Ethereum Main or forking mainnet networks using hardhat, solve, verify and issue tasks, and finally build your own tasks.  Use the following steps to connect to Ethereum blockchain and solve tasks with your friends!
+This tutorial demonstrates how to get started with Truebit using Ethereum mainnet or hardhat (testnet) to solve, verify, issue, and build tasks. Please refer to this guide for step by step installation instructions.
 
 ## GETTING STARTED
 
+Follow the [getting started] (https://docs.truebit.io/v1docs) guide to learn about:
 -Install Truebit on Ethereum<br>
 -Truebit on Ethereum Structure<br>
 -Start Docker container<br>
@@ -49,8 +50,6 @@ This tutorial demonstrates how to install Truebit, connect to Ethereum Main or f
 -Purchase Solver License<br>
 -Start Solve and Verify<br>
 -IPFS connection for distributed file sharing<br>
-
-Follow the [Getting started Guide](https://docs.truebit.io/v1docs)
 
 
 ## Sample tasks via smart contracts
