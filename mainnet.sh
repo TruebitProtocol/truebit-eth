@@ -23,7 +23,7 @@ GETHIPC='/root/.ethereum/geth.ipc'
 
 GETH=$(echo 'geth  console --http --http.api web3,eth,net,engine,admin --datadir=/root/.ethereum --authrpc.jwtsecret /ethereum/consensus/jwt.hex --authrpc.vhosts localhost  --signer' $CLEF)
 
-PRYSM=$(echo '/ethereum/consensus/prysm/prysm.sh beacon-chain --execution-endpoint=http://localhost:8551 --datadir=/root/.eth2/beaconchain --jwt-secret=/ethereum/consensus/jwt.hex  --suggested-fee-recipient=0x1Da28542742614B3CA2941F9DFcD23FFc3CB0071')
+PRYSM=$(echo '/ethereum/consensus/bin/beacon-chain --execution-endpoint=http://localhost:8551 --datadir=/root/.eth2/beaconchain --jwt-secret=/ethereum/consensus/jwt.hex --genesis-state=/ethereum/consensus/prysm/genesis.ssz --suggested-fee-recipient=0x1Da28542742614B3CA2941F9DFcD23FFc3CB0071 --accept-terms-of-use') 
 cat <<< $(jq '.geth.providerURL="/root/.ethereum/geth.ipc"' /truebit-eth/wasm-client/config.json) > /truebit-eth/wasm-client/config.json
 tmux \
 new-session 'clef --advanced --nousb --chainid 1 --keystore=/root/.ethereum/keystore --configdir=/root/.clef   --rules /truebit-eth/wasm-client/ruleset.js' \; \

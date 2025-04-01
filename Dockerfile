@@ -79,26 +79,22 @@ RUN cd bin \
 
 # Install Geth
 FROM stage-base-plain AS stage-Geth
-RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.13.14-2bd6bd01.tar.gz \
+RUN wget https://gethstore.blob.core.windows.net/builds/geth-alltools-linux-amd64-1.15.6-19d2b4c8.tar.gz \
     && tar xf geth*tar.gz \
     && rm geth*tar.gz \
     && cd geth*
 
 # Install Consensus
 FROM stage-base-plain AS stage-Prysm
-RUN mkdir ethereum \
-    && cd ethereum \
-    && mkdir consensus \
-    && cd consensus \
-    && mkdir prysm \
-    && cd prysm \
-    && curl https://raw.githubusercontent.com/prysmaticlabs/prysm/master/prysm.sh --output prysm.sh \
-    && chmod 755 prysm.sh \
-    && wget https://github.com/eth-clients/eth2-networks/blob/master/shared/mainnet/genesis.ssz \
-    && export PRYSM_ALLOW_UNVERIFIED_BINARIES=1 \
-    && ./prysm.sh beacon-chain generate-auth-secret \
-    && cp jwt.hex .. \
-    && cd .. \
+ARG PRYSM_VERSION=v5.2.0 
+RUN mkdir -p /ethereum/consensus/prysm /ethereum/consensus/bin \
+    && cd /ethereum/consensus/bin \
+    && wget "https://github.com/prysmaticlabs/prysm/releases/download/${PRYSM_VERSION}/beacon-chain-${PRYSM_VERSION}-linux-amd64" -O beacon-chain \
+    && chmod +x beacon-chain \
+    && cd /ethereum/consensus/prysm \
+    && wget https://github.com/eth-clients/eth2-networks/raw/master/shared/mainnet/genesis.ssz \
+    && cd /ethereum/consensus \
+    && openssl rand -hex 32 > jwt.hex \
     && chmod 0444 jwt.hex
 
 # Install IPFS
@@ -115,9 +111,9 @@ RUN wget https://dist.ipfs.io/go-ipfs/v0.7.0/go-ipfs_v0.7.0_linux-amd64.tar.gz \
 # Final Image
 FROM stage-base-02 as final-image
 COPY --from=stage-Solidity /bin/solc /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.13.14-2bd6bd01/geth  /bin/
-COPY --from=stage-Geth /geth-alltools-linux-amd64-1.13.14-2bd6bd01/clef  /bin/
-COPY --from=stage-Prysm /ethereum /ethereum
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.15.6-19d2b4c8/geth  /bin/
+COPY --from=stage-Geth /geth-alltools-linux-amd64-1.15.6-19d2b4c8/clef  /bin/
+COPY --from=stage-Prysm /ethereum/consensus /ethereum/consensus
 COPY --from=stage-IPFS /usr/local/bin/ipfs /usr/local/bin/
 COPY . truebit-eth/
 ARG URL_TRUEBIT_OS=https://downloads.truebit.io/truebit-linux
