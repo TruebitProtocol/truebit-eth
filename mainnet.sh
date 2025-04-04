@@ -27,7 +27,7 @@ cat <<< $(jq '.geth.providerURL="/root/.ethereum/geth.ipc"' /truebit-eth/wasm-cl
 tmux \
 new-session 'clef --advanced --nousb --chainid 1 --keystore=/root/.ethereum/keystore --configdir=/root/.clef --rules /truebit-eth/wasm-client/ruleset.js' \; \
 split-window "echo 'Geth is waiting for Clef IPC socket...'; until [ -S $CLEF ]; do sleep 0.1; done; $GETH" \; \
-split-window -hf "echo 'Prysm is waiting for Geth Engine API...'; until [ -S $CLEF ]; do sleep 0.1; done; sleep 10; echo 'Starting Prysm...'; $PRYSM " \; \
+split-window -hf "echo 'Waiting for Geth Engine API to initialize (30 seconds)...'; until [ -S $CLEF ]; do sleep 0.1; done; sleep 30; echo 'Starting Prysm...'; $PRYSM " \; \
 selectp -L \; swap-pane -U
 
 # Improve IPFS connectivity by connecting to other Truebit users
